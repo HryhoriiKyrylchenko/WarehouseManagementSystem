@@ -22,7 +22,7 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public int BuildingNumber { get; set; }
 
-        public int? Room { get; set; }
+        public string? Room { get; set; }
 
         public string? AdditionalInfo { get; set; }
 

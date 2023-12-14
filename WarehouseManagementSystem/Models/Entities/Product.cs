@@ -51,6 +51,10 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<ProductInZonePosition> ProductsInZonePositions { get; set; }
 
+        public virtual ICollection<Label> Labels { get; set; }
+
+        public virtual ICollection<ProductDetail> Details { get; set; }
+
         public Product (string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price)
         {
             ProductCode = productCode;
@@ -65,6 +69,8 @@ namespace WarehouseManagementSystem.Models.Entities
             ReceiptItems = new List<ReceiptItem>();
             ProductPhotos = new List<ProductPhoto>();
             ProductsInZonePositions = new List<ProductInZonePosition>();
+            Labels = new List<Label>();
+            Details = new List<ProductDetail>();
         }
     }
 }

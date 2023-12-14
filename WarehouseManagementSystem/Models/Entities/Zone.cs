@@ -35,11 +35,13 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<ZonePosition> ZonePositions { get; set; }
 
-        public Zone(string name, int warehouseId, int categoryId)
+        public Zone(string name, int warehouseId, int categoryId, int capacity, string additionalInfo = "")
         {
             Name = name;
             WarehouseId = warehouseId;
             CategoryId = categoryId;
+            Capacity = capacity;
+            AdditionalInfo = additionalInfo;
 
             ZonePositions = new List<ZonePosition>();
         }

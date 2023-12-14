@@ -33,12 +33,13 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public string? AdditionalInfo { get; set; }
 
-        public MovementHistory(DateTime movementDate, int productId, int sourceZonePositionId, int destinationZonePositionId)
+        public MovementHistory(DateTime movementDate, int productId, int sourceZonePositionId, int destinationZonePositionId, string additionalInfo = "")
         {
             MovementDate = movementDate;
             ProductId = productId;
             SourceZonePositionId = sourceZonePositionId;
             DestinationZonePositionId = destinationZonePositionId;
+            AdditionalInfo = additionalInfo;
         }
     }
 }

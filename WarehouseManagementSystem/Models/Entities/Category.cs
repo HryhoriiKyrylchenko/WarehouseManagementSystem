@@ -14,15 +14,16 @@ namespace WarehouseManagementSystem.Models.Entities
         public int Id { get; set; }
 
         [Required]
-        public Enum CategoryName { get; set; }
+        public string CategoryName { get; set; }
 
-        public string? AdditionalInfo { get; set; }
+        public string AdditionalInfo { get; set; }
 
         public virtual ICollection<Subcategory> Subcategories { get; set; }
 
-        public Category(Enum categoryName)
+        public Category(string categoryName, string additionalInfo = "")
         {
             CategoryName = categoryName;
+            AdditionalInfo = additionalInfo;
 
             Subcategories = new List<Subcategory>();
         }

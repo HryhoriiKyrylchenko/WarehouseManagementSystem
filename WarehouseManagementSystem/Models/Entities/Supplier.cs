@@ -26,10 +26,11 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Receipt> Receipts { get; set; }
 
-        public Supplier(string name, int addressId)
+        public Supplier(string name, int addressId, string additionalInfo = "")
         {
             Name = name;
             AddressId = addressId;
+            AdditionalInfo = additionalInfo;
 
             Receipts = new List<Receipt>();
         }

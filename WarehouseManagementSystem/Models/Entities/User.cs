@@ -30,11 +30,12 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Report> Reports { get; set; }
 
-        public User(string username, string password, UserRolesEnum role)
+        public User(string username, string password, UserRolesEnum role, string additionalInfo = "")
         {
             Username = username;
             Password = password;
             Role = role;
+            AdditionalInfo = additionalInfo;
 
             Shipments = new List<Shipment>();
             Receipts = new List<Receipt>();
