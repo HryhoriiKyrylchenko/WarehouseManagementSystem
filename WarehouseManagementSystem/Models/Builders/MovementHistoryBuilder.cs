@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.Models.Builders
 {
-    public class AddressBuilder : IBuilder<Address>
+    public class MovementHistoryBuilder : IBuilder<MovementHistory>
     {
-        private Address address;
+        private MovementHistory movementHistory;
 
-        public AddressBuilder(string country, string index, string city, string street, int buildingNumber)
+        public MovementHistoryBuilder(DateTime movementDate, int productId, int sourceZonePositionId, int destinationZonePositionId)
         {
             try
             {
-                this.address = Initialize(new Address(country, index, city, street, buildingNumber));
+                this.movementHistory = Initialize(new MovementHistory(movementDate, productId, sourceZonePositionId, destinationZonePositionId));
             }
             catch
             {
@@ -27,11 +25,11 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public AddressBuilder(Address address)
+        public MovementHistoryBuilder(MovementHistory movementHistory)
         {
             try
             {
-                this.address = Initialize(address);
+                this.movementHistory = Initialize(movementHistory);
             }
             catch
             {
@@ -39,18 +37,18 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        private Address Initialize(Address address)
+        private MovementHistory Initialize(MovementHistory movementHistory)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    var initializer = entityManager.AddAddress(address);
+                    var initializer = entityManager.AddMovementHistory(movementHistory);
                     return initializer;
                 }
                 catch (DuplicateObjectException)
                 {
-                    return address;
+                    return movementHistory;
                 }
                 catch (Exception ex)
                 {
@@ -63,15 +61,15 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public AddressBuilder WithRoom(string room)
+        public MovementHistoryBuilder WithAdditionalInfo(string additionalInfo)
         {
-            address.Room = room;
+            movementHistory.AdditionalInfo = additionalInfo;
 
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    address = entityManager.UpdateAddress(address);
+                    movementHistory = entityManager.UpdateMovementHistory(movementHistory);
                 }
                 catch (Exception ex)
                 {
@@ -86,32 +84,9 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public AddressBuilder WithAdditionalInfo(string additionalInfo)
+        public MovementHistory Build()
         {
-            address.AdditionalInfo = additionalInfo;
-
-            using (var entityManager = new EntityManager(new WarehouseDbContext()))
-            {
-                try
-                {
-                    address = entityManager.UpdateAddress(address);
-                }
-                catch (Exception ex)
-                {
-                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
-                    {
-                        errorLogger.LogError(ex);
-                    }
-                    throw;
-                }
-            }
-
-            return this;
-        }
-
-        public Address Build()
-        {
-            return address;
+            return movementHistory;
         }
     }
 }

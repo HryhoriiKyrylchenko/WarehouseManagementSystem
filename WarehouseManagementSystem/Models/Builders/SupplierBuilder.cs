@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.Models.Builders
 {
-    public class AddressBuilder : IBuilder<Address>
+    public class SupplierBuilder : IBuilder<Supplier>
     {
-        private Address address;
+        private Supplier supplier;
 
-        public AddressBuilder(string country, string index, string city, string street, int buildingNumber)
+        public SupplierBuilder(string name, int addressId)
         {
             try
             {
-                this.address = Initialize(new Address(country, index, city, street, buildingNumber));
+                this.supplier = Initialize(new Supplier(name, addressId));
             }
             catch
             {
@@ -27,11 +25,11 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public AddressBuilder(Address address)
+        public SupplierBuilder(Supplier supplier)
         {
             try
             {
-                this.address = Initialize(address);
+                this.supplier = Initialize(supplier);
             }
             catch
             {
@@ -39,18 +37,18 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        private Address Initialize(Address address)
+        private Supplier Initialize(Supplier supplier)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    var initializer = entityManager.AddAddress(address);
+                    var initializer = entityManager.AddSupplier(supplier);
                     return initializer;
                 }
                 catch (DuplicateObjectException)
                 {
-                    return address;
+                    return supplier;
                 }
                 catch (Exception ex)
                 {
@@ -63,15 +61,15 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public AddressBuilder WithRoom(string room)
+        public SupplierBuilder WithAdditionalInfo(string additionalInfo)
         {
-            address.Room = room;
+            supplier.AdditionalInfo = additionalInfo;
 
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    address = entityManager.UpdateAddress(address);
+                    supplier = entityManager.UpdateSupplier(supplier);
                 }
                 catch (Exception ex)
                 {
@@ -86,32 +84,9 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public AddressBuilder WithAdditionalInfo(string additionalInfo)
+        public Supplier Build()
         {
-            address.AdditionalInfo = additionalInfo;
-
-            using (var entityManager = new EntityManager(new WarehouseDbContext()))
-            {
-                try
-                {
-                    address = entityManager.UpdateAddress(address);
-                }
-                catch (Exception ex)
-                {
-                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
-                    {
-                        errorLogger.LogError(ex);
-                    }
-                    throw;
-                }
-            }
-
-            return this;
-        }
-
-        public Address Build()
-        {
-            return address;
+            return supplier;
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 
@@ -15,13 +17,40 @@ namespace WarehouseManagementSystem.Models.Builders
 
         public ReceiptBuilder(DateTime receiptDate, int supplierId, int userId, string batchNumber)
         {
-            receipt = new Receipt(receiptDate, supplierId, userId, batchNumber);
+            try
+            {
+                this.receipt = Initialize(new Receipt(receiptDate, supplierId, userId, batchNumber));
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+        public ReceiptBuilder(Receipt receipt) 
+        {
+            try
+            {
+                this.receipt = Initialize(receipt);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private Receipt Initialize(Receipt receipt)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    receipt = warehousManager.AddReceipt(receipt);
+                    var initializer = entityManager.AddReceipt(receipt);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return receipt;
                 }
                 catch (Exception ex)
                 {
@@ -29,26 +58,20 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); ///
+                    throw;
                 }
             }
-        }
-
-        public ReceiptBuilder(Receipt receipt) 
-        {  
-            this.receipt = receipt; 
         }
 
         public ReceiptBuilder WithShipmentNumber(string shipmentNumber)
         {
             receipt.ShipmentNumber = shipmentNumber;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    receipt = warehousManager.UpdateReceipt(receipt);
+                    receipt = entityManager.UpdateReceipt(receipt);
                 }
                 catch (Exception ex)
                 {
@@ -56,8 +79,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -68,11 +90,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             receipt.AdditionalInfo = additionalInfo;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    receipt = warehousManager.UpdateReceipt(receipt);
+                    receipt = entityManager.UpdateReceipt(receipt);
                 }
                 catch (Exception ex)
                 {
@@ -80,8 +102,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 

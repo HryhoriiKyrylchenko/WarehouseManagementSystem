@@ -25,11 +25,10 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Zone> Zones { get; set; }
 
-        public Warehouse(string name, int addressId, string additionalInfo = "")
+        public Warehouse(string name, int addressId)
         {
             Name = name;
             AddressId = addressId;
-            AdditionalInfo = additionalInfo;
 
             Zones = new List<Zone>();
         }

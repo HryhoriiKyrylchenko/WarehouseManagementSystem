@@ -3,25 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 
 namespace WarehouseManagementSystem.Services
 {
-    public class WarehouseManager : IDisposable
+    public class EntityManager : IDisposable
     {
         private readonly WarehouseDbContext dbContext;
 
-        public WarehouseManager(WarehouseDbContext dbContext)
+        public EntityManager(WarehouseDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
         public Product AddProduct(Product newProduct)
         {
-            dbContext.Products.Add(newProduct);
-            dbContext.SaveChanges();
-            return newProduct;
+            var existingProduct = dbContext.Products.Find(newProduct.Id);
+
+            if (existingProduct == null)
+            {
+                dbContext.Products.Add(newProduct);
+                dbContext.SaveChanges();
+                return newProduct;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current product already exists in the database");
+            }
         }
 
         public Product UpdateProduct(Product updatedProduct)
@@ -56,9 +66,18 @@ namespace WarehouseManagementSystem.Services
 
         public ProductDetail AddProductDetail(ProductDetail newProductDetail)
         {
-            dbContext.ProductDetails.Add(newProductDetail);
-            dbContext.SaveChanges();
-            return newProductDetail;
+            var existingProductDetail = dbContext.ProductDetails.Find(newProductDetail.Id);
+
+            if (existingProductDetail == null)
+            {
+                dbContext.ProductDetails.Add(newProductDetail);
+                dbContext.SaveChanges();
+                return newProductDetail;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current product detail already exists in the database");
+            }
         }
 
         public ProductDetail UpdateProductDetail(ProductDetail updatedProductDetail)
@@ -93,9 +112,18 @@ namespace WarehouseManagementSystem.Services
 
         public Subcategory AddSubcategory(Subcategory newSubcategory)
         {
-            dbContext.Subcategories.Add(newSubcategory);
-            dbContext.SaveChanges();
-            return newSubcategory;
+            var existingSubcategory = dbContext.Subcategories.Find(newSubcategory.Id);
+
+            if (existingSubcategory == null)
+            {
+                dbContext.Subcategories.Add(newSubcategory);
+                dbContext.SaveChanges();
+                return newSubcategory;
+            }
+            else 
+            {
+                throw new DuplicateObjectException("Current subcategory already exists in the database");
+            }
         }
 
         public Subcategory UpdateSubcategory(Subcategory updatedSubcategory)
@@ -130,9 +158,18 @@ namespace WarehouseManagementSystem.Services
 
         public Category AddCategory(Category newCategory)
         {
-            dbContext.Categories.Add(newCategory);
-            dbContext.SaveChanges();
-            return newCategory;
+            var existingCategory = dbContext.Categories.Find(newCategory.Id);
+
+            if (existingCategory == null)
+            {
+                dbContext.Categories.Add(newCategory);
+                dbContext.SaveChanges();
+                return newCategory;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current category already exists in the database");
+            }
         }
 
         public Category UpdateCategory(Category updatedCategory)
@@ -167,9 +204,18 @@ namespace WarehouseManagementSystem.Services
 
         public MovementHistory AddMovementHistory(MovementHistory newMovementHistory)
         {
-            dbContext.MovementHistories.Add(newMovementHistory);
-            dbContext.SaveChanges();
-            return newMovementHistory;
+            var existingMovementHistory = dbContext.MovementHistories.Find(newMovementHistory.Id);
+
+            if (existingMovementHistory == null)
+            {
+                dbContext.MovementHistories.Add(newMovementHistory);
+                dbContext.SaveChanges();
+                return newMovementHistory;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current movement history already exists in the database");
+            }
         }
 
         public MovementHistory UpdateMovementHistory(MovementHistory updatedMovementHistory)
@@ -204,9 +250,18 @@ namespace WarehouseManagementSystem.Services
 
         public ZonePosition AddZonePosition(ZonePosition newZonePosition)
         {
-            dbContext.ZonePositions.Add(newZonePosition);
-            dbContext.SaveChanges();
-            return newZonePosition;
+            var existingZonePosition = dbContext.ZonePositions.Find(newZonePosition.Id);
+
+            if (existingZonePosition == null)
+            {
+                dbContext.ZonePositions.Add(newZonePosition);
+                dbContext.SaveChanges();
+                return newZonePosition;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current zone position already exists in the database");
+            }
         }
 
         public ZonePosition UpdateZonePosition(ZonePosition updatedZonePosition)
@@ -241,9 +296,18 @@ namespace WarehouseManagementSystem.Services
 
         public Zone AddZone(Zone newZone)
         {
-            dbContext.Zones.Add(newZone);
-            dbContext.SaveChanges();
-            return newZone;
+            var existingZone = dbContext.Zones.Find(newZone.Id);
+
+            if (existingZone == null)
+            {
+                dbContext.Zones.Add(newZone);
+                dbContext.SaveChanges();
+                return newZone;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current zone already exists in the database");
+            }
         }
 
         public Zone UpdateZone(Zone updatedZone)
@@ -278,9 +342,18 @@ namespace WarehouseManagementSystem.Services
 
         public Report AddReport(Report newReport)
         {
-            dbContext.Reports.Add(newReport);
-            dbContext.SaveChanges();
-            return newReport;
+            var existingReport = dbContext.Reports.Find(newReport.Id);
+
+            if (existingReport == null)
+            {
+                dbContext.Reports.Add(newReport);
+                dbContext.SaveChanges();
+                return newReport;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current report already exists in the database");
+            }
         }
 
         public Report UpdateReport(Report updatedReport)
@@ -315,9 +388,18 @@ namespace WarehouseManagementSystem.Services
 
         public User AddUser(User newUser)
         {
-            dbContext.Users.Add(newUser);
-            dbContext.SaveChanges();
-            return newUser;
+            var existingUser = dbContext.Users.Find(newUser.Id);
+
+            if (existingUser == null)
+            {
+                dbContext.Users.Add(newUser);
+                dbContext.SaveChanges();
+                return newUser;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current user already exists in the database");
+            }
         }
 
         public User UpdateUser(User updatedUser)
@@ -352,9 +434,18 @@ namespace WarehouseManagementSystem.Services
 
         public Shipment AddShipment(Shipment newShipment)
         {
-            dbContext.Shipments.Add(newShipment);
-            dbContext.SaveChanges();
-            return newShipment;
+            var existingShipment = dbContext.Shipments.Find(newShipment.Id);
+
+            if (existingShipment == null)
+            {
+                dbContext.Shipments.Add(newShipment);
+                dbContext.SaveChanges();
+                return newShipment;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current shipment already exists in the database");
+            }
         }
 
         public Shipment UpdateShipment(Shipment updatedShipment)
@@ -389,9 +480,18 @@ namespace WarehouseManagementSystem.Services
 
         public ShipmentItem AddShipmentItem(ShipmentItem newShipmentItem)
         {
-            dbContext.ShipmentItems.Add(newShipmentItem);
-            dbContext.SaveChanges();
-            return newShipmentItem;
+            var existingShipmentItem = dbContext.ShipmentItems.Find(newShipmentItem.Id);
+
+            if (existingShipmentItem == null)
+            {
+                dbContext.ShipmentItems.Add(newShipmentItem);
+                dbContext.SaveChanges();
+                return newShipmentItem;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current shipment item already exists in the database");
+            }
         }
 
         public ShipmentItem UpdateShipmentItem(ShipmentItem updatedShipmentItem)
@@ -426,9 +526,18 @@ namespace WarehouseManagementSystem.Services
 
         public Receipt AddReceipt(Receipt newReceipt)
         {
-            dbContext.Receipts.Add(newReceipt);
-            dbContext.SaveChanges();
-            return newReceipt;
+            var existingReceipt = dbContext.Receipts.Find(newReceipt.Id);
+
+            if (existingReceipt == null)
+            {
+                dbContext.Receipts.Add(newReceipt);
+                dbContext.SaveChanges();
+                return newReceipt;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current receipt already exists in the database");
+            }
         }
 
         public Receipt UpdateReceipt(Receipt updatedReceipt)
@@ -463,9 +572,18 @@ namespace WarehouseManagementSystem.Services
 
         public ReceiptItem AddReceiptItem(ReceiptItem newReceiptItem)
         {
-            dbContext.ReceiptItems.Add(newReceiptItem);
-            dbContext.SaveChanges();
-            return newReceiptItem;
+            var existingReceiptItem = dbContext.ReceiptItems.Find(newReceiptItem.Id);
+
+            if (existingReceiptItem == null)
+            {
+                dbContext.ReceiptItems.Add(newReceiptItem);
+                dbContext.SaveChanges();
+                return newReceiptItem;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current receipt item already exists in the database");
+            }
         }
 
         public ReceiptItem UpdateReceiptItem(ReceiptItem updatedReceiptItem)
@@ -500,9 +618,18 @@ namespace WarehouseManagementSystem.Services
 
         public Warehouse AddWarehouse(Warehouse newWarehouse)
         {
-            dbContext.Warehouses.Add(newWarehouse);
-            dbContext.SaveChanges();
-            return newWarehouse;
+            var existingWarehouse = dbContext.Warehouses.Find(newWarehouse.Id);
+
+            if (existingWarehouse == null)
+            {
+                dbContext.Warehouses.Add(newWarehouse);
+                dbContext.SaveChanges();
+                return newWarehouse;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current warehouse already exists in the database");
+            }
         }
 
         public Warehouse UpdateWarehouse(Warehouse updatedWarehouse)
@@ -535,11 +662,66 @@ namespace WarehouseManagementSystem.Services
             return false;
         }
 
+        public Supplier AddSupplier(Supplier newSupplier)
+        {
+            var existingSupplier = dbContext.Suppliers.Find(newSupplier.Id);
+
+            if (existingSupplier == null)
+            {
+                dbContext.Suppliers.Add(newSupplier);
+                dbContext.SaveChanges();
+                return newSupplier;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current supplier already exists in the database");
+            }
+        }
+
+        public Supplier UpdateSupplier(Supplier updatedSupplier)
+        {
+            var existingSupplier = dbContext.Suppliers.Find(updatedSupplier.Id);
+
+            if (existingSupplier != null)
+            {
+                dbContext.Entry(existingSupplier).CurrentValues.SetValues(updatedSupplier);
+                dbContext.SaveChanges();
+                return existingSupplier;
+            }
+            else
+            {
+                throw new ArgumentException("Current supplier item does not exist in the database");
+            }
+        }
+
+        public bool DeleteSupplier(Supplier supplier)
+        {
+            var supplierToDelete = dbContext.Suppliers.Find(supplier.Id);
+
+            if (supplierToDelete != null)
+            {
+                dbContext.Suppliers.Remove(supplierToDelete);
+                dbContext.SaveChanges();
+                return true;
+            }
+
+            return false;
+        }
+
         public Customer AddCustomer(Customer newCustomer)
         {
-            dbContext.Customers.Add(newCustomer);
-            dbContext.SaveChanges();
-            return newCustomer;
+            var existingCustomer = dbContext.Customers.Find(newCustomer.Id);
+
+            if (existingCustomer == null)
+            {
+                dbContext.Customers.Add(newCustomer);
+                dbContext.SaveChanges();
+                return newCustomer;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current customer already exists in the database");
+            }
         }
 
         public Customer UpdateCustomer(Customer updatedCustomer)
@@ -574,9 +756,18 @@ namespace WarehouseManagementSystem.Services
 
         public Address AddAddress(Address newAddress)
         {
-            dbContext.Addresses.Add(newAddress);
-            dbContext.SaveChanges();
-            return newAddress;
+            var existingAddress = dbContext.Addresses.Find(newAddress.Id);
+
+            if (existingAddress == null)
+            {
+                dbContext.Addresses.Add(newAddress);
+                dbContext.SaveChanges();
+                return newAddress;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current address already exists in the database");
+            }
         }
 
         public Address UpdateAddress(Address updatedAddress)
@@ -609,11 +800,66 @@ namespace WarehouseManagementSystem.Services
             return false;
         }
 
+        public ProductPhoto AddProductPhoto(ProductPhoto newProductPhoto)
+        {
+            var existingProductPhoto = dbContext.ProductPhotos.Find(newProductPhoto.Id);
+
+            if (existingProductPhoto == null)
+            {
+                dbContext.ProductPhotos.Add(newProductPhoto);
+                dbContext.SaveChanges();
+                return newProductPhoto;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current product photo already exists in the database");
+            }
+        }
+
+        public ProductPhoto UpdateProductPhoto(ProductPhoto updatedProductPhoto)
+        {
+            var existingProductPhoto = dbContext.ProductPhotos.Find(updatedProductPhoto.Id);
+
+            if (existingProductPhoto != null)
+            {
+                dbContext.Entry(existingProductPhoto).CurrentValues.SetValues(updatedProductPhoto);
+                dbContext.SaveChanges();
+                return existingProductPhoto;
+            }
+            else
+            {
+                throw new ArgumentException("Current product photo item does not exist in the database");
+            }
+        }
+
+        public bool DeleteProductPhoto(ProductPhoto productPhoto)
+        {
+            var productPhotoToDelete = dbContext.ProductPhotos.Find(productPhoto.Id);
+
+            if (productPhotoToDelete != null)
+            {
+                dbContext.ProductPhotos.Remove(productPhotoToDelete);
+                dbContext.SaveChanges();
+                return true;
+            }
+
+            return false;
+        }
+
         public ProductInZonePosition AddProductInZonePosition(ProductInZonePosition newProductInZonePosition)
         {
-            dbContext.ProductInZonePositions.Add(newProductInZonePosition);
-            dbContext.SaveChanges();
-            return newProductInZonePosition;
+            var existingProductInZonePosition = dbContext.ProductInZonePositions.Find(newProductInZonePosition.Id);
+
+            if (existingProductInZonePosition == null)
+            {
+                dbContext.ProductInZonePositions.Add(newProductInZonePosition);
+                dbContext.SaveChanges();
+                return newProductInZonePosition;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current product in zone position already exists in the database");
+            }
         }
 
         public ProductInZonePosition UpdateProductInZonePosition(ProductInZonePosition updatedProductInZonePosition)
@@ -648,9 +894,18 @@ namespace WarehouseManagementSystem.Services
 
         public Manufacturer AddManufacturer(Manufacturer newManufacturer)
         {
-            dbContext.Manufacturers.Add(newManufacturer);
-            dbContext.SaveChanges();
-            return newManufacturer;
+            var existingManufacturer = dbContext.Manufacturers.Find(newManufacturer.Id);
+
+            if (existingManufacturer == null)
+            {
+                dbContext.Manufacturers.Add(newManufacturer);
+                dbContext.SaveChanges();
+                return newManufacturer;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current manufacturer already exists in the database");
+            }
         }
 
         public Manufacturer UpdateManufacturer(Manufacturer updatedManufacturer)
@@ -676,6 +931,98 @@ namespace WarehouseManagementSystem.Services
             if (manufacturerToDelete != null)
             {
                 dbContext.Manufacturers.Remove(manufacturerToDelete);
+                dbContext.SaveChanges();
+                return true;
+            }
+
+            return false;
+        }
+
+        public Label AddLabel(Label newLabel)
+        {
+            var existingLabel = dbContext.Labels.Find(newLabel.Id);
+
+            if (existingLabel == null)
+            {
+                dbContext.Labels.Add(newLabel);
+                dbContext.SaveChanges();
+                return newLabel;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current label already exists in the database");
+            }
+        }
+
+        public Label UpdateLabel(Label updatedLabel)
+        {
+            var existingLabel = dbContext.Labels.Find(updatedLabel.Id);
+
+            if (existingLabel != null)
+            {
+                dbContext.Entry(existingLabel).CurrentValues.SetValues(updatedLabel);
+                dbContext.SaveChanges();
+                return existingLabel;
+            }
+            else
+            {
+                throw new ArgumentException("Current label does not exist in the database");
+            }
+        }
+
+        public bool DeleteLabel(Label label)
+        {
+            var labelToDelete = dbContext.Labels.Find(label.Id);
+
+            if (labelToDelete != null)
+            {
+                dbContext.Labels.Remove(labelToDelete);
+                dbContext.SaveChanges();
+                return true;
+            }
+
+            return false;
+        }
+
+        public ErrorLog AddErrorLog(ErrorLog newErrorLog)
+        {
+            var existingErrorLog = dbContext.ErrorLogs.Find(newErrorLog.Id);
+
+            if (existingErrorLog == null)
+            {
+                dbContext.ErrorLogs.Add(newErrorLog);
+                dbContext.SaveChanges();
+                return newErrorLog;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current error log already exists in the database");
+            }
+        }
+
+        public ErrorLog UpdateErrorLog(ErrorLog updatedErrorLog)
+        {
+            var existingErrorLog = dbContext.ErrorLogs.Find(updatedErrorLog.Id);
+
+            if (existingErrorLog != null)
+            {
+                dbContext.Entry(existingErrorLog).CurrentValues.SetValues(updatedErrorLog);
+                dbContext.SaveChanges();
+                return existingErrorLog;
+            }
+            else
+            {
+                throw new ArgumentException("Current error log does not exist in the database");
+            }
+        }
+
+        public bool DeleteErrorLog(ErrorLog errorLog)
+        {
+            var errorLogToDelete = dbContext.ErrorLogs.Find(errorLog.Id);
+
+            if (errorLogToDelete != null)
+            {
+                dbContext.ErrorLogs.Remove(errorLogToDelete);
                 dbContext.SaveChanges();
                 return true;
             }

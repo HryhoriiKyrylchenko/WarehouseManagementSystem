@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using Zone = WarehouseManagementSystem.Models.Entities.Zone;
 
 namespace WarehouseManagementSystem.Models.Builders
 {
-    public class AddressBuilder : IBuilder<Address>
+    public class ZoneBuilder : IBuilder<Zone>
     {
-        private Address address;
+        private Zone zone;
 
-        public AddressBuilder(string country, string index, string city, string street, int buildingNumber)
+        public ZoneBuilder(string name, int warehouseId, int categoryId, int capacity)
         {
             try
             {
-                this.address = Initialize(new Address(country, index, city, street, buildingNumber));
+                this.zone = Initialize(new Zone(name, warehouseId, categoryId, capacity));
             }
             catch
             {
@@ -27,11 +27,11 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public AddressBuilder(Address address)
+        public ZoneBuilder(Zone zone)
         {
             try
             {
-                this.address = Initialize(address);
+                this.zone = Initialize(zone);
             }
             catch
             {
@@ -39,18 +39,18 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        private Address Initialize(Address address)
+        private Zone Initialize(Zone zone)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    var initializer = entityManager.AddAddress(address);
+                    var initializer = entityManager.AddZone(zone);
                     return initializer;
                 }
                 catch (DuplicateObjectException)
                 {
-                    return address;
+                    return zone;
                 }
                 catch (Exception ex)
                 {
@@ -63,15 +63,15 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public AddressBuilder WithRoom(string room)
+        public ZoneBuilder WithAdditionalInfo(string additionalInfo)
         {
-            address.Room = room;
+            zone.AdditionalInfo = additionalInfo;
 
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    address = entityManager.UpdateAddress(address);
+                    zone = entityManager.UpdateZone(zone);
                 }
                 catch (Exception ex)
                 {
@@ -86,32 +86,9 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public AddressBuilder WithAdditionalInfo(string additionalInfo)
+        public Zone Build()
         {
-            address.AdditionalInfo = additionalInfo;
-
-            using (var entityManager = new EntityManager(new WarehouseDbContext()))
-            {
-                try
-                {
-                    address = entityManager.UpdateAddress(address);
-                }
-                catch (Exception ex)
-                {
-                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
-                    {
-                        errorLogger.LogError(ex);
-                    }
-                    throw;
-                }
-            }
-
-            return this;
-        }
-
-        public Address Build()
-        {
-            return address;
+            return zone;
         }
     }
 }

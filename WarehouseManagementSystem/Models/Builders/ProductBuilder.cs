@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Models.Entities.Enums;
 using WarehouseManagementSystem.Services;
@@ -16,40 +17,61 @@ namespace WarehouseManagementSystem.Models.Builders
 
         public ProductBuilder(string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price)
         {
-            product = new Product(productCode, name, unitOfMeasure, quantity, capacity, price);
-
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            try
             {
-                try
-                {
-                    product = warehousManager.AddProduct(product);
-                }
-                catch (Exception ex)
-                {
-                    using(var errorLogger = new ErrorLogger(new WarehouseDbContext()))
-                    {
-                        errorLogger.LogError(ex);
-                    }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); ///
-                }
+                this.product = Initialize(new Product(productCode, name, unitOfMeasure, quantity, capacity, price));
+            }
+            catch
+            {
+                throw;
             }
         }
 
         public ProductBuilder(Product product)
         {
-            this.product = product;
+            try
+            {
+                this.product = Initialize(product);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private Product Initialize(Product product)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = entityManager.AddProduct(product);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return product;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
         }
 
         public ProductBuilder WithDescription(string description)
         {
             product.Description = description;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    product = warehousManager.UpdateProduct(product);
+                    product = entityManager.UpdateProduct(product);
                 }
                 catch (Exception ex)
                 {
@@ -58,7 +80,7 @@ namespace WarehouseManagementSystem.Models.Builders
                         errorLogger.LogError(ex);
                     }
 
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); ///
+                    throw;
                 }
             }
 
@@ -69,11 +91,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             product.Manufacturer = manufacturer;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    product = warehousManager.UpdateProduct(product);
+                    product = entityManager.UpdateProduct(product);
                 }
                 catch (Exception ex)
                 {
@@ -82,7 +104,7 @@ namespace WarehouseManagementSystem.Models.Builders
                         errorLogger.LogError(ex);
                     }
 
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -93,11 +115,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             product.DiscountPercentage = discountPercentage;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    product = warehousManager.UpdateProduct(product);
+                    product = entityManager.UpdateProduct(product);
                 }
                 catch (Exception ex)
                 {
@@ -106,7 +128,7 @@ namespace WarehouseManagementSystem.Models.Builders
                         errorLogger.LogError(ex);
                     }
 
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -117,11 +139,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             product.SubcategoryId = subcategoryId;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    product = warehousManager.UpdateProduct(product);
+                    product = entityManager.UpdateProduct(product);
                 }
                 catch (Exception ex)
                 {
@@ -130,7 +152,7 @@ namespace WarehouseManagementSystem.Models.Builders
                         errorLogger.LogError(ex);
                     }
 
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -139,24 +161,7 @@ namespace WarehouseManagementSystem.Models.Builders
 
         public ProductBuilder WithDetails(string key, string value)
         {
-            ProductDetail newProductDetail = new ProductDetail(product.Id, key, value);
-
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
-            {
-                try
-                {
-                    warehousManager.AddProductDetail(newProductDetail);
-                }
-                catch (Exception ex)
-                {
-                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
-                    {
-                        errorLogger.LogError(ex);
-                    }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            ProductDetail newProductDetail = new ProductDetailBuilder(product.Id, key, value).Build();
 
             return this;
         }

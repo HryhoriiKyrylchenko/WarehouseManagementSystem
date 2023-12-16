@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 
@@ -15,13 +17,40 @@ namespace WarehouseManagementSystem.Models.Builders
 
         public CustomerBuilder(string firstName, string lastName, int addressId)
         {
-            customer = new Customer(firstName, lastName, addressId);
+            try
+            {
+                this.customer = Initialize(new Customer(firstName, lastName, addressId));
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+        public CustomerBuilder(Customer customer) 
+        {
+            try
+            {
+                this.customer = Initialize(customer);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private Customer Initialize(Customer customer)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    customer = warehousManager.AddCustomer(customer);
+                    var initializer = entityManager.AddCustomer(customer);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return customer;
                 }
                 catch (Exception ex)
                 {
@@ -29,26 +58,20 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); ///
+                    throw;
                 }
             }
-        }
-
-        public CustomerBuilder(Customer customer) 
-        {
-            this.customer = customer;
         }
 
         public CustomerBuilder WithDateOfBirth(DateTime dateOfBirth)
         {
             customer.DateOfBirth = dateOfBirth;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    customer = warehousManager.UpdateCustomer(customer);
+                    customer = entityManager.UpdateCustomer(customer);
                 }
                 catch (Exception ex)
                 {
@@ -56,8 +79,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -68,11 +90,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             customer.DiscountPercentage = discountPercentage;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    customer = warehousManager.UpdateCustomer(customer);
+                    customer = entityManager.UpdateCustomer(customer);
                 }
                 catch (Exception ex)
                 {
@@ -80,8 +102,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -92,11 +113,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             customer.AdditionalInfo = additionalInfo;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    customer = warehousManager.UpdateCustomer(customer);
+                    customer = entityManager.UpdateCustomer(customer);
                 }
                 catch (Exception ex)
                 {
@@ -104,8 +125,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 

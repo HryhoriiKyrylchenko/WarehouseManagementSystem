@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 
@@ -15,13 +17,39 @@ namespace WarehouseManagementSystem.Models.Builders
 
         public ShipmentBuilder(DateTime shipmentDate, int customerId, int userId, string batchNumber)
         {
-            shipment = new Shipment(shipmentDate, customerId, userId, batchNumber);
+            try
+            {
+                this.shipment = Initialize(new Shipment(shipmentDate, customerId, userId, batchNumber));
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public ShipmentBuilder(Shipment shipment)
+        {
+            try
+            {
+                this.shipment = Initialize(shipment);
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+        private Shipment Initialize(Shipment shipment)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    shipment = warehousManager.AddShipment(shipment);
+                    var initializer = entityManager.AddShipment(shipment);
+                    return shipment;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return shipment;
                 }
                 catch (Exception ex)
                 {
@@ -29,25 +57,20 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); ///
+                    throw;
                 }
             }
-        }
-        public ShipmentBuilder(Shipment shipment)
-        {
-            this.shipment = shipment;
         }
 
         public ShipmentBuilder WithShipmentNumber(string shipmentNumber)
         {
             shipment.ShipmentNumber = shipmentNumber;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    shipment = warehousManager.UpdateShipment(shipment);
+                    shipment = entityManager.UpdateShipment(shipment);
                 }
                 catch (Exception ex)
                 {
@@ -55,8 +78,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -67,11 +89,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             shipment.AdditionalInfo = additionalInfo;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    shipment = warehousManager.UpdateShipment(shipment);
+                    shipment = entityManager.UpdateShipment(shipment);
                 }
                 catch (Exception ex)
                 {
@@ -79,8 +101,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 

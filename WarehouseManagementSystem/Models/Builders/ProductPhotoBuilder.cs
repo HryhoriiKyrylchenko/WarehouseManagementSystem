@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using WarehouseManagementSystem.Exceptions;
+using WarehouseManagementSystem.Models.Entities;
+using WarehouseManagementSystem.Services;
+
+namespace WarehouseManagementSystem.Models.Builders
+{
+    public class ProductPhotoBuilder : IBuilder<ProductPhoto>
+    {
+        private ProductPhoto productPhoto;
+
+        public ProductPhotoBuilder(byte[] photoData, int productId)
+        {
+            try
+            {
+                this.productPhoto = Initialize(new ProductPhoto(photoData, productId));
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public ProductPhotoBuilder(ProductPhoto productPhoto)
+        {
+            try
+            {
+                this.productPhoto = Initialize(productPhoto);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private ProductPhoto Initialize(ProductPhoto productPhoto)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = entityManager.AddProductPhoto(productPhoto);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return productPhoto;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
+        public ProductPhoto Build()
+        {
+            return productPhoto;
+        }
+    }
+}

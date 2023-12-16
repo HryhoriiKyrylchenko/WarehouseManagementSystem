@@ -32,12 +32,11 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<MovementHistory> MovementHistories { get; set; }
 
-        public ZonePosition(string name, int zoneId, int capacity, string additionalInfo = "")
+        public ZonePosition(string name, int zoneId, int capacity)
         {
             Name = name;
             ZoneId = zoneId;
             Capacity = capacity;
-            AdditionalInfo = additionalInfo;
 
             ProductsInZonePosition = new List<ProductInZonePosition>();
             MovementHistories = new List<MovementHistory>();

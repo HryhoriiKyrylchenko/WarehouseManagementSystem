@@ -16,14 +16,13 @@ namespace WarehouseManagementSystem.Models.Entities
         [Required]
         public string CategoryName { get; set; }
 
-        public string AdditionalInfo { get; set; }
+        public string? AdditionalInfo { get; set; }
 
         public virtual ICollection<Subcategory> Subcategories { get; set; }
 
-        public Category(string categoryName, string additionalInfo = "")
+        public Category(string categoryName)
         {
             CategoryName = categoryName;
-            AdditionalInfo = additionalInfo;
 
             Subcategories = new List<Subcategory>();
         }

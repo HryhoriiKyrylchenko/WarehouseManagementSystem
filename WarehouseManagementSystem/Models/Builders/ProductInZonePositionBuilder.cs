@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 
@@ -16,13 +18,40 @@ namespace WarehouseManagementSystem.Models.Builders
 
         public ProductInZonePositionBuilder(int productId, int quantity, int zonePositionId)
         {
-            productInZonePosition = new ProductInZonePosition(productId, quantity, zonePositionId);
+            try
+            {
+                this.productInZonePosition = Initialize(new ProductInZonePosition(productId, quantity, zonePositionId));
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+        public ProductInZonePositionBuilder(ProductInZonePosition productInZonePosition)
+        {
+            try
+            {
+                this.productInZonePosition = Initialize(productInZonePosition);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private ProductInZonePosition Initialize(ProductInZonePosition productInZonePosition)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    productInZonePosition = warehousManager.AddProductInZonePosition(productInZonePosition);
+                    var initializer = entityManager.AddProductInZonePosition(productInZonePosition);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return productInZonePosition;
                 }
                 catch (Exception ex)
                 {
@@ -30,26 +59,20 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); ///
+                    throw;
                 }
             }
-        }
-
-        public ProductInZonePositionBuilder(ProductInZonePosition productInZonePosition)
-        {
-            this.productInZonePosition = productInZonePosition;
         }
 
         public ProductInZonePositionBuilder WithManufactureDate(DateTime manufactureDate)
         {
             productInZonePosition.ManufactureDate = manufactureDate;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    productInZonePosition = warehousManager.UpdateProductInZonePosition(productInZonePosition);
+                    productInZonePosition = entityManager.UpdateProductInZonePosition(productInZonePosition);
                 }
                 catch (Exception ex)
                 {
@@ -57,8 +80,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -69,11 +91,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             productInZonePosition.ExpiryDate = expiryDate;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    productInZonePosition = warehousManager.UpdateProductInZonePosition(productInZonePosition);
+                    productInZonePosition = entityManager.UpdateProductInZonePosition(productInZonePosition);
                 }
                 catch (Exception ex)
                 {
@@ -81,8 +103,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,15 +12,15 @@ using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.Models.Builders
 {
-    public class AddressBuilder : IBuilder<Address>
+    public class SubcategoryBuilder : IBuilder<Subcategory>
     {
-        private Address address;
+        private Subcategory subcategory;
 
-        public AddressBuilder(string country, string index, string city, string street, int buildingNumber)
+        public SubcategoryBuilder(string name, int categoryId)
         {
             try
             {
-                this.address = Initialize(new Address(country, index, city, street, buildingNumber));
+                this.subcategory = Initialize(new Subcategory(name, categoryId));
             }
             catch
             {
@@ -27,11 +28,11 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public AddressBuilder(Address address)
+        public SubcategoryBuilder(Subcategory subcategory) 
         {
             try
             {
-                this.address = Initialize(address);
+                this.subcategory = Initialize(subcategory);
             }
             catch
             {
@@ -39,18 +40,18 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        private Address Initialize(Address address)
+        private Subcategory Initialize(Subcategory subcategory)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    var initializer = entityManager.AddAddress(address);
+                    var initializer = entityManager.AddSubcategory(subcategory);
                     return initializer;
                 }
                 catch (DuplicateObjectException)
                 {
-                    return address;
+                    return subcategory;
                 }
                 catch (Exception ex)
                 {
@@ -63,15 +64,15 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public AddressBuilder WithRoom(string room)
+        public SubcategoryBuilder WithAdditionalInfo(string additionalInfo)
         {
-            address.Room = room;
+            subcategory.AdditionalInfo = additionalInfo;
 
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    address = entityManager.UpdateAddress(address);
+                    subcategory = entityManager.UpdateSubcategory(subcategory);
                 }
                 catch (Exception ex)
                 {
@@ -86,32 +87,9 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public AddressBuilder WithAdditionalInfo(string additionalInfo)
+        public Subcategory Build()
         {
-            address.AdditionalInfo = additionalInfo;
-
-            using (var entityManager = new EntityManager(new WarehouseDbContext()))
-            {
-                try
-                {
-                    address = entityManager.UpdateAddress(address);
-                }
-                catch (Exception ex)
-                {
-                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
-                    {
-                        errorLogger.LogError(ex);
-                    }
-                    throw;
-                }
-            }
-
-            return this;
-        }
-
-        public Address Build()
-        {
-            return address;
+            return subcategory;
         }
     }
 }

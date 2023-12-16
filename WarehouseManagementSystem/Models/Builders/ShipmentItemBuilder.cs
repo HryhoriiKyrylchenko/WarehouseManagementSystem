@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using WarehouseManagementSystem.Exceptions;
+using WarehouseManagementSystem.Models.Entities;
+using WarehouseManagementSystem.Services;
+
+namespace WarehouseManagementSystem.Models.Builders
+{
+    public class ShipmentItemBuilder : IBuilder<ShipmentItem>
+    {
+        private ShipmentItem shipmentItem;
+
+        public ShipmentItemBuilder(int shipmentId, int productId, int quantity)
+        {
+            try
+            {
+                this.shipmentItem = Initialize(new ShipmentItem(shipmentId, productId, quantity));
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public ShipmentItemBuilder(ShipmentItem shipmentItem)
+        {
+            try
+            {
+                this.shipmentItem = Initialize(shipmentItem);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private ShipmentItem Initialize(ShipmentItem shipmentItem)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = entityManager.AddShipmentItem(shipmentItem);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return shipmentItem;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
+        public ShipmentItem Build()
+        {
+            return shipmentItem;
+        }
+    }
+}

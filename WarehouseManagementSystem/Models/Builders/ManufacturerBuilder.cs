@@ -1,28 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WarehouseManagementSystem.Exceptions;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.Models.Builders
 {
-    internal class ManufacturerBuilder : IBuilder<Manufacturer>
+    public class ManufacturerBuilder : IBuilder<Manufacturer>
     {
         private Manufacturer manufacturer;
 
         public ManufacturerBuilder(string name)
         {
-            manufacturer = new Manufacturer(name);
+            try
+            {
+                this.manufacturer = Initialize(new Manufacturer(name));
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+        public ManufacturerBuilder(Manufacturer manufacturer)
+        {
+            try
+            {
+                this.manufacturer = Initialize(manufacturer);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private Manufacturer Initialize(Manufacturer manufacturer)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    manufacturer = warehousManager.AddManufacturer(manufacturer);
+                    var initializer = entityManager.AddManufacturer(manufacturer);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return manufacturer;
                 }
                 catch (Exception ex)
                 {
@@ -30,26 +59,20 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); ///
+                    throw;
                 }
             }
-        }
-
-        public ManufacturerBuilder(Manufacturer manufacturer)
-        {  
-            this.manufacturer = manufacturer; 
         }
 
         public ManufacturerBuilder WithDescription(string description)
         {
             manufacturer.Description = description;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    manufacturer = warehousManager.UpdateManufacturer(manufacturer);
+                    manufacturer = entityManager.UpdateManufacturer(manufacturer);
                 }
                 catch (Exception ex)
                 {
@@ -57,8 +80,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -69,11 +91,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             manufacturer.AddressId = addressId;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    manufacturer = warehousManager.UpdateManufacturer(manufacturer);
+                    manufacturer = entityManager.UpdateManufacturer(manufacturer);
                 }
                 catch (Exception ex)
                 {
@@ -81,8 +103,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 
@@ -93,11 +114,11 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             manufacturer.AdditionalInfo = additionalInfo;
 
-            using (var warehousManager = new WarehouseManager(new WarehouseDbContext()))
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    manufacturer = warehousManager.UpdateManufacturer(manufacturer);
+                    manufacturer = entityManager.UpdateManufacturer(manufacturer);
                 }
                 catch (Exception ex)
                 {
@@ -105,8 +126,7 @@ namespace WarehouseManagementSystem.Models.Builders
                     {
                         errorLogger.LogError(ex);
                     }
-
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw;
                 }
             }
 

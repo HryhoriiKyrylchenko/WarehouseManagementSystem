@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WarehouseManagementSystem.Models;
+using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 
 namespace WarehouseManagementSystem.Services
@@ -21,7 +22,7 @@ namespace WarehouseManagementSystem.Services
         {
             try
             {
-                var errorLog = new ErrorLog(ex.Message, ex.StackTrace ?? "", DateTime.Now);
+                ErrorLog errorLog = new ErrorLogBuilder(ex.Message, ex.StackTrace ?? "", DateTime.Now).Build();
 
                 dbContext.ErrorLogs.Add(errorLog);
                 dbContext.SaveChanges();
