@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -135,9 +136,9 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public ProductBuilder WithSubcategory(int subcategoryId)
+        public ProductBuilder WithCategory(int categoryId)
         {
-            product.SubcategoryId = subcategoryId;
+            product.CategoryId = categoryId;
 
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
@@ -159,9 +160,47 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public ProductBuilder WithDetails(string key, string value)
+        public ProductBuilder WithProductDetails(string key, string value)
         {
-            ProductDetail newProductDetail = new ProductDetailBuilder(product.Id, key, value).Build();
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product.AddProductDetail(key, value);
+                    product = entityManager.UpdateProduct(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public ProductBuilder WithAdditionalInfo(string additionalInfo)
+        {
+            product.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product = entityManager.UpdateProduct(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
 
             return this;
         }

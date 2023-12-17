@@ -63,6 +63,29 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        public CategoryBuilder WithPreviousCategory(int previousCategoryId)
+        {
+            category.PreviousCategoryId = previousCategoryId;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    category = entityManager.UpdateCategory(category);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public CategoryBuilder WithAdditionalInfo(string additionalInfo)
         {
             category.AdditionalInfo = additionalInfo;

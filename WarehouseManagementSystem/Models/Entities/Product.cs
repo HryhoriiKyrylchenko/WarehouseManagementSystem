@@ -6,6 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WarehouseManagementSystem.Models.Entities.Enums;
+using WarehouseManagementSystem.Models.Entities.Support_classes;
+using Newtonsoft.Json;
+using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.Exceptions;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
@@ -36,10 +40,14 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public decimal? DiscountPercentage { get; set; }
 
-        public int? SubcategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         [ForeignKey("SubcategoryId")]
-        public virtual Subcategory? Subcategory { get; set; }
+        public virtual Category? Category { get; set; }
+
+        public string? ProductDetails { get; set; }
+
+        public string? AdditionalInfo { get; set; }
 
         public virtual ICollection<MovementHistory> MovementHistories { get; set; }
 
@@ -52,8 +60,6 @@ namespace WarehouseManagementSystem.Models.Entities
         public virtual ICollection<ProductInZonePosition> ProductsInZonePositions { get; set; }
 
         public virtual ICollection<Label> Labels { get; set; }
-
-        public virtual ICollection<ProductDetail> Details { get; set; }
 
         public Product (string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price)
         {
@@ -70,7 +76,53 @@ namespace WarehouseManagementSystem.Models.Entities
             ProductPhotos = new List<ProductPhoto>();
             ProductsInZonePositions = new List<ProductInZonePosition>();
             Labels = new List<Label>();
-            Details = new List<ProductDetail>();
+        }
+
+        public void AddProductDetail(string key, string value)
+        {
+            try
+            {
+                ProductDetail newDetail = new ProductDetail(key, value);
+                List<ProductDetail> currentDetails = GetProductDetailsList();
+                currentDetails.Add(newDetail);
+                ProductDetails = JsonConvert.SerializeObject(currentDetails);
+            }
+            catch 
+            {
+                throw;
+            }
+        }
+
+        private List<ProductDetail> GetProductDetailsList()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(ProductDetails))
+                {
+                    return new List<ProductDetail>();
+                }
+                else
+                {
+                    return JsonConvert.DeserializeObject<List<ProductDetail>>(ProductDetails);
+                }
+            }
+            catch (JsonException ex)
+            {
+                using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                {
+                    CustomJsonException cex = new CustomJsonException(ex, ProductDetails ?? "");
+                    errorLogger.LogError(cex);
+                }
+                return new List<ProductDetail>();
+            }
+            catch (Exception ex)
+            {
+                using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                {
+                    errorLogger.LogError(ex);
+                }
+                return new List<ProductDetail>();
+            }
         }
     }
 }

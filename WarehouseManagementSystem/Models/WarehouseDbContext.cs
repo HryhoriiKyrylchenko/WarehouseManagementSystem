@@ -14,7 +14,6 @@ namespace WarehouseManagementSystem.Models
     public class WarehouseDbContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
-        public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<MovementHistory> MovementHistories { get; set; }
         public DbSet<ZonePosition> ZonePositions { get; set; }
@@ -33,7 +32,6 @@ namespace WarehouseManagementSystem.Models
         public DbSet<ProductInZonePosition> ProductInZonePositions { get; set; }
         public DbSet<Manufacturer> Manufacturers { get; set; }
         public DbSet<Label> Labels { get; set; }
-        public DbSet<ProductDetail> ProductDetails { get; set; }
         public DbSet<ErrorLog> ErrorLogs { get; set; }
 
         public WarehouseDbContext()
@@ -99,21 +97,14 @@ namespace WarehouseManagementSystem.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
-                .HasMany(p => p.Details)
-                .WithOne()
-                .HasForeignKey(m => m.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Subcategory>()
-                .HasMany(s => s.Products)
-                .WithOne(p => p.Subcategory)
-                .HasForeignKey(p => p.SubcategoryId)
+                .HasOne(p => p.Category)
+                .WithMany()
+                .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Category>()
-                .HasMany(c => c.Subcategories)
-                .WithOne(s => s.Category)
-                .HasForeignKey(s => s.CategoryId)
+                .HasMany(c => c.Products)
+                .WithOne(p => p.Category)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<MovementHistory>()
@@ -305,12 +296,6 @@ namespace WarehouseManagementSystem.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Label>()
-                .HasOne(l => l.Product)
-                .WithMany()
-                .HasForeignKey(m => m.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ProductDetail>()
                 .HasOne(l => l.Product)
                 .WithMany()
                 .HasForeignKey(m => m.ProductId)
