@@ -21,10 +21,6 @@ namespace WarehouseManagementSystem.Models.Entities
         [ForeignKey("ProductId")]
         public virtual Product? Product { get; set; }
 
-        public Label()
-        {
-            Barcode = "";
-        }
         public Label(string barcode, int productId)
         {
             Barcode = barcode;

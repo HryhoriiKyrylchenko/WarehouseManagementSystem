@@ -63,37 +63,34 @@ namespace WarehouseManagementSystem.Models
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.MovementHistories)
                 .WithOne()
-                .HasForeignKey(m => m.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.ShipmentItems)
-                .WithOne()
-                .HasForeignKey(m => m.ProductId)
+                .WithOne(si => si.Product)
+                .HasForeignKey(si => si.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.ReceiptItems)
-                .WithOne()
-                .HasForeignKey(m => m.ProductId)
+                .WithOne(ri => ri.Product)
+                .HasForeignKey(ri => ri.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.ProductPhotos)
                 .WithOne()
-                .HasForeignKey(m => m.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.ProductsInZonePositions)
                 .WithOne()
-                .HasForeignKey(m => m.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.Labels)
-                .WithOne()
-                .HasForeignKey(m => m.ProductId)
+                .WithOne(l => l.Product)
+                .HasForeignKey(l => l.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
@@ -132,13 +129,13 @@ namespace WarehouseManagementSystem.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ZonePosition>()
-                .HasMany(zp => zp.MovementHistories)
+                .HasMany(zp => zp.SourceMovementHistories)
                 .WithOne(mh => mh.SourceZonePosition)
                 .HasForeignKey(mh => mh.SourceZonePositionId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ZonePosition>()
-                .HasMany(zp => zp.MovementHistories)
+                .HasMany(zp => zp.DestinationMovementHistories)
                 .WithOne(mh => mh.DestinationZonePosition)
                 .HasForeignKey(mh => mh.DestinationZonePositionId)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -183,7 +180,7 @@ namespace WarehouseManagementSystem.Models
 
             modelBuilder.Entity<ShipmentItem>()
                 .HasOne(si => si.Product)
-                .WithMany()
+                .WithMany(p => p.ShipmentItems)
                 .HasForeignKey(si => si.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -195,7 +192,7 @@ namespace WarehouseManagementSystem.Models
 
             modelBuilder.Entity<Receipt>()
                 .HasOne(r => r.User)
-                .WithMany()
+                .WithMany(u => u.Receipts)
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -207,7 +204,7 @@ namespace WarehouseManagementSystem.Models
 
             modelBuilder.Entity<ReceiptItem>()
                 .HasOne(ri => ri.Product)
-                .WithMany()
+                .WithMany(p => p.ReceiptItems)
                 .HasForeignKey(ri => ri.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -268,7 +265,6 @@ namespace WarehouseManagementSystem.Models
             modelBuilder.Entity<Address>()
                 .HasMany(a => a.Manufacturers)
                 .WithOne(m => m.Address)
-                .HasForeignKey(m => m.AddressId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ProductPhoto>()
@@ -291,15 +287,33 @@ namespace WarehouseManagementSystem.Models
 
             modelBuilder.Entity<Manufacturer>()
                 .HasOne(m => m.Address)
-                .WithMany()
+                .WithMany(a => a.Manufacturers)
                 .HasForeignKey(m => m.AddressId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Label>()
                 .HasOne(l => l.Product)
-                .WithMany()
-                .HasForeignKey(m => m.ProductId)
+                .WithMany(p => p.Labels)
+                .HasForeignKey(l => l.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            modelBuilder.Entity<Customer>()
+                .Property(c => c.DiscountPercentage)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.DiscountPercentage)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Quantity)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }

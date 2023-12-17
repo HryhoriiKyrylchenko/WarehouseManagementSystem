@@ -33,10 +33,10 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Shipment> Shipments { get; set; }
 
-        public Customer(string firstName, string lastName, int addressId)
+        public Customer(string firstname, string lastname, int addressId)
         {
-            Firstname = firstName;
-            Lastname = lastName;
+            Firstname = firstname;
+            Lastname = lastname;
             AddressId = addressId;
 
             Shipments = new List<Shipment>();

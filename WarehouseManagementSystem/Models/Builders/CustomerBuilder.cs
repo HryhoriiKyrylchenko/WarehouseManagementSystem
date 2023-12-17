@@ -15,11 +15,11 @@ namespace WarehouseManagementSystem.Models.Builders
     {
         private Customer customer;
 
-        public CustomerBuilder(string firstName, string lastName, int addressId)
+        public CustomerBuilder(string firstname, string lastname, int addressId)
         {
             try
             {
-                this.customer = Initialize(new Customer(firstName, lastName, addressId));
+                this.customer = Initialize(new Customer(firstname, lastname, addressId));
             }
             catch
             {

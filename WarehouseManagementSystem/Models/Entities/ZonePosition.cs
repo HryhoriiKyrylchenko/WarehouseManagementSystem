@@ -30,7 +30,11 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<ProductInZonePosition> ProductsInZonePosition { get; set; }
 
-        public virtual ICollection<MovementHistory> MovementHistories { get; set; }
+        [InverseProperty("SourceZonePosition")]
+        public virtual ICollection<MovementHistory> SourceMovementHistories { get; set; }
+
+        [InverseProperty("DestinationZonePosition")]
+        public virtual ICollection<MovementHistory> DestinationMovementHistories { get; set; }
 
         public ZonePosition(string name, int zoneId, int capacity)
         {
@@ -39,7 +43,8 @@ namespace WarehouseManagementSystem.Models.Entities
             Capacity = capacity;
 
             ProductsInZonePosition = new List<ProductInZonePosition>();
-            MovementHistories = new List<MovementHistory>();
+            SourceMovementHistories = new List<MovementHistory>();
+            DestinationMovementHistories = new List<MovementHistory>();
         }
     }
 }

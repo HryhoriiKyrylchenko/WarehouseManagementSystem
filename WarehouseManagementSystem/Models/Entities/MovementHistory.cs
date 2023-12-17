@@ -24,11 +24,13 @@ namespace WarehouseManagementSystem.Models.Entities
         public int SourceZonePositionId { get; set; }
 
         [ForeignKey("SourceZonePositionId")]
+        [InverseProperty("SourceMovementHistories")]
         public virtual ZonePosition? SourceZonePosition { get; set; }
 
         public int DestinationZonePositionId { get; set; }
 
         [ForeignKey("DestinationZonePositionId")]
+        [InverseProperty("DestinationMovementHistories")]
         public virtual ZonePosition? DestinationZonePosition { get; set; }
 
         public string? AdditionalInfo { get; set; }
