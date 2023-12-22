@@ -103,7 +103,7 @@ namespace WarehouseManagementSystem.Models.Entities
                 }
                 else
                 {
-                    return JsonConvert.DeserializeObject<List<ProductDetail>>(ProductDetails);
+                    return JsonConvert.DeserializeObject<List<ProductDetail>>(ProductDetails) ?? new List<ProductDetail>();
                 }
             }
             catch (JsonException ex)

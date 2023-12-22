@@ -49,7 +49,7 @@ namespace WarehouseManagementSystem.Models
                     .AddJsonFile("appsettings.json")
                     .Build();
 
-                string connectionString = configuration.GetConnectionString("DefaultConnection");
+                string connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new NullReferenceException("Connection string == null");
 
                 optionsBuilder.UseSqlServer(connectionString);
             }
