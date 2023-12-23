@@ -26,20 +26,16 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public ICommand ShowProductsCommand { get; }
-        
+        public ICommand ShowProductsCommand => new RelayCommand(_ => NavigateToViewModel(new ProductsViewModel(this)));
+        public ICommand ShowReceiptsCommand => new RelayCommand(_ => NavigateToViewModel(new ReceiptsViewModel(this)));
+        public ICommand ShowShipmentsCommand => new RelayCommand(_ => NavigateToViewModel(new ShipmentsViewModel(this)));
+        public ICommand ShowReportsCommand => new RelayCommand(_ => NavigateToViewModel(new ReportsViewModel(this)));
+        public ICommand ShowSettingsCommand => new RelayCommand(_ => NavigateToViewModel(new SettingsViewModel(this)));
 
         public MainViewModel()
         {
-            ShowProductsCommand = new RelayCommand(ShowProducts);
-
             viewModelStack = new Stack<ViewModelBase>();
             CurrentViewModel = this;
-        }
-
-        private void ShowProducts(object parameter)
-        {
-            NavigateToViewModel(new ProductsViewModel(this));
         }
 
         public void NavigateToViewModel(ViewModelBase viewModel)
