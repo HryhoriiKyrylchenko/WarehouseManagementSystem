@@ -72,6 +72,11 @@ namespace WarehouseManagementSystem.Services
             return products;
         }
 
+        public User? FindUserByUsernameAndPassword(string username, string password)
+        {
+            return dbContext.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
+        }
+
         public void Dispose()
         {
             dbContext.Dispose();

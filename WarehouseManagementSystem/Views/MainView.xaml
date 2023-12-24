@@ -15,13 +15,19 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Orientation="Vertical">
-            <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Products" Command="{Binding ShowProductsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Receipts" Command="{Binding ShowReceiptsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Shipments" Command="{Binding ShowShipmentsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Reports" Command="{Binding ShowReportsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Settings" Command="{Binding ShowSettingsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        </StackPanel>
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
+            <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+                <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Products" Command="{Binding ShowProductsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Receipts" Command="{Binding ShowReceiptsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Shipments" Command="{Binding ShowShipmentsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Reports" Command="{Binding ShowReportsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Settings" Command="{Binding ShowSettingsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+                <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Logout" Command="{Binding LogoutCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+            </StackPanel>
+        </DockPanel>
+        
         <TextBlock Grid.Row="0" Grid.Column="1" FontSize="20" Text="Brief summary of the current state of the warehouse" Margin="15" HorizontalAlignment="Center"/>
         <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="10">
             

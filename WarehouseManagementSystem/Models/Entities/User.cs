@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WarehouseManagementSystem.Models.Entities.Enums;
+using WarehouseManagementSystem.Enums;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
