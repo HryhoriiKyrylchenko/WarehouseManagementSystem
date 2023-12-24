@@ -20,7 +20,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.productInZonePosition = Initialize(new ProductInZonePosition(productId, quantity, zonePositionId));
+                this.productInZonePosition = InitializeAsync(new ProductInZonePosition(productId, quantity, zonePositionId)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -32,7 +32,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.productInZonePosition = Initialize(productInZonePosition);
+                this.productInZonePosition = InitializeAsync(productInZonePosition).GetAwaiter().GetResult();
             }
             catch
             {
@@ -64,6 +64,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<ProductInZonePosition> InitializeAsync(ProductInZonePosition productInZonePosition)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddProductInZonePositionAsync(productInZonePosition);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return productInZonePosition;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public ProductInZonePositionBuilder WithManufactureDate(DateTime manufactureDate)
         {
             productInZonePosition.ManufactureDate = manufactureDate;
@@ -87,6 +111,29 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
+        public async Task<ProductInZonePositionBuilder> WithManufactureDateAsync(DateTime manufactureDate)
+        {
+            productInZonePosition.ManufactureDate = manufactureDate;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    productInZonePosition = await entityManager.UpdateProductInZonePositionAsync(productInZonePosition);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public ProductInZonePositionBuilder WithExpiryDate(DateTime expiryDate)
         {
             productInZonePosition.ExpiryDate = expiryDate;
@@ -102,6 +149,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ProductInZonePositionBuilder> WithExpiryDateAsync(DateTime expiryDate)
+        {
+            productInZonePosition.ExpiryDate = expiryDate;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    productInZonePosition = await entityManager.UpdateProductInZonePositionAsync(productInZonePosition);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

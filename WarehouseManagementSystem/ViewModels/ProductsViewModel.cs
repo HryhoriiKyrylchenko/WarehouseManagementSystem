@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models;
+using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.ViewModels
@@ -15,22 +16,65 @@ namespace WarehouseManagementSystem.ViewModels
     {
         private readonly MainViewModel mainViewModel;
 
-        public ObservableCollection<CategoryViewModel> Categories { get; set; }
+        private ObservableCollection<CategoryViewModel> categories;
+
+        public ObservableCollection<CategoryViewModel> Categories 
+        { 
+            get { return categories; } 
+            set {
+                if (categories != value)
+                {
+                    categories = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private CategoryViewModel? selectedCategory;
+
+        public CategoryViewModel? SelectedCategory
+        {
+            get { return selectedCategory; }
+            set
+            {
+                if (selectedCategory != value)
+                {
+                    selectedCategory = value;
+                    OnPropertyChanged(nameof(SelectedCategory));
+                    UpdateProducts();
+                }
+            }
+        }
+
+        private ObservableCollection<Product>? products;
+
+        public ObservableCollection<Product>? Products
+        {
+            get { return products; }
+            set
+            {
+                if (products != value)
+                {
+                    products = value;
+                    OnPropertyChanged(nameof(Products));
+                }
+            }
+        }
 
         public ProductsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
-            Categories = new ObservableCollection<CategoryViewModel>();
+            categories = new ObservableCollection<CategoryViewModel>();
 
             InitializeAsync();
         }
 
         private async void InitializeAsync()
         {
-            await InitializwCategoriesFromDBAsync();
+            await InitializeCategoriesFromDBAsync();
         }
 
-        private async Task InitializwCategoriesFromDBAsync()
+        private async Task InitializeCategoriesFromDBAsync()
         {
             using (var dbManager = new WarehouseDBManager(new WarehouseDbContext()))
             {
@@ -42,6 +86,38 @@ namespace WarehouseManagementSystem.ViewModels
                     Categories.Add(rootViewModel);
                 }
             }           
+        }
+
+        private void UpdateProducts()
+        {
+            if (SelectedCategory != null)
+            {
+                var products = GetProductsForCategory(SelectedCategory);
+                Products = new ObservableCollection<Product>(products);
+            }
+            else
+            {
+                Products = new ObservableCollection<Product>();
+            }
+        }
+
+        private List<Product> GetProductsForCategory(CategoryViewModel categoryViewModel)
+        {
+            var products = new List<Product>();
+
+            void AddProductsFromCategory(CategoryViewModel category)
+            {
+                products.AddRange(category.Category.Products);
+
+                foreach (var childCategory in category.Children)
+                {
+                    AddProductsFromCategory(childCategory);
+                }
+            }
+
+            AddProductsFromCategory(categoryViewModel);
+
+            return products;
         }
 
         public ICommand BackCommand => new RelayCommand(Back);

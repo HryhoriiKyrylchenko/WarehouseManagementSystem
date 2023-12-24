@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.customer = Initialize(new Customer(firstname, lastname, addressId));
+                this.customer = InitializeAsync(new Customer(firstname, lastname, addressId)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.customer = Initialize(customer);
+                this.customer = InitializeAsync(customer).GetAwaiter().GetResult();
             }
             catch
             {
@@ -63,6 +63,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<Customer> InitializeAsync(Customer customer)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddCustomerAsync(customer);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return customer;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public CustomerBuilder WithDateOfBirth(DateTime dateOfBirth)
         {
             customer.DateOfBirth = dateOfBirth;
@@ -78,6 +102,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<CustomerBuilder> WithDateOfBirthAsync(DateTime dateOfBirth)
+        {
+            customer.DateOfBirth = dateOfBirth;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    customer = await entityManager.UpdateCustomerAsync(customer);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }
@@ -109,6 +156,29 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
+        public async Task<CustomerBuilder> WithDiscountPercentageAsync(decimal discountPercentage)
+        {
+            customer.DiscountPercentage = discountPercentage;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    customer = await entityManager.UpdateCustomerAsync(customer);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public CustomerBuilder WithAdditionalInfo(string additionalInfo)
         {
             customer.AdditionalInfo = additionalInfo;
@@ -124,6 +194,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<CustomerBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            customer.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    customer = await entityManager.UpdateCustomerAsync(customer);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

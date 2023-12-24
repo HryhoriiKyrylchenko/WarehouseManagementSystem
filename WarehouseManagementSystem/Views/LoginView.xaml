@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="WarehouseManagementSystem.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="420" d:DesignWidth="540">
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height=".5*"/>
+            <RowDefinition Height=".5*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Warehouse Management System" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Login:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="TextBoxLogin" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Password:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="TextBoxPassword" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Image Grid.Row="3" Grid.Column="0" Source="/WarehouseManagementSystem;component/Resources/question_mark_icon.png" Width="32" Height="32">
+            <Image.ToolTip>
+                <ToolTip Content="If you do not have a login and password or have other problems logging in, please contact your system administrator." />
+            </Image.ToolTip>
+        </Image>
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="buttonLogin" Style="{StaticResource ButtonStyle}" Content="Login" FontSize="24" Height="30"/>
+            <Button x:Name="buttonCancel" Style="{StaticResource ButtonStyle}" Content="Cancel" FontSize="24" Height="30"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -20,7 +20,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.product = Initialize(new Product(productCode, name, unitOfMeasure, quantity, capacity, price));
+                this.product = InitializeAsync(new Product(productCode, name, unitOfMeasure, quantity, capacity, price)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -32,7 +32,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.product = Initialize(product);
+                this.product = InitializeAsync(product).GetAwaiter().GetResult();
             }
             catch
             {
@@ -64,6 +64,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<Product> InitializeAsync(Product product)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddProductAsync(product);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return product;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public ProductBuilder WithDescription(string description)
         {
             product.Description = description;
@@ -79,6 +103,30 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ProductBuilder> WithDescriptionAsync(string description)
+        {
+            product.Description = description;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product = await entityManager.UpdateProductAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
 
                     throw;
@@ -112,6 +160,30 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
+        public async Task<ProductBuilder> WithManufacturerAsync(Manufacturer manufacturer)
+        {
+            product.Manufacturer = manufacturer;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product = await entityManager.UpdateProductAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public ProductBuilder WithDiscountPercentage(decimal? discountPercentage)
         {
             product.DiscountPercentage = discountPercentage;
@@ -127,6 +199,30 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ProductBuilder> WithDiscountPercentageAsync(decimal? discountPercentage)
+        {
+            product.DiscountPercentage = discountPercentage;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product = await entityManager.UpdateProductAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
 
                     throw;
@@ -160,6 +256,30 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
+        public async Task<ProductBuilder> WithCategoryAsync(int categoryId)
+        {
+            product.CategoryId = categoryId;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product = await entityManager.UpdateProductAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public ProductBuilder WithProductDetails(string key, string value)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
@@ -174,6 +294,28 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ProductBuilder> WithProductDetailsAsync(string key, string value)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product.AddProductDetail(key, value);
+                    product = await entityManager.UpdateProductAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }
@@ -197,6 +339,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ProductBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            product.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product = await entityManager.UpdateProductAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

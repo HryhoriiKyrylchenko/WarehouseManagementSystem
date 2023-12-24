@@ -20,7 +20,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.manufacturer = Initialize(new Manufacturer(name));
+                this.manufacturer = InitializeAsync(new Manufacturer(name)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -32,7 +32,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.manufacturer = Initialize(manufacturer);
+                this.manufacturer = InitializeAsync(manufacturer).GetAwaiter().GetResult();
             }
             catch
             {
@@ -64,6 +64,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<Manufacturer> InitializeAsync(Manufacturer manufacturer)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddManufacturerAsync(manufacturer);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return manufacturer;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public ManufacturerBuilder WithDescription(string description)
         {
             manufacturer.Description = description;
@@ -79,6 +103,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ManufacturerBuilder> WithDescriptionAsync(string description)
+        {
+            manufacturer.Description = description;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    manufacturer = await entityManager.UpdateManufacturerAsync(manufacturer);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }
@@ -110,6 +157,29 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
+        public async Task<ManufacturerBuilder> WithAddressAsync(int addressId)
+        {
+            manufacturer.AddressId = addressId;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    manufacturer = await entityManager.UpdateManufacturerAsync(manufacturer);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public ManufacturerBuilder WithAdditionalInfo(string additionalInfo)
         {
             manufacturer.AdditionalInfo = additionalInfo;
@@ -125,6 +195,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ManufacturerBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            manufacturer.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    manufacturer = await entityManager.UpdateManufacturerAsync(manufacturer);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.address = Initialize(new Address(country, index, city, street, buildingNumber));
+                this.address = InitializeAsync(new Address(country, index, city, street, buildingNumber)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.address = Initialize(address);
+                this.address = InitializeAsync(address).GetAwaiter().GetResult();
             }
             catch
             {
@@ -39,13 +39,13 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        private Address Initialize(Address address)
+        private async Task<Address> InitializeAsync(Address address)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    var initializer = entityManager.AddAddress(address);
+                    var initializer = await entityManager.AddAddressAsync(address);
                     return initializer;
                 }
                 catch (DuplicateObjectException)
@@ -56,14 +56,14 @@ namespace WarehouseManagementSystem.Models.Builders
                 {
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
-                        errorLogger.LogError(ex);
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }
             }
         }
 
-        public AddressBuilder WithRoom(string room)
+        public async Task<AddressBuilder> WithRoomAsync(string room)
         {
             address.Room = room;
 
@@ -71,13 +71,13 @@ namespace WarehouseManagementSystem.Models.Builders
             {
                 try
                 {
-                    address = entityManager.UpdateAddress(address);
+                    address = await entityManager.UpdateAddressAsync(address);
                 }
                 catch (Exception ex)
                 {
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
-                        errorLogger.LogError(ex);
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }
@@ -101,6 +101,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<AddressBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            address.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    address = await entityManager.UpdateAddressAsync(address);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

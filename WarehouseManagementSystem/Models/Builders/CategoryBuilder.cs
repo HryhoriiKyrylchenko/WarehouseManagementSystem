@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.category = Initialize(new Category(categoryName));
+                this.category = InitializeAsync(new Category(categoryName)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.category = Initialize(category);
+                this.category = InitializeAsync(category).GetAwaiter().GetResult();
             }
             catch
             {
@@ -63,6 +63,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<Category> InitializeAsync(Category category)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddCategoryAsync(category);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return category;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public CategoryBuilder WithPreviousCategory(int previousCategoryId)
         {
             category.PreviousCategoryId = previousCategoryId;
@@ -86,6 +110,29 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
+        public async Task<CategoryBuilder> WithPreviousCategoryAsync(int previousCategoryId)
+        {
+            category.PreviousCategoryId = previousCategoryId;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    category = await entityManager.UpdateCategoryAsync(category);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public CategoryBuilder WithAdditionalInfo(string additionalInfo)
         {
             category.AdditionalInfo = additionalInfo;
@@ -101,6 +148,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<CategoryBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            category.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    category = await entityManager.UpdateCategoryAsync(category);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }
