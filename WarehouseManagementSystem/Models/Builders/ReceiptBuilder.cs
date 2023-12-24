@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.receipt = Initialize(new Receipt(receiptDate, supplierId, userId, batchNumber));
+                this.receipt = InitializeAsync(new Receipt(receiptDate, supplierId, userId, batchNumber)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.receipt = Initialize(receipt);
+                this.receipt = InitializeAsync(receipt).GetAwaiter().GetResult();
             }
             catch
             {
@@ -63,6 +63,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<Receipt> InitializeAsync(Receipt receipt)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddReceiptAsync(receipt);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return receipt;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public ReceiptBuilder WithShipmentNumber(string shipmentNumber)
         {
             receipt.ShipmentNumber = shipmentNumber;
@@ -86,6 +110,29 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
+        public async Task<ReceiptBuilder> WithShipmentNumberAsync(string shipmentNumber)
+        {
+            receipt.ShipmentNumber = shipmentNumber;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    receipt = await entityManager.UpdateReceiptAsync(receipt);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public ReceiptBuilder WithAdditionalInfo(string additionalInfo)
         {
             receipt.AdditionalInfo = additionalInfo;
@@ -101,6 +148,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ReceiptBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            receipt.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    receipt = await entityManager.UpdateReceiptAsync(receipt);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

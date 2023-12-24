@@ -12,11 +12,13 @@ namespace WarehouseManagementSystem.ViewModels
     {
         public Category Category { get; set; }
         public ObservableCollection<CategoryViewModel> Children { get; set; }
+        public ObservableCollection<Product> Products { get; set; }
 
         public CategoryViewModel(Category category)
         {
             Category = category;
             Children = new ObservableCollection<CategoryViewModel>();
+            Products = new ObservableCollection<Product>();
         }
     }
 }

@@ -32,6 +32,20 @@ namespace WarehouseManagementSystem.Services
             }
         }
 
+        public async Task LogErrorAsync(Exception ex)
+        {
+            try
+            {
+                ErrorLog errorLog = new ErrorLogBuilder(ex.Message, ex.StackTrace ?? "", DateTime.Now).Build();
+
+                await dbContext.ErrorLogs.AddAsync(errorLog);
+                await dbContext.SaveChangesAsync();
+            }
+            catch
+            {
+            }
+        }
+
         public void Dispose()
         {
             dbContext.Dispose();

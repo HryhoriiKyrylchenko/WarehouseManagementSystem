@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.label = Initialize(new Label(barcode, productId));
+                this.label = InitializeAsync(new Label(barcode, productId)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.label = Initialize(label);
+                this.label = InitializeAsync(label).GetAwaiter().GetResult();
             }
             catch
             {
@@ -55,6 +55,30 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
+        private async Task<Label> InitializeAsync(Label label)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddLabelAsync(label);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return label;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

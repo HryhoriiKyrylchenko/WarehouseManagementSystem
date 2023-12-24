@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.zone = Initialize(new Zone(name, warehouseId, categoryId, capacity));
+                this.zone = InitializeAsync(new Zone(name, warehouseId, categoryId, capacity)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.zone = Initialize(zone);
+                this.zone = InitializeAsync(zone).GetAwaiter().GetResult();
             }
             catch
             {
@@ -63,6 +63,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<Zone> InitializeAsync(Zone zone)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddZoneAsync(zone);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return zone;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public ZoneBuilder WithAdditionalInfo(string additionalInfo)
         {
             zone.AdditionalInfo = additionalInfo;
@@ -78,6 +102,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ZoneBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            zone.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    zone = await entityManager.UpdateZoneAsync(zone);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

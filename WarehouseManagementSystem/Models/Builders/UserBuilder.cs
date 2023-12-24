@@ -18,7 +18,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.user = Initialize(new User(username, password, role));
+                this.user = InitializeAsync(new User(username, password, role)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -30,7 +30,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.user = Initialize(user);
+                this.user = InitializeAsync(user).GetAwaiter().GetResult();
             }
             catch
             {
@@ -62,6 +62,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<User> InitializeAsync(User user)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddUserAsync(user);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return user;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public UserBuilder WithAdditionalInfo(string additionalInfo)
         {
             user.AdditionalInfo = additionalInfo;
@@ -77,6 +101,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<UserBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            user.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    user = await entityManager.UpdateUserAsync(user);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

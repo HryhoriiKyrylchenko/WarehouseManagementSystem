@@ -28,9 +28,21 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="PRODUCTS" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            
-            <DataGrid Grid.Row="1" Margin="15">
-                
+
+            <DataGrid x:Name="DateGridProducts" Grid.Row="1" Margin="15" ItemsSource="{Binding Products}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Product code" Binding="{Binding ProductCode}" />
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+                    <DataGridTextColumn Header="Unit of measure" Binding="{Binding UnitOfMeasure}" />
+                    <DataGridTextColumn Header="Capacity" Binding="{Binding Capacity}" />
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
+                    <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" />
+                    <DataGridTextColumn Header="Price" Binding="{Binding Price}" />
+                    <DataGridTextColumn Header="DiscountPercentage" Binding="{Binding DiscountPercentage}" />
+                    <DataGridTextColumn Header="Product details" Binding="{Binding ProductDetails}" />
+                    <DataGridTextColumn Header="Additional info" Binding="{Binding AdditionalInfo}" />
+                </DataGrid.Columns>
             </DataGrid>
         </Grid>
         <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
