@@ -15,7 +15,6 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        
         <ContentControl Content="{Binding CurrentViewModel}" />
     </Grid>
 </Window>

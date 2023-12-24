@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WarehouseManagementSystem.Models.Entities.Enums
+namespace WarehouseManagementSystem.Enums
 {
     public enum UserRolesEnum
     {
         ADMIN,
         DIRECTOR,
         MANAGER,
+        WAREHOUSE_WORKER, 
+        ACCOUNTANT,
         SALESPERSON,
         GUEST,
         UNDEFINED

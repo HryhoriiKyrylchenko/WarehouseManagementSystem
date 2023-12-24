@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WarehouseManagementSystem.Models.Entities.Enums;
 using WarehouseManagementSystem.Models.Entities.Support_classes;
 using Newtonsoft.Json;
 using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.Exceptions;
+using WarehouseManagementSystem.Enums;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
