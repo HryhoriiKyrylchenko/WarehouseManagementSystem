@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <None Remove="Resources\question_mark_icon.png" />
-    <None Remove="Windows\question_mark_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +27,6 @@
 
   <ItemGroup>
     <Resource Include="Resources\question_mark_icon.png" />
-    <Resource Include="Windows\question_mark_icon.png" />
   </ItemGroup>
 
 </Project>

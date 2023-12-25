@@ -27,7 +27,7 @@
                 <TextBox Grid.Row="1" Grid.Column="1" x:Name="TextBoxUsername" Text="admin" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Password:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="2" Grid.Column="1" x:Name="TextBoxPassword" Text="admin" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Image Grid.Row="3" Grid.Column="0" Source="/Windows/question_mark_icon.png" Width="32" Height="32">
+                <Image Grid.Row="3" Grid.Column="0" Source="..\Resources\question_mark_icon.png" Width="32" Height="32">
                     <Image.ToolTip>
                         <ToolTip Width="200">
                             <StackPanel>

@@ -25,4 +25,8 @@
     <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
         <views:SettingsView />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddProductViewModel}">
+        <views:AddProductView />
+    </DataTemplate>
 </ResourceDictionary>
