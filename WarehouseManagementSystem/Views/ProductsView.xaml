@@ -24,7 +24,9 @@
         </TreeView>
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height=".5*"/>
+                <RowDefinition Height=".3*"/>
+                <RowDefinition Height="1.2*"/>
+                <RowDefinition Height=".3*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="PRODUCTS" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -44,11 +46,42 @@
                     <DataGridTextColumn Header="Additional info" Binding="{Binding AdditionalInfo}" />
                 </DataGrid.Columns>
             </DataGrid>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+            </StackPanel>
+            <Border Grid.Row="3" BorderBrush="DarkGray" BorderThickness="1" Margin="15,15,15,0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Selected product:" FontSize="22" Margin="10"/>
+                        <TextBlock x:Name="TextBlockSelectedProduct" FontSize="22" FontWeight="Bold" Margin="10"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Unallocated balance:" FontSize="22" Margin="10"/>
+                        <TextBlock x:Name="TextBlockUnallocatedBalance" FontSize="22" FontWeight="Bold" Margin="10"/>
+                        <TextBlock Text="Unallocated capacity:" FontSize="22" Margin="10"/>
+                        <TextBlock x:Name="TextBlockUnallocatedCapacity" FontSize="22" FontWeight="Bold" Margin="10"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Zone:" FontSize="22" Margin="10"/>
+                        <ListBox x:Name="ListBoxZone" Width="250" Height="32"/>
+                        <TextBlock Text="Pozition in zone:" FontSize="22" Margin="10"/>
+                        <ListBox x:Name="ListBoxZonePozition" Width="250" Height="32"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Free capacity:" FontSize="22" Margin="10"/>
+                        <TextBlock x:Name="TextBlockFreeCapacity" FontSize="22" FontWeight="Bold" Margin="10"/>
+                        <TextBlock Text="Enter quantity to allocate:" FontSize="22" Margin="10"/>
+                        <TextBox x:Name="TextBoxQuantityToAllocate" FontSize="22" Width="100" Height="30"/>
+                        <TextBlock Text="Capacity to allocate:" FontSize="22" Margin="10"/>
+                        <TextBlock x:Name="TextBlockCapacityToAllocate" FontSize="22" FontWeight="Bold" Margin="10"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </Grid>
         <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        </StackPanel>
+        <Border Grid.Row="1" Grid.Column="1" BorderBrush="DarkGray" BorderThickness="1" Margin="15,0,15,10">
+            <Button Style="{StaticResource ButtonStyle}" Content="Alocate" Command="{Binding AllocateCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" HorizontalAlignment="Center"/>
+        </Border>
     </Grid>
 </UserControl>
