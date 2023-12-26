@@ -18,9 +18,9 @@ namespace WarehouseManagementSystem.Views
     /// <summary>
     /// Interaction logic for AddProductView.xaml
     /// </summary>
-    public partial class AddProductView : UserControl
+    public partial class AddEditProductView : UserControl
     {
-        public AddProductView()
+        public AddEditProductView()
         {
             InitializeComponent();
         }

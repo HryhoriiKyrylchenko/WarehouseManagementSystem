@@ -8,6 +8,7 @@
              d:DesignHeight="800" d:DesignWidth="1200">
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
+            <RowDefinition Height=".6*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -15,20 +16,52 @@
             <ColumnDefinition Width=".3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TreeView Grid.Row="0" Grid.Column="0" x:Name="TreeViewProducts" Margin="15"/>
-        <Grid Grid.Row="0" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height=".5*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="RECEIPTS" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-            <DataGrid Grid.Row="1" Margin="15">
-
-            </DataGrid>
-        </Grid>
-        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <TextBlock Text="Selected receipt" FontSize="24" FontWeight="Bold" Margin="15,50,15,15" HorizontalAlignment="Center"/>
+            <TextBlock Text="Batch number:" FontSize="20" Margin="15,5" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="TextBlockBatchNumber" FontSize="20" FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
+            <TextBlock Text="Data:" FontSize="20" Margin="15,5" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="TextBlockData" FontSize="20" FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1">
+            <TextBlock  Text="RECEIPTS" FontSize="35" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Border BorderBrush="DarkGray" BorderThickness="1" Margin="1">
+                <StackPanel>
+                    <TextBlock Text="Filter:" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <StackPanel Margin="10" Orientation="Horizontal">
+                        <TextBlock Text="From date:" FontSize="22" Margin="10"/>
+                        <DatePicker x:Name="DatePickerFromDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                        <TextBlock Text="To date:" FontSize="22" Margin="10"/>
+                        <DatePicker x:Name="DatePickerToDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                    </StackPanel>
+                    <StackPanel Margin="10" Orientation="Horizontal" >
+                        <TextBlock Text="Suplier:" FontSize="22" Margin="10"/>
+                        <ListBox x:Name="ListBoxZone" Width="250" Height="32" Margin="10"/>
+                        <TextBlock Text="User:" FontSize="22" Margin="10"/>
+                        <ListBox x:Name="ListBoxZonePozition" Width="250" Height="32" Margin="10"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <DataGrid Grid.Row="1" Grid.Column="0" x:Name="DataGridReceiptItems" Margin="15" ItemsSource="{Binding Products}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Product name" Width="150" Binding="{Binding SelectedProduct.Name}" />
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Grid.Row="1" Grid.Column="1" x:Name="DataGridReceipts" Margin="15" ItemsSource="{Binding Receipts}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Batch number" Binding="{Binding BatchNumber}" />
+                <DataGridTextColumn Header="Receipt date" Binding="{Binding ReceiptDate}" />
+                <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier.Name}" />
+                <DataGridTextColumn Header="User" Binding="{Binding User.Name}" />
+                <DataGridTextColumn Header="Products count" Binding="{Binding Products.Quantity}" />
+                <DataGridTextColumn Header="Shipment number" Binding="{Binding ShipmentNumber}" />
+                <DataGridTextColumn Header="Additional info" Binding="{Binding AdditionalInfo}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
             <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
         </StackPanel>

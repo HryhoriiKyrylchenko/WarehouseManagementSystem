@@ -29,9 +29,16 @@
                 <RowDefinition Height=".3*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="PRODUCTS" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-            <DataGrid x:Name="DateGridProducts" Grid.Row="1" Margin="15" ItemsSource="{Binding Products}">
+            <DockPanel Grid.Row="0">
+                <TextBlock DockPanel.Dock="Left" Text="PRODUCTS" FontSize="35" Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <StackPanel DockPanel.Dock="Right" Margin="20" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <RadioButton Content="Unallocated" GroupName="ProductsGroup" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="In stock" GroupName="ProductsGroup" IsChecked="True" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="Not in stoсk" GroupName="ProductsGroup" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="All products" GroupName="ProductsGroup" Margin="5" VerticalAlignment="Center" />
+                </StackPanel>
+            </DockPanel>
+            <DataGrid x:Name="DateGridProducts" Grid.Row="1" Margin="15" ItemsSource="{Binding Products}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                     <DataGridTextColumn Header="Product code" Binding="{Binding ProductCode}" />
@@ -52,29 +59,35 @@
             </StackPanel>
             <Border Grid.Row="3" BorderBrush="DarkGray" BorderThickness="1" Margin="15,15,15,0">
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Selected product:" FontSize="22" Margin="10"/>
-                        <TextBlock x:Name="TextBlockSelectedProduct" FontSize="22" FontWeight="Bold" Margin="10"/>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Selected product:" FontSize="22" Margin="10,5"/>
+                        <TextBlock x:Name="TextBlockSelectedProduct" FontSize="22" FontWeight="Bold" Margin="10,0"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                    <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Unallocated balance:" FontSize="22" Margin="10"/>
                         <TextBlock x:Name="TextBlockUnallocatedBalance" FontSize="22" FontWeight="Bold" Margin="10"/>
                         <TextBlock Text="Unallocated capacity:" FontSize="22" Margin="10"/>
                         <TextBlock x:Name="TextBlockUnallocatedCapacity" FontSize="22" FontWeight="Bold" Margin="10"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                    <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Zone:" FontSize="22" Margin="10"/>
                         <ListBox x:Name="ListBoxZone" Width="250" Height="32"/>
-                        <TextBlock Text="Pozition in zone:" FontSize="22" Margin="10"/>
+                        <TextBlock Text="Position in zone:" FontSize="22" Margin="10"/>
                         <ListBox x:Name="ListBoxZonePozition" Width="250" Height="32"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                    <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Free capacity:" FontSize="22" Margin="10"/>
                         <TextBlock x:Name="TextBlockFreeCapacity" FontSize="22" FontWeight="Bold" Margin="10"/>
                         <TextBlock Text="Enter quantity to allocate:" FontSize="22" Margin="10"/>
                         <TextBox x:Name="TextBoxQuantityToAllocate" FontSize="22" Width="100" Height="30"/>
                         <TextBlock Text="Capacity to allocate:" FontSize="22" Margin="10"/>
                         <TextBlock x:Name="TextBlockCapacityToAllocate" FontSize="22" FontWeight="Bold" Margin="10"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Manufacture date:" FontSize="22" Margin="10"/>
+                        <DatePicker x:Name="DatePickerManufactureDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                        <TextBlock Text="Expiry date:" FontSize="22" Margin="10"/>
+                        <DatePicker x:Name="DatePickerExpiryDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

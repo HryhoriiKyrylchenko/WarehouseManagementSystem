@@ -9,6 +9,9 @@
         WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight"
         MinHeight="400" MinWidth="400">
+    <Window.Icon>
+        <BitmapImage UriSource="../Resources/Logo.ico"/>
+    </Window.Icon>
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -7,6 +7,9 @@
         
         mc:Ignorable="d"
         Title="Warehouse Management System" Height="800" Width="1200" MinHeight="800" MinWidth="1200">
+    <Window.Icon>
+        <BitmapImage UriSource="Resources/Logo.ico"/>
+    </Window.Icon>
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
