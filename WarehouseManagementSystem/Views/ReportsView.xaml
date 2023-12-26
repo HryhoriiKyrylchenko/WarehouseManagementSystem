@@ -15,22 +15,43 @@
             <ColumnDefinition Width=".3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ListView Grid.Row="0" Grid.Column="0" x:Name="TreeViewProducts" Margin="15"/>
-        <Grid Grid.Row="0" Grid.Column="1">
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <TextBlock  Text="REPORTS" FontSize="35" Margin="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Border BorderBrush="DarkGray" BorderThickness="1" Margin="1">
+                <StackPanel>
+                    <TextBlock Text="Filter:" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="By user:" FontSize="16" Margin="15,5"/>
+                    <ListBox x:Name="ListBoxUsers" FontSize="20" Height="25" Margin="15,10"/>
+                    <TextBlock Text="By type:" FontSize="16" Margin="15,5"/>
+                    <ListBox x:Name="ListBoxTypes" FontSize="20" Height="25" Margin="15,10"/>
+                    <TextBlock Text="By date:" FontSize="16" Margin="15,5"/>
+                    <ListBox x:Name="ListBoxZoneDates" FontSize="20" Height="25" Margin="15,10"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width=".3*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height=".5*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="REPORTS" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-            <RichTextBox Grid.Row="1" Margin="15">
-
-            </RichTextBox>
+            <DataGrid Grid.Row="0" Grid.Column="0" x:Name="DataGridReports" Margin="15" ItemsSource="{Binding Reports}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Title" Width="300" Binding="{Binding Title}" />
+                    <DataGridTextColumn Header="Report date" Width="100" Binding="{Binding ReportDate}" />
+                    <DataGridTextColumn Header="Report type" Width="100" Binding="{Binding ReportType}" />
+                    <DataGridTextColumn Header="User" Width="100" Binding="{Binding User.Name}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <UniformGrid Grid.Row="0" Grid.Column="1" Rows="2" Margin="5">
+                <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Content="Delete" Command="{Binding DeleteCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+            </UniformGrid>
+            <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="DataGridSelectedReport" Margin="15" ItemsSource="{Binding SelectedReport}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
         </Grid>
         <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        </StackPanel>
     </Grid>
 </UserControl>

@@ -9,7 +9,7 @@ using WarehouseManagementSystem.Models.Entities.Support_classes;
 
 namespace WarehouseManagementSystem.ViewModels
 {
-    public class AddProductViewModel : ViewModelBase
+    public class AddEditProductViewModel : ViewModelBase
     {
         private Product? product;
 
@@ -56,13 +56,13 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public AddProductViewModel()
+        public AddEditProductViewModel()
         {
             productDetails = new ObservableCollection<ProductDetail>();
             productPhotoes = new ObservableCollection<ProductPhoto>();
         }
 
-        public AddProductViewModel(Product product) 
+        public AddEditProductViewModel(Product product) 
         {
             this.product = product;
             productDetails = new ObservableCollection<ProductDetail>(); ////////////////

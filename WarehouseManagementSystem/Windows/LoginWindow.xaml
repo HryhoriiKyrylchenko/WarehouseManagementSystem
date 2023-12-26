@@ -9,6 +9,9 @@
         ResizeMode="NoResize"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen">
+    <Window.Icon>
+        <BitmapImage UriSource="../Resources/Logo.ico"/>
+    </Window.Icon>
     <Grid Background="LightGray">
         <Border BorderBrush="Black" BorderThickness="1" Background="LightGray">
             <Grid>
