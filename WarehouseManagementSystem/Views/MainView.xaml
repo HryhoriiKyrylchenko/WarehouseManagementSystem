@@ -24,14 +24,48 @@
                 <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Reports" Command="{Binding ShowReportsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
                 <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Settings" Command="{Binding ShowSettingsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
             </StackPanel>
-            <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
-                <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Logout" Command="{Binding LogoutCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            </StackPanel>
+            <Border DockPanel.Dock="Bottom" VerticalAlignment="Bottom" BorderBrush="DarkGray" BorderThickness="1" Margin="1">
+                <StackPanel>
+                    <TextBlock Text="Current user:" FontSize="18" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding LoginService.CurrentUser.Username}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <Button Style="{StaticResource ButtonStyle}" Height="70" Content="Logout" Command="{Binding LogoutCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                </StackPanel>
+            </Border>
         </DockPanel>
         
         <TextBlock Grid.Row="0" Grid.Column="1" FontSize="20" Text="Brief summary of the current state of the warehouse" Margin="15" HorizontalAlignment="Center"/>
         <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="10">
-            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Total warehouse capacity:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding SummaryViewModel.TotalCapacity}" FontSize="24" FontWeight="Bold" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Free capacity:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding SummaryViewModel.FreeCapacity}" FontSize="24" FontWeight="Bold" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Occupancy percentage:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SummaryViewModel.OccupancyPercentage}" FontSize="24" FontWeight="Bold" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="Total warehouse zones:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding SummaryViewModel.TotalZones}" FontSize="24" FontWeight="Bold" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Unused zones:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding SummaryViewModel.UnusedZones}" FontSize="24" FontWeight="Bold" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="0" Grid.Row="5" Text="Total different products:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding SummaryViewModel.TotalProducts}" FontSize="24" FontWeight="Bold" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="0" Grid.Row="6" Text="Unallocated products sum:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding SummaryViewModel.UnallocatedProducts}" FontSize="24" FontWeight="Bold" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Button Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Content="Refresh" FontSize="24" Width="150" Height="50" Command="{Binding RefreshSummaryCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

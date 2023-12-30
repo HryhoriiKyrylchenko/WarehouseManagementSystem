@@ -26,11 +26,29 @@ namespace WarehouseManagementSystem.Services
             }
         }
 
-        public bool Login(string username, string password)
+        private Warehouse? currentWarehouse;
+
+        public Warehouse CurrentWarehouse
         {
-            if (IsValidUser(username, password, out User? curUser))
+            get { return currentWarehouse ?? throw new NullReferenceException(); }
+            set
+            {
+                if (currentWarehouse != value)
+                {
+                    currentWarehouse = value;
+                }
+            }
+        }
+
+        public bool Login(string username, string password, Warehouse? warehouse)
+        {
+            if (IsValidUser(username, password, out User? curUser) && IsValidWarehouse(warehouse))
             {
                 CurrentUser = curUser;
+                if(warehouse != null) 
+                {
+                    CurrentWarehouse = warehouse;
+                }
                 return true;
             }
             else
@@ -68,6 +86,11 @@ namespace WarehouseManagementSystem.Services
                 user = null;
             }
             return user != null;
+        }
+
+        private bool IsValidWarehouse(Warehouse? warehouse)
+        {
+            return !(warehouse == null);
         }
     }
 }

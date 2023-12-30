@@ -63,6 +63,7 @@ namespace WarehouseManagementSystem.Models
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.MovementHistories)
                 .WithOne()
+                .HasForeignKey(mh => mh.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
@@ -80,11 +81,13 @@ namespace WarehouseManagementSystem.Models
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.ProductPhotos)
                 .WithOne()
+                .HasForeignKey(pph => pph.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.ProductsInZonePositions)
                 .WithOne()
+                .HasForeignKey(pz => pz.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
