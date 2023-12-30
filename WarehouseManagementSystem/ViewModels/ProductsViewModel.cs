@@ -78,11 +78,11 @@ namespace WarehouseManagementSystem.ViewModels
         {
             using (var dbManager = new WarehouseDBManager(new WarehouseDbContext()))
             {
-                var rootCategories = await dbManager.GetRootCategoriesAsync();
+                var rootCategories = await dbManager.GetRootCategoriesAsync(mainViewModel.LoginService.CurrentWarehouse);
 
                 foreach (var rootCategory in rootCategories)
                 {
-                    var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory);
+                    var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory, mainViewModel.LoginService.CurrentWarehouse);
                     Categories.Add(rootViewModel);
                 }
             }           

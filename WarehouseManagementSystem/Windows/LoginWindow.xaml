@@ -19,6 +19,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height=".5*"/>
                     <RowDefinition Height=".5*"/>
+                    <RowDefinition Height=".5*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -30,7 +31,10 @@
                 <TextBox Grid.Row="1" Grid.Column="1" x:Name="TextBoxUsername" Text="admin" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Password:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="2" Grid.Column="1" x:Name="TextBoxPassword" Text="admin" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Image Grid.Row="3" Grid.Column="0" Source="..\Resources\question_mark_icon.png" Width="32" Height="32">
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Warehouse:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <ListBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Warehouses}" FontSize="24" Height="30" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center" SelectionChanged="ListBox_SelectionChanged"/>
+
+                <Image Grid.Row="4" Grid.Column="0" Source="..\Resources\question_mark_icon.png" Width="32" Height="32">
                     <Image.ToolTip>
                         <ToolTip Width="200">
                             <StackPanel>
@@ -40,7 +44,7 @@
                         </ToolTip> 
                     </Image.ToolTip>
                 </Image>
-                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button x:Name="buttonLogin" Style="{StaticResource ButtonStyle}" Content="Login" FontSize="24" Height="30" Click="buttonLogin_Click"/>
                     <Button x:Name="buttonExit" Style="{StaticResource ButtonStyle}" Content="Exit" FontSize="24" Height="30" Click="buttonExit_Click"/>
                 </StackPanel>

@@ -25,11 +25,14 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Product> Products { get; set; }
 
+        public virtual ICollection<Zone> Zones { get; set; }
+
         public Category(string categoryName)
         {
             CategoryName = categoryName;
 
             Products = new List<Product>();
+            Zones = new List<Zone>();
         }
     }
 }

@@ -31,7 +31,35 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private LoginService loginService; 
+        private LoginService loginService;
+
+        public LoginService LoginService
+        {
+            get { return loginService; }
+            set
+            {
+                if (loginService != value)
+                {
+                    loginService = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private SummaryViewModel summaryViewModel;
+
+        public SummaryViewModel SummaryViewModel
+        {
+            get { return summaryViewModel; }
+            set
+            {
+                if (summaryViewModel != value)
+                {
+                    summaryViewModel = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public ICommand ShowProductsCommand => new RelayCommand(_ => NavigateToViewModel(new ProductsViewModel(this)));
         public ICommand ShowMoveProductsCommand => new RelayCommand(_ => NavigateToViewModel(new MoveProductsViewModel(this)));
@@ -40,6 +68,7 @@ namespace WarehouseManagementSystem.ViewModels
         public ICommand ShowReportsCommand => new RelayCommand(_ => NavigateToViewModel(new ReportsViewModel(this)));
         public ICommand ShowSettingsCommand => new RelayCommand(_ => NavigateToViewModel(new SettingsViewModel(this)));
         public ICommand LogoutCommand => new RelayCommand(_ => Logout());
+        public ICommand RefreshSummaryCommand => new RelayCommand(_ => RefreshSummary());
 
         public MainViewModel()
         {
@@ -48,6 +77,8 @@ namespace WarehouseManagementSystem.ViewModels
 
             viewModelStack = new Stack<ViewModelBase>();
             CurrentViewModel = this;
+
+            summaryViewModel = new SummaryViewModel(loginService.CurrentWarehouse);
         }
 
         private void CheckUserLogin()
@@ -82,6 +113,11 @@ namespace WarehouseManagementSystem.ViewModels
         {
             loginService.Logout();
             CheckUserLogin();
+        }
+
+        private async void RefreshSummary()
+        {
+            await SummaryViewModel.GetData();
         }
     }
 }
