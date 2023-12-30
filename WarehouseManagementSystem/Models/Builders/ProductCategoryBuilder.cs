@@ -11,15 +11,15 @@ using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.Models.Builders
 {
-    public class CategoryBuilder : IBuilder<Category>
+    public class ProductCategoryBuilder : IBuilder<ProductCategory>
     {
-        private Category category;
+        private ProductCategory category;
 
-        public CategoryBuilder(string categoryName)
+        public ProductCategoryBuilder(string categoryName)
         {
             try
             {
-                this.category = InitializeAsync(new Category(categoryName)).GetAwaiter().GetResult();
+                this.category = InitializeAsync(new ProductCategory(categoryName)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -27,7 +27,7 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public CategoryBuilder(Category category) 
+        public ProductCategoryBuilder(ProductCategory category) 
         {
             try
             {
@@ -39,13 +39,13 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        private Category Initialize(Category category)
+        private ProductCategory Initialize(ProductCategory category)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    var initializer = entityManager.AddCategory(category);
+                    var initializer = entityManager.AddProductCategory(category);
                     return initializer;
                 }
                 catch (DuplicateObjectException)
@@ -63,13 +63,13 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        private async Task<Category> InitializeAsync(Category category)
+        private async Task<ProductCategory> InitializeAsync(ProductCategory category)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
-                    var initializer = await entityManager.AddCategoryAsync(category);
+                    var initializer = await entityManager.AddProductCategoryAsync(category);
                     return initializer;
                 }
                 catch (DuplicateObjectException)
@@ -87,7 +87,7 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
-        public CategoryBuilder WithPreviousCategory(int previousCategoryId)
+        public ProductCategoryBuilder WithPreviousCategory(int previousCategoryId)
         {
             category.PreviousCategoryId = previousCategoryId;
 
@@ -95,7 +95,7 @@ namespace WarehouseManagementSystem.Models.Builders
             {
                 try
                 {
-                    category = entityManager.UpdateCategory(category);
+                    category = entityManager.UpdateProductCategory(category);
                 }
                 catch (Exception ex)
                 {
@@ -110,7 +110,7 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public async Task<CategoryBuilder> WithPreviousCategoryAsync(int previousCategoryId)
+        public async Task<ProductCategoryBuilder> WithPreviousCategoryAsync(int previousCategoryId)
         {
             category.PreviousCategoryId = previousCategoryId;
 
@@ -118,7 +118,7 @@ namespace WarehouseManagementSystem.Models.Builders
             {
                 try
                 {
-                    category = await entityManager.UpdateCategoryAsync(category);
+                    category = await entityManager.UpdateProductCategoryAsync(category);
                 }
                 catch (Exception ex)
                 {
@@ -133,7 +133,7 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public CategoryBuilder WithAdditionalInfo(string additionalInfo)
+        public ProductCategoryBuilder WithAdditionalInfo(string additionalInfo)
         {
             category.AdditionalInfo = additionalInfo;
 
@@ -141,7 +141,7 @@ namespace WarehouseManagementSystem.Models.Builders
             {
                 try
                 {
-                    category = entityManager.UpdateCategory(category);
+                    category = entityManager.UpdateProductCategory(category);
                 }
                 catch (Exception ex)
                 {
@@ -156,7 +156,7 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public async Task<CategoryBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        public async Task<ProductCategoryBuilder> WithAdditionalInfoAsync(string additionalInfo)
         {
             category.AdditionalInfo = additionalInfo;
 
@@ -164,7 +164,7 @@ namespace WarehouseManagementSystem.Models.Builders
             {
                 try
                 {
-                    category = await entityManager.UpdateCategoryAsync(category);
+                    category = await entityManager.UpdateProductCategoryAsync(category);
                 }
                 catch (Exception ex)
                 {
@@ -179,7 +179,7 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public Category Build()
+        public ProductCategory Build()
         {
             return category;
         }

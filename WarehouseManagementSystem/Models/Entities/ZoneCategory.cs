@@ -3,39 +3,33 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
-    public class Warehouse
+    public class ZoneCategory
     {
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        [Required]
+        public string CategoryName { get; set; }
 
-        public int AddressId { get; set; }
+        public int? PreviousCategoryId { get; set; }
 
-        [ForeignKey("AddressId")]
-        public virtual Address? Address { get; set; }
+        [ForeignKey("PreviousCategoryId")]
+        public virtual ProductCategory? PreviousCategory { get; set; }
 
         public string? AdditionalInfo { get; set; }
 
         public virtual ICollection<Zone> Zones { get; set; }
 
-        public Warehouse(string name, int addressId)
+        public ZoneCategory(string categoryName)
         {
-            Name = name;
-            AddressId = addressId;
+            CategoryName = categoryName;
 
             Zones = new List<Zone>();
-        }
-
-        public override string ToString()
-        {
-            return Name.ToString();
         }
     }
 }

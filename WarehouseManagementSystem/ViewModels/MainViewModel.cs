@@ -79,6 +79,20 @@ namespace WarehouseManagementSystem.ViewModels
             CurrentViewModel = this;
 
             summaryViewModel = new SummaryViewModel(loginService.CurrentWarehouse);
+            OnPropertyChanged(nameof(SummaryViewModel));
+            InitializeAsync();
+        }
+
+        private async void InitializeAsync()
+        {
+            await summaryViewModel.GetDataAsync();
+
+            UpdateUI();
+        }
+
+        private void UpdateUI()
+        {
+            OnPropertyChanged(nameof(SummaryViewModel));
         }
 
         private void CheckUserLogin()
@@ -115,9 +129,9 @@ namespace WarehouseManagementSystem.ViewModels
             CheckUserLogin();
         }
 
-        private async void RefreshSummary()
+        private void RefreshSummary()
         {
-            await SummaryViewModel.GetData();
+            InitializeAsync();
         }
     }
 }

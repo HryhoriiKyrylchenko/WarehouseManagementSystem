@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,11 +22,25 @@ namespace WarehouseManagementSystem.Windows
     /// <summary>
     /// Interaction logic for LoginWindow.xaml
     /// </summary>
-    public partial class LoginWindow : Window
+    public partial class LoginWindow : Window, INotifyPropertyChanged
     {
         LoginService loginService;
 
-        private ObservableCollection<Warehouse> Warehouses { get; set; }
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private ObservableCollection<Warehouse> warehouses;
+        public ObservableCollection<Warehouse> Warehouses
+        {
+            get { return warehouses; }
+            set
+            {
+                if (warehouses != value)
+                {
+                    warehouses = value;
+                    OnPropertyChanged(nameof(Warehouses));
+                }
+            }
+        }
 
         private Warehouse? selectedWarehouse;
 
@@ -37,6 +52,7 @@ namespace WarehouseManagementSystem.Windows
                 if (selectedWarehouse != value)
                 {
                     selectedWarehouse = value;
+                    OnPropertyChanged(nameof(SelectedWarehouse));
                 }
             }
         }
@@ -45,10 +61,14 @@ namespace WarehouseManagementSystem.Windows
         {
             InitializeComponent();
             this.loginService = loginService;
-            Warehouses = new ObservableCollection<Warehouse>();
+            warehouses = new ObservableCollection<Warehouse>();
 
-            Warehouses = GetWarehousesAsync().GetAwaiter().GetResult();
+            Warehouses = GetWarehouses();
             DataContext = this;
+            if (Warehouses.Count > 0)
+            {
+                ComboBoxWarehouses.SelectedIndex = 0;
+            }
         }
 
         private void buttonLogin_Click(object sender, RoutedEventArgs e)
@@ -63,18 +83,18 @@ namespace WarehouseManagementSystem.Windows
                 }
                 else
                 {
-                    MessageBox.Show("Wrong username or password");
+                    MessageBox.Show("Wrong data entered");
                     TextBoxUsername.Text = string.Empty;
                     TextBoxPassword.Text = string.Empty;
                 }
             }
         }
 
-        private async Task<ObservableCollection<Warehouse>> GetWarehousesAsync()
+        private ObservableCollection<Warehouse> GetWarehouses()
         {
             using(WarehouseDBManager db = new WarehouseDBManager(new Models.WarehouseDbContext()))
             {
-                return await db.GetAllWarehousesAsync();
+                return db.GetAllWarehouses();
             }
         }
 
@@ -85,7 +105,7 @@ namespace WarehouseManagementSystem.Windows
 
         public bool IsValidInput(string username, string password, Warehouse? warehouse)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || warehouse != null)
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || warehouse == null)
             {
                 MessageBox.Show("All fields are required");
                 return false;
@@ -94,15 +114,20 @@ namespace WarehouseManagementSystem.Windows
             return true;
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ListBox listBox)
+            if (sender is ComboBox comboBox)
             {
-                if (listBox.SelectedItem is Warehouse warehouse)
+                if (comboBox.SelectedItem is Warehouse warehouse)
                 {
                     SelectedWarehouse = warehouse;
                 }
             }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

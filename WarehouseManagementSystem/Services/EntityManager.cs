@@ -110,13 +110,13 @@ namespace WarehouseManagementSystem.Services
             return false;
         }
 
-        public Category AddCategory(Category newCategory)
+        public ProductCategory AddProductCategory(ProductCategory newCategory)
         {
-            var existingCategory = dbContext.Categories.Find(newCategory.Id);
+            var existingCategory = dbContext.ProductCategories.Find(newCategory.Id);
 
             if (existingCategory == null)
             {
-                dbContext.Categories.Add(newCategory);
+                dbContext.ProductCategories.Add(newCategory);
                 dbContext.SaveChanges();
                 return newCategory;
             }
@@ -126,13 +126,13 @@ namespace WarehouseManagementSystem.Services
             }
         }
 
-        public async Task<Category> AddCategoryAsync(Category newCategory)
+        public async Task<ProductCategory> AddProductCategoryAsync(ProductCategory newCategory)
         {
-            var existingCategory = await dbContext.Categories.FindAsync(newCategory.Id);
+            var existingCategory = await dbContext.ProductCategories.FindAsync(newCategory.Id);
 
             if (existingCategory == null)
             {
-                await dbContext.Categories.AddAsync(newCategory);
+                await dbContext.ProductCategories.AddAsync(newCategory);
                 await dbContext.SaveChangesAsync();
                 return newCategory;
             }
@@ -142,9 +142,9 @@ namespace WarehouseManagementSystem.Services
             }
         }
 
-        public Category UpdateCategory(Category updatedCategory)
+        public ProductCategory UpdateProductCategory(ProductCategory updatedCategory)
         {
-            var existingCategory = dbContext.Categories.Find(updatedCategory.Id);
+            var existingCategory = dbContext.ProductCategories.Find(updatedCategory.Id);
 
             if (existingCategory != null)
             {
@@ -158,9 +158,9 @@ namespace WarehouseManagementSystem.Services
             }
         }
 
-        public async Task<Category> UpdateCategoryAsync(Category updatedCategory)
+        public async Task<ProductCategory> UpdateProductCategoryAsync(ProductCategory updatedCategory)
         {
-            var existingCategory = await dbContext.Categories.FindAsync(updatedCategory.Id);
+            var existingCategory = await dbContext.ProductCategories.FindAsync(updatedCategory.Id);
 
             if (existingCategory != null)
             {
@@ -174,13 +174,13 @@ namespace WarehouseManagementSystem.Services
             }
         }
 
-        public bool DeleteCategory(Category category)
+        public bool DeleteProductCategory(ProductCategory category)
         {
-            var categoryToDelete = dbContext.Categories.Find(category.Id);
+            var categoryToDelete = dbContext.ProductCategories.Find(category.Id);
 
             if (categoryToDelete != null)
             {
-                dbContext.Categories.Remove(categoryToDelete);
+                dbContext.ProductCategories.Remove(categoryToDelete);
                 dbContext.SaveChanges();
                 return true;
             }
@@ -188,13 +188,105 @@ namespace WarehouseManagementSystem.Services
             return false;
         }
 
-        public async Task<bool> DeleteCategoryAsync(Category category)
+        public async Task<bool> DeleteProductCategoryAsync(ProductCategory category)
         {
-            var categoryToDelete = await dbContext.Categories.FindAsync(category.Id);
+            var categoryToDelete = await dbContext.ProductCategories.FindAsync(category.Id);
 
             if (categoryToDelete != null)
             {
-                dbContext.Categories.Remove(categoryToDelete);
+                dbContext.ProductCategories.Remove(categoryToDelete);
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+        public ZoneCategory AddZoneCategory(ZoneCategory newCategory)
+        {
+            var existingCategory = dbContext.ZoneCategories.Find(newCategory.Id);
+
+            if (existingCategory == null)
+            {
+                dbContext.ZoneCategories.Add(newCategory);
+                dbContext.SaveChanges();
+                return newCategory;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current category already exists in the database");
+            }
+        }
+
+        public async Task<ZoneCategory> AddZoneCategoryAsync(ZoneCategory newCategory)
+        {
+            var existingCategory = await dbContext.ZoneCategories.FindAsync(newCategory.Id);
+
+            if (existingCategory == null)
+            {
+                await dbContext.ZoneCategories.AddAsync(newCategory);
+                await dbContext.SaveChangesAsync();
+                return newCategory;
+            }
+            else
+            {
+                throw new DuplicateObjectException("Current category already exists in the database");
+            }
+        }
+
+        public ZoneCategory UpdateZoneCategory(ZoneCategory updatedCategory)
+        {
+            var existingCategory = dbContext.ZoneCategories.Find(updatedCategory.Id);
+
+            if (existingCategory != null)
+            {
+                dbContext.Entry(existingCategory).CurrentValues.SetValues(updatedCategory);
+                dbContext.SaveChanges();
+                return existingCategory;
+            }
+            else
+            {
+                throw new ArgumentException("Current category does not exist in the database");
+            }
+        }
+
+        public async Task<ZoneCategory> UpdateZoneCategoryAsync(ZoneCategory updatedCategory)
+        {
+            var existingCategory = await dbContext.ZoneCategories.FindAsync(updatedCategory.Id);
+
+            if (existingCategory != null)
+            {
+                dbContext.Entry(existingCategory).CurrentValues.SetValues(updatedCategory);
+                await dbContext.SaveChangesAsync();
+                return existingCategory;
+            }
+            else
+            {
+                throw new ArgumentException("Current category does not exist in the database");
+            }
+        }
+
+        public bool DeleteZoneCategory(ZoneCategory category)
+        {
+            var categoryToDelete = dbContext.ZoneCategories.Find(category.Id);
+
+            if (categoryToDelete != null)
+            {
+                dbContext.ZoneCategories.Remove(categoryToDelete);
+                dbContext.SaveChanges();
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> DeleteZoneCategoryAsync(ZoneCategory category)
+        {
+            var categoryToDelete = await dbContext.ZoneCategories.FindAsync(category.Id);
+
+            if (categoryToDelete != null)
+            {
+                dbContext.ZoneCategories.Remove(categoryToDelete);
                 await dbContext.SaveChangesAsync();
                 return true;
             }
