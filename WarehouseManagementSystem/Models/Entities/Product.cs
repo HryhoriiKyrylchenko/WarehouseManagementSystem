@@ -43,7 +43,7 @@ namespace WarehouseManagementSystem.Models.Entities
         public int? CategoryId { get; set; }
 
         [ForeignKey("SubcategoryId")]
-        public virtual Category? Category { get; set; }
+        public virtual ProductCategory? Category { get; set; }
 
         public string? ProductDetails { get; set; }
 

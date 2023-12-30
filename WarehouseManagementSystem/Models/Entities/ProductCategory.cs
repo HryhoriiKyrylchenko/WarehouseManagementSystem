@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
-    public class Category
+    public class ProductCategory
     {
         [Key]
         public int Id { get; set; }
@@ -19,20 +19,17 @@ namespace WarehouseManagementSystem.Models.Entities
         public int? PreviousCategoryId { get; set; }
 
         [ForeignKey("PreviousCategoryId")]
-        public virtual Category? PreviousCategory { get; set; }
+        public virtual ProductCategory? PreviousCategory { get; set; }
 
         public string? AdditionalInfo { get; set; }
 
         public virtual ICollection<Product> Products { get; set; }
 
-        public virtual ICollection<Zone> Zones { get; set; }
-
-        public Category(string categoryName)
+        public ProductCategory(string categoryName)
         {
             CategoryName = categoryName;
 
             Products = new List<Product>();
-            Zones = new List<Zone>();
         }
     }
 }

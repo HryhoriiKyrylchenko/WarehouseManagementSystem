@@ -60,7 +60,7 @@
             <Border Grid.Row="3" BorderBrush="DarkGray" BorderThickness="1" Margin="15,15,15,0">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" >
-                        <TextBlock Text="Selected product:" FontSize="22" Margin="10,5"/>
+                        <TextBlock Text="Selected product:" FontSize="22" Margin="10,0"/>
                         <TextBlock x:Name="TextBlockSelectedProduct" FontSize="22" FontWeight="Bold" Margin="10,0"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >

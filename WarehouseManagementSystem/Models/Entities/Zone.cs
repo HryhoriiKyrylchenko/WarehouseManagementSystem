@@ -25,20 +25,20 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public int FreeSpace => ZonePositions.Sum(zp => zp.FreeSpace) + (Capacity - ZonePositions.Sum(zp => zp.Capacity));
 
-        public int CategoryId {  get; set; }
+        public int ZoneCategoryId {  get; set; }
 
-        [ForeignKey("CategoryId")]
-        public virtual Category? Category { get; set; }
+        [ForeignKey("ZoneCategoryId")]
+        public virtual ZoneCategory? ZoneCategory { get; set; }
 
         public string? AdditionalInfo { get; set; }
 
         public virtual ICollection<ZonePosition> ZonePositions { get; set; }
 
-        public Zone(string name, int warehouseId, int categoryId, int capacity)
+        public Zone(string name, int warehouseId, int zoneCategoryId, int capacity)
         {
             Name = name;
             WarehouseId = warehouseId;
-            CategoryId = categoryId;
+            ZoneCategoryId = zoneCategoryId;
             Capacity = capacity;
 
             ZonePositions = new List<ZonePosition>();

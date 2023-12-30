@@ -10,11 +10,11 @@ namespace WarehouseManagementSystem.ViewModels
 {
     public class CategoryViewModel : ViewModelBase
     {
-        public Category Category { get; set; }
+        public ProductCategory Category { get; set; }
         public ObservableCollection<CategoryViewModel> Children { get; set; }
         public ObservableCollection<Product> Products { get; set; }
 
-        public CategoryViewModel(Category category)
+        public CategoryViewModel(ProductCategory category)
         {
             Category = category;
             Children = new ObservableCollection<CategoryViewModel>();

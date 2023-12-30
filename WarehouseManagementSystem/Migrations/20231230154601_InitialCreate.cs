@@ -31,26 +31,6 @@ namespace WarehouseManagementSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PreviousCategoryId = table.Column<int>(type: "int", nullable: true),
-                    AdditionalInfo = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Categories_Categories_PreviousCategoryId",
-                        column: x => x.PreviousCategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ErrorLogs",
                 columns: table => new
                 {
@@ -63,6 +43,26 @@ namespace WarehouseManagementSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ErrorLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PreviousCategoryId = table.Column<int>(type: "int", nullable: true),
+                    AdditionalInfo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductCategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductCategories_ProductCategories_PreviousCategoryId",
+                        column: x => x.PreviousCategoryId,
+                        principalTable: "ProductCategories",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -170,6 +170,26 @@ namespace WarehouseManagementSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ZoneCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PreviousCategoryId = table.Column<int>(type: "int", nullable: true),
+                    AdditionalInfo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ZoneCategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ZoneCategories_ProductCategories_PreviousCategoryId",
+                        column: x => x.PreviousCategoryId,
+                        principalTable: "ProductCategories",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reports",
                 columns: table => new
                 {
@@ -246,16 +266,16 @@ namespace WarehouseManagementSystem.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Products_Manufacturers_ManufacturerId",
                         column: x => x.ManufacturerId,
                         principalTable: "Manufacturers",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_ProductCategories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "ProductCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -297,22 +317,22 @@ namespace WarehouseManagementSystem.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WarehouseId = table.Column<int>(type: "int", nullable: false),
                     Capacity = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    ZoneCategoryId = table.Column<int>(type: "int", nullable: false),
                     AdditionalInfo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Zones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Zones_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Zones_Warehouses_WarehouseId",
                         column: x => x.WarehouseId,
                         principalTable: "Warehouses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Zones_ZoneCategories_ZoneCategoryId",
+                        column: x => x.ZoneCategoryId,
+                        principalTable: "ZoneCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -344,8 +364,7 @@ namespace WarehouseManagementSystem.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PhotoData = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    ProductId2 = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -444,8 +463,7 @@ namespace WarehouseManagementSystem.Migrations
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     SourceZonePositionId = table.Column<int>(type: "int", nullable: false),
                     DestinationZonePositionId = table.Column<int>(type: "int", nullable: false),
-                    AdditionalInfo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProductId2 = table.Column<int>(type: "int", nullable: false)
+                    AdditionalInfo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -480,8 +498,7 @@ namespace WarehouseManagementSystem.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     ManufactureDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ZonePositionId = table.Column<int>(type: "int", nullable: false),
-                    ProductId2 = table.Column<int>(type: "int", nullable: false)
+                    ZonePositionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -499,11 +516,6 @@ namespace WarehouseManagementSystem.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Categories_PreviousCategoryId",
-                table: "Categories",
-                column: "PreviousCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_AddressId",
@@ -534,6 +546,11 @@ namespace WarehouseManagementSystem.Migrations
                 name: "IX_MovementHistories_SourceZonePositionId",
                 table: "MovementHistories",
                 column: "SourceZonePositionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCategories_PreviousCategoryId",
+                table: "ProductCategories",
+                column: "PreviousCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductInZonePositions_ProductId",
@@ -616,19 +633,24 @@ namespace WarehouseManagementSystem.Migrations
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ZoneCategories_PreviousCategoryId",
+                table: "ZoneCategories",
+                column: "PreviousCategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ZonePositions_ZoneId",
                 table: "ZonePositions",
                 column: "ZoneId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Zones_CategoryId",
-                table: "Zones",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Zones_WarehouseId",
                 table: "Zones",
                 column: "WarehouseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Zones_ZoneCategoryId",
+                table: "Zones",
+                column: "ZoneCategoryId");
         }
 
         /// <inheritdoc />
@@ -686,13 +708,16 @@ namespace WarehouseManagementSystem.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Categories");
-
-            migrationBuilder.DropTable(
                 name: "Warehouses");
 
             migrationBuilder.DropTable(
+                name: "ZoneCategories");
+
+            migrationBuilder.DropTable(
                 name: "Addresses");
+
+            migrationBuilder.DropTable(
+                name: "ProductCategories");
         }
     }
 }

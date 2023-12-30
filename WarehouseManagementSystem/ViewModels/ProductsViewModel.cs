@@ -25,7 +25,7 @@ namespace WarehouseManagementSystem.ViewModels
                 if (categories != value)
                 {
                     categories = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Categories));
                 }
             }
         }
@@ -76,16 +76,28 @@ namespace WarehouseManagementSystem.ViewModels
 
         private async Task InitializeCategoriesFromDBAsync()
         {
-            using (var dbManager = new WarehouseDBManager(new WarehouseDbContext()))
+            try
             {
-                var rootCategories = await dbManager.GetRootCategoriesAsync(mainViewModel.LoginService.CurrentWarehouse);
-
-                foreach (var rootCategory in rootCategories)
+                using (var dbManager = new WarehouseDBManager(new WarehouseDbContext()))
                 {
-                    var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory, mainViewModel.LoginService.CurrentWarehouse);
-                    Categories.Add(rootViewModel);
+                    var rootCategories = await dbManager.GetRootCategoriesAsync(mainViewModel.LoginService.CurrentWarehouse);
+                    if (rootCategories != null) 
+                    {
+                        foreach (var rootCategory in rootCategories)
+                        {
+                            var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory, mainViewModel.LoginService.CurrentWarehouse);
+                            Categories.Add(rootViewModel);
+                        }
+                    }
                 }
-            }           
+            }
+            catch (Exception ex) 
+            {
+                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                {
+                    await logger.LogErrorAsync(ex);
+                }
+            }    
         }
 
         private void UpdateProducts()
