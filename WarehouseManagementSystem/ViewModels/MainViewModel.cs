@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -80,12 +81,13 @@ namespace WarehouseManagementSystem.ViewModels
 
             summaryViewModel = new SummaryViewModel(loginService.CurrentWarehouse);
             OnPropertyChanged(nameof(SummaryViewModel));
-            InitializeAsync();
+
+            ThreadPool.QueueUserWorkItem(InitializeAsync);
         }
 
-        private async void InitializeAsync()
+        private  void InitializeAsync(object? state)
         {
-            await summaryViewModel.GetDataAsync();
+            summaryViewModel.GetData();
 
             UpdateUI();
         }
@@ -131,7 +133,7 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void RefreshSummary()
         {
-            InitializeAsync();
+            ThreadPool.QueueUserWorkItem(InitializeAsync);
         }
     }
 }

@@ -25,12 +25,15 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Zone> Zones { get; set; }
 
+        public virtual ICollection<Product> Products { get; set; }
+
         public Warehouse(string name, int addressId)
         {
             Name = name;
             AddressId = addressId;
 
             Zones = new List<Zone>();
+            Products = new List<Product>();
         }
 
         public override string ToString()

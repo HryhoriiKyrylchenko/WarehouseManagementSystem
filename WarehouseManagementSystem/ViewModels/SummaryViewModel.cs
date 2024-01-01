@@ -120,39 +120,26 @@ namespace WarehouseManagementSystem.ViewModels
             unallocatedProducts = string.Empty;
         }
 
-        public async Task GetDataAsync()
+        public void GetData()
         {
             try
             {
                 using (WarehouseDBManager db = new WarehouseDBManager(new Models.WarehouseDbContext()))
                 {
-                    int totalCapacity = await db.GetTotalWarehouseCapacityAsync(currentWarehouse);
-                    TotalCapacity = totalCapacity.ToString();
-
-                    int freeCapacity = await db.GetFreeWarehouseCapacityAsync(currentWarehouse);
-                    FreeCapacity = freeCapacity.ToString();
-
-                    double occupancyPercentage = await db.GetWarehouseOccupancyPercentageAsync(currentWarehouse);
-                    OccupancyPercentage = occupancyPercentage.ToString();
-
-                    int totalZones = await db.CountTotalZonesAsync(currentWarehouse);
-                    TotalZones = totalZones.ToString();
-
-                    int unusedZones = await db.CountUnusedZonesAsync(currentWarehouse);
-                    UnusedZones = unusedZones.ToString();
-
-                    int totalProducts = await db.CountTotalProductsInWarehouseAsync(currentWarehouse);
-                    TotalProducts = totalProducts.ToString();
-
-                    int unallocatedProducts = await db.CountUnallocatedProductsInWarehouseAsync(currentWarehouse);
-                    UnallocatedProducts = unallocatedProducts.ToString();
+                    TotalCapacity = db.GetTotalWarehouseCapacity(currentWarehouse).ToString();
+                    FreeCapacity = db.GetFreeWarehouseCapacity(currentWarehouse).ToString();
+                    OccupancyPercentage = db.GetWarehouseOccupancyPercentage(currentWarehouse).ToString();
+                    TotalZones = db.CountTotalZones(currentWarehouse).ToString();
+                    UnusedZones = db.CountUnusedZones(currentWarehouse).ToString();
+                    TotalProducts = db.CountTotalProductsInWarehouse(currentWarehouse).ToString();
+                    UnallocatedProducts = db.CountUnallocatedProductsInWarehouse(currentWarehouse).ToString();
                 }
             }
             catch (Exception ex)
             {
                 using(ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
                 {
-                    await logger.LogErrorAsync(ex);
+                    logger.LogError(ex);
                 }
                 Application.Current.Dispatcher.Invoke(() =>
                 {

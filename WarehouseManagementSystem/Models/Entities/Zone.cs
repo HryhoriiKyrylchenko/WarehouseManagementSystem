@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
@@ -22,9 +23,7 @@ namespace WarehouseManagementSystem.Models.Entities
         public virtual Warehouse? Warehouse { get; set; }
 
         public int Capacity { get; set; }
-
-        public int FreeSpace => ZonePositions.Sum(zp => zp.FreeSpace) + (Capacity - ZonePositions.Sum(zp => zp.Capacity));
-
+      
         public int ZoneCategoryId {  get; set; }
 
         [ForeignKey("ZoneCategoryId")]
@@ -42,6 +41,11 @@ namespace WarehouseManagementSystem.Models.Entities
             Capacity = capacity;
 
             ZonePositions = new List<ZonePosition>();
+        }
+
+        public override string ToString()
+        {
+            return Name.ToString();
         }
     }
 }

@@ -36,9 +36,9 @@
                     </StackPanel>
                     <StackPanel Margin="10" Orientation="Horizontal" >
                         <TextBlock Text="Suplier:" FontSize="22" Margin="10"/>
-                        <ListBox x:Name="ListBoxZone" Width="250" Height="32" Margin="10"/>
+                        <ComboBox x:Name="ListBoxZone" Width="250" Height="32" Margin="10"/>
                         <TextBlock Text="User:" FontSize="22" Margin="10"/>
-                        <ListBox x:Name="ListBoxZonePozition" Width="250" Height="32" Margin="10"/>
+                        <ComboBox x:Name="ListBoxZonePozition" Width="250" Height="32" Margin="10"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
