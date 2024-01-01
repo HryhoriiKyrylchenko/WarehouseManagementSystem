@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Entities
         public int? PreviousCategoryId { get; set; }
 
         [ForeignKey("PreviousCategoryId")]
-        public virtual ProductCategory? PreviousCategory { get; set; }
+        public virtual ZoneCategory? PreviousCategory { get; set; }
 
         public string? AdditionalInfo { get; set; }
 

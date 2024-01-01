@@ -16,11 +16,11 @@ namespace WarehouseManagementSystem.Models.Builders
     {
         private Product product;
 
-        public ProductBuilder(string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price)
+        public ProductBuilder(string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price, int warehouseId)
         {
             try
             {
-                this.product = InitializeAsync(new Product(productCode, name, unitOfMeasure, quantity, capacity, price)).GetAwaiter().GetResult();
+                this.product = InitializeAsync(new Product(productCode, name, unitOfMeasure, quantity, capacity, price, warehouseId)).GetAwaiter().GetResult();
             }
             catch
             {

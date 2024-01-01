@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WarehouseManagementSystem.Models;
 
@@ -11,9 +12,11 @@ using WarehouseManagementSystem.Models;
 namespace WarehouseManagementSystem.Migrations
 {
     [DbContext(typeof(WarehouseDbContext))]
-    partial class WarehouseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231231103811_EditZoneCategory")]
+    partial class EditZoneCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,6 +220,9 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -233,9 +239,6 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ProductCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -246,19 +249,17 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("UnitOfMeasure")
+                    b.Property<int?>("SubcategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("WarehouseId")
+                    b.Property<int>("UnitOfMeasure")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ManufacturerId");
-
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("ManufacturerId");
 
                     b.ToTable("Products");
                 });
@@ -722,26 +723,18 @@ namespace WarehouseManagementSystem.Migrations
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Product", b =>
                 {
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.Manufacturer", "Manufacturer")
-                        .WithMany()
-                        .HasForeignKey("ManufacturerId");
-
                     b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.Warehouse", "Warehouse")
-                        .WithMany("Products")
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Manufacturer");
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerId");
 
                     b.Navigation("Category");
 
-                    b.Navigation("Warehouse");
+                    b.Navigation("Manufacturer");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
@@ -993,8 +986,6 @@ namespace WarehouseManagementSystem.Migrations
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Warehouse", b =>
                 {
-                    b.Navigation("Products");
-
                     b.Navigation("Zones");
                 });
 

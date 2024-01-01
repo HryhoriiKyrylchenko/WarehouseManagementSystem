@@ -264,7 +264,7 @@ namespace WarehouseManagementSystem.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ProductCategory", b =>
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -723,7 +723,7 @@ namespace WarehouseManagementSystem.Migrations
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Product", b =>
                 {
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.ProductCategory", "Category")
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -737,9 +737,9 @@ namespace WarehouseManagementSystem.Migrations
                     b.Navigation("Manufacturer");
                 });
 
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ProductCategory", b =>
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
                 {
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.ProductCategory", "PreviousCategory")
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "PreviousCategory")
                         .WithMany()
                         .HasForeignKey("PreviousCategoryId");
 
@@ -906,7 +906,7 @@ namespace WarehouseManagementSystem.Migrations
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ZoneCategory", b =>
                 {
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.ProductCategory", "PreviousCategory")
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "PreviousCategory")
                         .WithMany()
                         .HasForeignKey("PreviousCategoryId");
 
@@ -955,7 +955,7 @@ namespace WarehouseManagementSystem.Migrations
                     b.Navigation("ShipmentItems");
                 });
 
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ProductCategory", b =>
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
                 {
                     b.Navigation("Products");
                 });

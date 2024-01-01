@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.ViewModels;
@@ -25,13 +26,6 @@ namespace WarehouseManagementSystem.Services
             dbContext.Dispose();
         }
 
-        private bool IsProductInWarehouse(Product product, Warehouse warehouse)
-        {
-            return product.ProductsInZonePositions.Any(pz => pz.ZonePosition != null
-                                                            && pz.ZonePosition.Zone != null
-                                                            && pz.ZonePosition.Zone.WarehouseId == warehouse.Id);
-        }
-
         public async Task<List<ProductCategory>> GetRootCategoriesAsync(Warehouse warehouse)
         {
             return await dbContext.ProductCategories.Where(c => c.PreviousCategoryId == null).ToListAsync();
@@ -40,21 +34,26 @@ namespace WarehouseManagementSystem.Services
         public async Task<CategoryViewModel> BuildCategoryViewModelTreeAsync(ProductCategory category, Warehouse warehouse)
         {
             var categoryViewModel = new CategoryViewModel(category);
-
-            var products = await GetProductsForCategoryAsync(category, warehouse);
-            if (products.Any())
+            try
             {
-                categoryViewModel.Products = new ObservableCollection<Product>(products);
+                var products = await GetProductsForCategoryAsync(category, warehouse);
+                if (products.Any())
+                {
+                    categoryViewModel.Products = new ObservableCollection<Product>(products);
+                }
+
+                var childCategories = await dbContext.ProductCategories.Where(c => c.PreviousCategoryId == category.Id).ToListAsync();
+
+                foreach (var childCategory in childCategories)
+                {
+                    var childViewModel = await BuildCategoryViewModelTreeAsync(childCategory, warehouse);
+                    categoryViewModel.Children.Add(childViewModel);
+                }
             }
-
-            var childCategories = await dbContext.ProductCategories.Where(c => c.PreviousCategoryId == category.Id).ToListAsync();
-
-            var childViewModels = await Task.WhenAll(childCategories.Select(childCategory =>
-                                                                        BuildCategoryViewModelTreeAsync(childCategory, warehouse)));
-
-            foreach (var childViewModel in childViewModels)
+            catch (Exception ex)
             {
-                categoryViewModel.Children.Add(childViewModel);
+                Application.Current.Dispatcher.Invoke(() => MessageBox.Show(ex.Message));
+                throw;
             }
 
             return categoryViewModel;
@@ -62,21 +61,9 @@ namespace WarehouseManagementSystem.Services
 
         private async Task<List<Product>> GetProductsForCategoryAsync(ProductCategory category, Warehouse warehouse)
         {
-            var products = new List<Product>();
-
-            async Task AddProductsFromCategoryAsync(ProductCategory currentCategory, Warehouse warehouse)
-            {
-                var currentProducts = await dbContext.Products
-                    .Where(p => p.CategoryId == currentCategory.Id)
-                    .Where(p => IsProductInWarehouse(p, warehouse))
+            return await dbContext.Products
+                    .Where(p => p.CategoryId == category.Id && p.WarehouseId == warehouse.Id)
                     .ToListAsync();
-
-                products.AddRange(currentProducts);
-            }
-
-            await AddProductsFromCategoryAsync(category, warehouse);
-
-            return products;
         }
 
         public User? FindUserByUsernameAndPassword(string username, string password)
@@ -96,71 +83,127 @@ namespace WarehouseManagementSystem.Services
             return new ObservableCollection<Warehouse>(await dbContext.Warehouses.ToListAsync());
         }
 
-        public async Task<int> GetTotalWarehouseCapacityAsync(Warehouse warehouse)
+        public int GetTotalWarehouseCapacity(Warehouse warehouse)
         {
-            return await dbContext.Zones.Where(z => z.WarehouseId == warehouse.Id).SumAsync(z => z.Capacity);
+            return dbContext.Zones.Where(z => z.WarehouseId == warehouse.Id).Sum(z => z.Capacity);
         }
 
-        public async Task<int> GetFreeWarehouseCapacityAsync(Warehouse warehouse)
+        public double GetWarehouseOccupancyPercentage(Warehouse warehouse)
         {
-            int freeCapacity = 0;
-            await Task.Run(() =>
-            {
-                freeCapacity = dbContext.Zones
-                    .Where(z => z.WarehouseId == warehouse.Id)
-                    .AsEnumerable()
-                    .Sum(z => z.FreeSpace);
-            });
-            return freeCapacity;
-        }
-
-        public async Task<double> GetWarehouseOccupancyPercentageAsync(Warehouse warehouse)
-        {
-            int totalCapasity = await GetTotalWarehouseCapacityAsync(warehouse);
-            int totalFreeSpace = await GetFreeWarehouseCapacityAsync(warehouse);
+            int totalCapasity = GetTotalWarehouseCapacity(warehouse);
+            int totalFreeSpace = GetFreeWarehouseCapacity(warehouse);
 
             return (totalCapasity == 0) ? 0 : (100.0 - totalFreeSpace * 100.0 / totalCapasity);
         }
 
-        public async Task<int> CountTotalZonesAsync(Warehouse warehouse)
+        public int CountTotalZones(Warehouse warehouse)
         {
-            return await dbContext.Zones.Where(z => z.WarehouseId == warehouse.Id).CountAsync();
+            return dbContext.Zones.Where(z => z.WarehouseId == warehouse.Id).Count();
         }
 
-        public async Task<int> CountUnusedZonesAsync(Warehouse warehouse)
+        public int GetFreeWarehouseCapacity(Warehouse warehouse)
         {
-            return await Task.Run(() =>
+            int freeCapacity = 0;
+
+            var zoneIds = dbContext.Zones.Select(z => z.Id).ToList();
+
+            foreach (var zoneId in zoneIds)
             {
-                var zones = dbContext.Zones
-                    .Where(z => z.WarehouseId == warehouse.Id)
-                    .AsEnumerable()
-                    .Where(z => z.Capacity == z.FreeSpace);
+                freeCapacity += GetZoneFreeCapacity(zoneId);
+            }
 
-                return zones.Count();
-            });
+            return freeCapacity;
         }
 
-        public async Task<int> CountTotalProductsInWarehouseAsync(Warehouse warehouse)
+        public int CountUnusedZones(Warehouse warehouse)
         {
-            return await dbContext.Zones.Where(z => z.WarehouseId == warehouse.Id)
-                                                        .SelectMany(z => z.ZonePositions)
-                                                        .SelectMany(zp => zp.ProductsInZonePosition)
-                                                        .Select(p => p.Product)
-                                                        .Distinct()
-                                                        .CountAsync();
+            var zones = dbContext.Zones.ToList();
+            return zones.Where(z => z.Capacity == GetZoneFreeCapacity(z.Id)).Count();
+        }
+    
+
+        public int CountTotalProductsInWarehouse(Warehouse warehouse)
+        {
+            return dbContext.Products.Where(p => p.WarehouseId == warehouse.Id).Count();
         }
 
-        public async Task<int> CountUnallocatedProductsInWarehouseAsync(Warehouse warehouse)
+        public decimal CountUnallocatedProductsInWarehouse(Warehouse warehouse)
         {
-            return await dbContext.Products
-                    .Where(p => p.Quantity > 0)
-                    .Where(p => p.ProductsInZonePositions.Count > 0)
-                    .Where(p => p.ProductsInZonePositions
-                        .Where(pz => pz.ZonePosition != null 
-                                    && pz.ZonePosition.Zone != null 
-                                    && pz.ZonePosition.Zone.WarehouseId == warehouse.Id)
-                        .Sum(pz => pz.Quantity) < p.Quantity)
-                    .CountAsync();
+            return dbContext.Products
+                .Where(p => p.WarehouseId == warehouse.Id)
+                .Where(p => p.Quantity > p.ProductsInZonePositions.Sum(z => z.Quantity))
+                .Count();
+        }
+
+        public async Task<decimal> GetUnallocatedProductInstancesSumAsync(int productId)
+        {
+            var unallocatedProductItems = await dbContext.Products
+                .Where(p => p.Id == productId)
+                .Select(p => p.Quantity - p.ProductsInZonePositions.Sum(z => z.Quantity))
+                .FirstOrDefaultAsync();
+
+            return unallocatedProductItems;
+        }
+
+        public async Task<ObservableCollection<Zone>> GetZonesAsync()
+        {
+            var zones = await dbContext.Zones.ToListAsync();
+            return new ObservableCollection<Zone>(zones);
+        }
+
+        public async Task<ObservableCollection<ZonePosition>> GetZonePozitionsAsync(int zoneId)
+        {
+            var zonePositions = await dbContext.ZonePositions
+                .Where(zp => zp.ZoneId == zoneId)
+                .ToListAsync();
+            return new ObservableCollection<ZonePosition>(zonePositions);
+        }
+
+        public async Task<ObservableCollection<ProductInZonePosition>> GetProductInZonePositionsByProductAsync(int productId)
+        {
+            var resultProductInZonePositions = await dbContext.ProductInZonePositions
+                .Where(pzp => pzp.ProductId == productId)
+                .Include(pzp => pzp.Product)
+                .Include(pzp => pzp.ZonePosition)
+                .ToListAsync();
+            return new ObservableCollection<ProductInZonePosition>(resultProductInZonePositions);
+        }
+
+        public ObservableCollection<ProductInZonePosition> GetProductInZonePositions(int zonePozitionId)
+        {
+            var productInZonePositions = dbContext.ProductInZonePositions
+                .Where(pzp => pzp.ZonePositionId == zonePozitionId)
+                .Include(pzp => pzp.Product)
+                .Include(pzp => pzp.ZonePosition)
+                .ToList();
+            return new ObservableCollection<ProductInZonePosition>(productInZonePositions);
+        }
+
+        public int GetZonePositionFreeCapacity(int zonePositionId)
+        {
+            var zonePositionWithProducts = dbContext.ZonePositions
+                .Include(zp => zp.ProductsInZonePosition)
+                .ThenInclude(p => p.Product)
+                .FirstOrDefault(zp => zp.Id == zonePositionId);
+
+            return zonePositionWithProducts?.Capacity - zonePositionWithProducts?.ProductsInZonePosition.Sum(p => p.Quantity * (p.Product?.Capacity ?? 0)) ?? 0;
+        }
+
+        public int GetZoneFreeCapacity(int zoneId)
+        {
+            var zoneWithZonePositions = dbContext.Zones
+                .Include(z => z.ZonePositions)
+                .FirstOrDefault(z => z.Id == zoneId);
+
+            if (zoneWithZonePositions == null)
+                return 0;
+
+            var zonePositionsFreeCapacities = zoneWithZonePositions.ZonePositions.Select(zp => GetZonePositionFreeCapacity(zp.Id));
+
+            int zonePositionsFreeCapacity = zonePositionsFreeCapacities.Sum();
+            int capacityDifference = zoneWithZonePositions.Capacity - zoneWithZonePositions.ZonePositions.Sum(zp => zp.Capacity);
+
+            return zonePositionsFreeCapacity + capacityDifference;
         }
     }
 }

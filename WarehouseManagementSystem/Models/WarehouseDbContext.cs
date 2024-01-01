@@ -89,6 +89,17 @@ namespace WarehouseManagementSystem.Models
                 .WithOne(p => p.Category)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Warehouse)
+                .WithMany()
+                .HasForeignKey(p => p.WarehouseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Warehouse>()
+                .HasMany(w => w.Products)
+                .WithOne(p => p.Warehouse)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<MovementHistory>()
                 .HasOne(m => m.SourceZonePosition)
                 .WithMany()

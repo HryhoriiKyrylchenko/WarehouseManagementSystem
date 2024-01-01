@@ -4,8 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1200">
+             d:DesignHeight="800" d:DesignWidth="1200"
+             xmlns:vmBehaviors="clr-namespace:WarehouseManagementSystem.ViewModels.Behaviors">
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -16,6 +18,9 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TreeView Grid.Row="0" Grid.Column="0" x:Name="TreeViewProducts" Margin="15" ItemsSource="{Binding Categories}">
+            <i:Interaction.Behaviors>
+                <vmBehaviors:TreeViewSelectedItemBehavior SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+            </i:Interaction.Behaviors>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Category.CategoryName}"/>
@@ -38,7 +43,9 @@
                     <RadioButton Content="All products" GroupName="ProductsGroup" Margin="5" VerticalAlignment="Center" />
                 </StackPanel>
             </DockPanel>
-            <DataGrid x:Name="DateGridProducts" Grid.Row="1" Margin="15" ItemsSource="{Binding Products}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <DataGrid x:Name="DateGridProducts" Grid.Row="1" Margin="15" ItemsSource="{Binding Products}" 
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False"
+                      SelectedItem="{Binding SelectedProduct, Mode=TwoWay}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                     <DataGridTextColumn Header="Product code" Binding="{Binding ProductCode}" />
@@ -46,7 +53,7 @@
                     <DataGridTextColumn Header="Unit of measure" Binding="{Binding UnitOfMeasure}" />
                     <DataGridTextColumn Header="Capacity" Binding="{Binding Capacity}" />
                     <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
-                    <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" />
+                    <DataGridTextColumn Header="Manufacturer Id" Binding="{Binding ManufacturerId}" />
                     <DataGridTextColumn Header="Price" Binding="{Binding Price}" />
                     <DataGridTextColumn Header="DiscountPercentage" Binding="{Binding DiscountPercentage}" />
                     <DataGridTextColumn Header="Product details" Binding="{Binding ProductDetails}" />
@@ -61,27 +68,27 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Selected product:" FontSize="22" Margin="10,0"/>
-                        <TextBlock x:Name="TextBlockSelectedProduct" FontSize="22" FontWeight="Bold" Margin="10,0"/>
+                        <TextBlock Text="{Binding SelectedProduct.Name}" FontSize="22" FontWeight="Bold" Margin="10,0"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Unallocated balance:" FontSize="22" Margin="10"/>
-                        <TextBlock x:Name="TextBlockUnallocatedBalance" FontSize="22" FontWeight="Bold" Margin="10"/>
+                        <TextBlock Text="{Binding UnallocatedProductInstances.UnallocatedBalance}" FontSize="22" FontWeight="Bold" Margin="10"/>
                         <TextBlock Text="Unallocated capacity:" FontSize="22" Margin="10"/>
-                        <TextBlock x:Name="TextBlockUnallocatedCapacity" FontSize="22" FontWeight="Bold" Margin="10"/>
+                        <TextBlock Text="{Binding UnallocatedProductInstances.UnallocatedCapacity}" FontSize="22" FontWeight="Bold" Margin="10"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Zone:" FontSize="22" Margin="10"/>
-                        <ListBox x:Name="ListBoxZone" Width="250" Height="32"/>
+                        <ComboBox ItemsSource="{Binding Zones}" SelectedItem="{Binding SelectedZone}" FontSize="22" Width="250" Height="32"/>
                         <TextBlock Text="Position in zone:" FontSize="22" Margin="10"/>
-                        <ListBox x:Name="ListBoxZonePozition" Width="250" Height="32"/>
+                        <ComboBox ItemsSource="{Binding ZonePositions}" SelectedItem="{Binding SelectedZonePosition}" FontSize="22" Width="250" Height="32"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Free capacity:" FontSize="22" Margin="10"/>
-                        <TextBlock x:Name="TextBlockFreeCapacity" FontSize="22" FontWeight="Bold" Margin="10"/>
+                        <TextBlock Text="{Binding SelectedZonePositionFreeCapacity}" FontSize="22" FontWeight="Bold" Margin="10"/>
                         <TextBlock Text="Enter quantity to allocate:" FontSize="22" Margin="10"/>
-                        <TextBox x:Name="TextBoxQuantityToAllocate" FontSize="22" Width="100" Height="30"/>
-                        <TextBlock Text="Capacity to allocate:" FontSize="22" Margin="10"/>
-                        <TextBlock x:Name="TextBlockCapacityToAllocate" FontSize="22" FontWeight="Bold" Margin="10"/>
+                        <TextBox Text="{Binding InputQuantity, UpdateSourceTrigger=PropertyChanged}" FontSize="22" Width="60" Height="30" PreviewTextInput="TextBox_PreviewTextInput" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+                        <TextBlock Text="Capacity to be allocated:" FontSize="22" Margin="10"/>
+                        <TextBlock Text="{Binding CapacityToBeAllocated}" FontSize="22" FontWeight="Bold" Margin="10"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Manufacture date:" FontSize="22" Margin="10"/>
