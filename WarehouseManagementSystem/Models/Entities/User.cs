@@ -40,5 +40,10 @@ namespace WarehouseManagementSystem.Models.Entities
             Receipts = new List<Receipt>();
             Reports = new List<Report>();
         }
+
+        public override string ToString()
+        {
+            return Username.ToString();
+        }
     }
 }

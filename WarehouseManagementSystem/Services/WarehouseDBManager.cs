@@ -9,6 +9,7 @@ using System.Windows;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.ViewModels;
+using WarehouseManagementSystem.ViewModels.Support_data;
 
 namespace WarehouseManagementSystem.Services
 {
@@ -120,7 +121,7 @@ namespace WarehouseManagementSystem.Services
             var zones = dbContext.Zones.ToList();
             return zones.Where(z => z.Capacity == GetZoneFreeCapacity(z.Id)).Count();
         }
-    
+
 
         public int CountTotalProductsInWarehouse(Warehouse warehouse)
         {
@@ -133,6 +134,16 @@ namespace WarehouseManagementSystem.Services
                 .Where(p => p.WarehouseId == warehouse.Id)
                 .Where(p => p.Quantity > p.ProductsInZonePositions.Sum(z => z.Quantity))
                 .Count();
+        }
+
+        public decimal GetUnallocatedProductInstancesSum(int productId)
+        {
+            var unallocatedProductItems = dbContext.Products
+                .Where(p => p.Id == productId)
+                .Select(p => p.Quantity - p.ProductsInZonePositions.Sum(z => z.Quantity))
+                .FirstOrDefault();
+
+            return unallocatedProductItems;
         }
 
         public async Task<decimal> GetUnallocatedProductInstancesSumAsync(int productId)
@@ -149,6 +160,24 @@ namespace WarehouseManagementSystem.Services
         {
             var zones = await dbContext.Zones.ToListAsync();
             return new ObservableCollection<Zone>(zones);
+        }
+
+        public async Task<ObservableCollection<Supplier>> GetSuppliersAsync()
+        {
+            var suppliers = await dbContext.Suppliers.ToListAsync();
+            return new ObservableCollection<Supplier>(suppliers);
+        }
+
+        public async Task<ObservableCollection<Customer>> GetCustomersAsync()
+        {
+            var suppliers = await dbContext.Customers.ToListAsync();
+            return new ObservableCollection<Customer>(suppliers);
+        }
+
+        public async Task<ObservableCollection<User>> GetUsersWithoutAdminAsync()
+        {
+            var users = await dbContext.Users.Where(u => u.Role != Enums.UserRolesEnum.ADMIN).ToListAsync();
+            return new ObservableCollection<User>(users);
         }
 
         public async Task<ObservableCollection<ZonePosition>> GetZonePozitionsAsync(int zoneId)
@@ -204,6 +233,72 @@ namespace WarehouseManagementSystem.Services
             int capacityDifference = zoneWithZonePositions.Capacity - zoneWithZonePositions.ZonePositions.Sum(zp => zp.Capacity);
 
             return zonePositionsFreeCapacity + capacityDifference;
+        }
+
+        public async Task<ObservableCollection<Receipt>?> GetReceiptsByFilterAsync(ReceiptsSelectorsFilterModel filterSelectors)
+        {
+            var query = dbContext.Receipts.AsQueryable();
+
+            if (filterSelectors.SectionDateFrom.HasValue)
+            {
+                query = query.Where(r => r.ReceiptDate >= filterSelectors.SectionDateFrom.Value);
+            }
+
+            if (filterSelectors.SectionDateTo.HasValue)
+            {
+                query = query.Where(r => r.ReceiptDate <= filterSelectors.SectionDateTo.Value);
+            }
+
+            if (!filterSelectors.SectionAllSuppliersSelected && filterSelectors.SelectedSupplier != null)
+            {
+                query = query.Where(r => r.SupplierId == filterSelectors.SelectedSupplier.Id);
+            }
+
+            if (!filterSelectors.SectionAllUsersSelected && filterSelectors.SelectedUser != null)
+            {
+                query = query.Where(r => r.UserId == filterSelectors.SelectedUser.Id);
+            }
+
+            var result = await query
+                .Include(r => r.Supplier)
+                .Include(r => r.User)
+                .Include(r => r.ReceiptItems)
+                    .ThenInclude(ri => ri.Product)
+                .ToListAsync();
+            return new ObservableCollection<Receipt>(result);
+        }
+
+        public async Task<ObservableCollection<Shipment>?> GetShipmentsByFilterAsync(ShipmentsSelectorsFilterModel filterSelectors)
+        {
+            var query = dbContext.Shipments.AsQueryable();
+
+            if (filterSelectors.SectionDateFrom.HasValue)
+            {
+                query = query.Where(r => r.ShipmentDate >= filterSelectors.SectionDateFrom.Value);
+            }
+
+            if (filterSelectors.SectionDateTo.HasValue)
+            {
+                query = query.Where(r => r.ShipmentDate <= filterSelectors.SectionDateTo.Value);
+            }
+
+            if (!filterSelectors.SectionAllCustomersSelected && filterSelectors.SelectedCustomer != null)
+            {
+                query = query.Where(r => r.CustomerId == filterSelectors.SelectedCustomer.Id);
+            }
+
+            if (!filterSelectors.SectionAllUsersSelected && filterSelectors.SelectedUser != null)
+            {
+                query = query.Where(r => r.UserId == filterSelectors.SelectedUser.Id);
+            }
+
+            var result = await query
+                .Include(r => r.Customer)
+                .Include(r => r.User)
+                .Include(r => r.ShipmentItems)
+                    .ThenInclude(ri => ri.Product)
+                .ToListAsync();
+            return new ObservableCollection<Shipment>(result);
         }
     }
 }
