@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:WarehouseManagementSystem.Windows"
         mc:Ignorable="d"
         Title="Warehouse Management System" 
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
-        MinHeight="400" MinWidth="400">
+        MinHeight="300" MinWidth="300">
     <Window.Icon>
         <BitmapImage UriSource="../Resources/Logo.ico"/>
     </Window.Icon>

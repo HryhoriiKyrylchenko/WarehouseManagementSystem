@@ -60,10 +60,16 @@
                     <DataGridTextColumn Header="Additional info" Binding="{Binding AdditionalInfo}" />
                 </DataGrid.Columns>
             </DataGrid>
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-                <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            </StackPanel>
+            <DockPanel Grid.Row="2" Margin="10,0,10,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                    <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                </StackPanel>
+                <Button Style="{StaticResource ButtonStyle}" Content="Save as report" Command="{Binding SaveReportCommand}" HorizontalAlignment="Right" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+            </DockPanel>
             <Border Grid.Row="3" BorderBrush="DarkGray" BorderThickness="1" Margin="15,15,15,0">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" >

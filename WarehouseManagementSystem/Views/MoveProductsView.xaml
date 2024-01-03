@@ -97,14 +97,23 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Manufacture date:" FontSize="22" Margin="10"/>
-                        <DatePicker x:Name="DatePickerManufactureDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                        <DatePicker SelectedDate="{Binding ProductManufactureDate, Mode=TwoWay}" FontSize="18" VerticalAlignment="Center" Margin="10"/>
                         <TextBlock Text="Expiry date:" FontSize="22" Margin="10"/>
-                        <DatePicker x:Name="DatePickerExpiryDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                        <DatePicker SelectedDate="{Binding ProductExpiryDate, Mode=TwoWay}" FontSize="18" VerticalAlignment="Center" Margin="10"/>
                     </StackPanel>
                     <Button Style="{StaticResource ButtonStyle}" Content="Move" Command="{Binding MoveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
                 </StackPanel>
             </Border>
         </Grid>
-        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" 
+                CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="Generate movements in report from:" FontSize="22" Margin="10" VerticalAlignment="Center"/>
+            <DatePicker SelectedDate="{Binding ReportDateFrom, Mode=TwoWay}" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <TextBlock Text="to:" FontSize="22" Margin="10" VerticalAlignment="Center"/>
+            <DatePicker SelectedDate="{Binding ReportDateTo, Mode=TwoWay}" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+            <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Save as report" Command="{Binding SaveReportCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

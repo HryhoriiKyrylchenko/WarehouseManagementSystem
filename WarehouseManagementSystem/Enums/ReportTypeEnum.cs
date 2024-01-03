@@ -8,9 +8,9 @@ namespace WarehouseManagementSystem.Enums
 {
     public enum ReportTypeEnum
     {
+        PRODUCTS,
+        MOVEMENTS,
         RECEIPTS,
-        SHIPMENTS,
-        SALES,
-        UNDEFINED
+        SHIPMENTS
     }
 }
