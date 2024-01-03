@@ -20,6 +20,8 @@ namespace WarehouseManagementSystem.Models.Entities
         [Required]
         public string Lastname { get; set; }
 
+        public string Fullname { get {  return $"{Firstname} {Lastname}"; } }
+
         public DateTime? DateOfBirth { get; set; }
 
         public int AddressId { get; set; }
@@ -40,6 +42,11 @@ namespace WarehouseManagementSystem.Models.Entities
             AddressId = addressId;
 
             Shipments = new List<Shipment>();
+        }
+
+        public override string ToString()
+        {
+            return Fullname;
         }
     }
 }

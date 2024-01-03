@@ -37,13 +37,13 @@
             <DockPanel Grid.Row="0">
                 <TextBlock DockPanel.Dock="Left" Text="PRODUCTS" FontSize="35" Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <StackPanel DockPanel.Dock="Right" Margin="20" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <RadioButton Content="Unallocated" GroupName="ProductsGroup" Margin="5" VerticalAlignment="Center" />
-                    <RadioButton Content="In stock" GroupName="ProductsGroup" IsChecked="True" Margin="5" VerticalAlignment="Center" />
-                    <RadioButton Content="Not in stoсk" GroupName="ProductsGroup" Margin="5" VerticalAlignment="Center" />
-                    <RadioButton Content="All products" GroupName="ProductsGroup" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="Unallocated" GroupName="ProductsGroup" IsChecked="{Binding ProductSelectors.SectionUnallocatedSelected}" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="In stock" GroupName="ProductsGroup" IsChecked="{Binding ProductSelectors.SectionInStockSelected}" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="Not in stoсk" GroupName="ProductsGroup" IsChecked="{Binding ProductSelectors.SectionNotInStockSelected}" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="All products" GroupName="ProductsGroup" IsChecked="{Binding ProductSelectors.SectionAllProductsSelected}" Margin="5" VerticalAlignment="Center" />
                 </StackPanel>
             </DockPanel>
-            <DataGrid x:Name="DateGridProducts" Grid.Row="1" Margin="15" ItemsSource="{Binding Products}" 
+            <DataGrid x:Name="DateGridProducts" Grid.Row="1" Margin="15" ItemsSource="{Binding FilteredProducts}" 
                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False"
                       SelectedItem="{Binding SelectedProduct, Mode=TwoWay}">
                 <DataGrid.Columns>
@@ -86,7 +86,7 @@
                         <TextBlock Text="Free capacity:" FontSize="22" Margin="10"/>
                         <TextBlock Text="{Binding SelectedZonePositionFreeCapacity}" FontSize="22" FontWeight="Bold" Margin="10"/>
                         <TextBlock Text="Enter quantity to allocate:" FontSize="22" Margin="10"/>
-                        <TextBox Text="{Binding InputQuantity, UpdateSourceTrigger=PropertyChanged}" FontSize="22" Width="60" Height="30" PreviewTextInput="TextBox_PreviewTextInput" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+                        <TextBox Text="{Binding InputQuantity, UpdateSourceTrigger=PropertyChanged}" MaxLength="4" FontSize="22" Width="60" Height="30" PreviewTextInput="TextBox_PreviewTextInput" PreviewKeyDown="TextBox_PreviewKeyDown"/>
                         <TextBlock Text="Capacity to be allocated:" FontSize="22" Margin="10"/>
                         <TextBlock Text="{Binding CapacityToBeAllocated}" FontSize="22" FontWeight="Bold" Margin="10"/>
                     </StackPanel>

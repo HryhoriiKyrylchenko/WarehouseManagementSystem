@@ -128,7 +128,7 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     TotalCapacity = db.GetTotalWarehouseCapacity(currentWarehouse).ToString();
                     FreeCapacity = db.GetFreeWarehouseCapacity(currentWarehouse).ToString();
-                    OccupancyPercentage = db.GetWarehouseOccupancyPercentage(currentWarehouse).ToString();
+                    OccupancyPercentage = db.GetWarehouseOccupancyPercentage(currentWarehouse).ToString("F2");
                     TotalZones = db.CountTotalZones(currentWarehouse).ToString();
                     UnusedZones = db.CountUnusedZones(currentWarehouse).ToString();
                     TotalProducts = db.CountTotalProductsInWarehouse(currentWarehouse).ToString();

@@ -21,10 +21,11 @@ namespace WarehouseManagementSystem.ViewModels
 
         private ObservableCollection<CategoryViewModel> categories;
 
-        public ObservableCollection<CategoryViewModel> Categories 
-        { 
-            get { return categories; } 
-            set {
+        public ObservableCollection<CategoryViewModel> Categories
+        {
+            get { return categories; }
+            set
+            {
                 if (categories != value)
                 {
                     categories = value;
@@ -49,6 +50,21 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private ProductsSelectorsFilterModel productSelectors;
+
+        public ProductsSelectorsFilterModel ProductSelectors
+        {
+            get { return productSelectors; }
+            set
+            {
+                if (productSelectors != value)
+                {
+                    productSelectors = value;
+                    OnPropertyChanged(nameof(ProductSelectors));
+                }
+            }
+        }
+
         private ObservableCollection<Product>? products;
 
         public ObservableCollection<Product>? Products
@@ -60,6 +76,23 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     products = value;
                     OnPropertyChanged(nameof(Products));
+
+                    ThreadPool.QueueUserWorkItem(UpdateFilteredProducts);
+                }
+            }
+        }
+
+        private ObservableCollection<Product>? filteredProducts;
+
+        public ObservableCollection<Product>? FilteredProducts
+        {
+            get { return filteredProducts; }
+            set
+            {
+                if (filteredProducts != value)
+                {
+                    filteredProducts = value;
+                    OnPropertyChanged(nameof(FilteredProducts));
                 }
             }
         }
@@ -163,7 +196,7 @@ namespace WarehouseManagementSystem.ViewModels
         public int SelectedZonePositionFreeCapacity
         {
             get { return selectedZonePositionFreeCapacity; }
-            set 
+            set
             {
                 if (selectedZonePositionFreeCapacity != value)
                 {
@@ -208,6 +241,7 @@ namespace WarehouseManagementSystem.ViewModels
         {
             this.mainViewModel = mainViewModel;
             categories = new ObservableCollection<CategoryViewModel>();
+            productSelectors = new ProductsSelectorsFilterModel(this);
 
             InitializeAsync();
         }
@@ -225,7 +259,7 @@ namespace WarehouseManagementSystem.ViewModels
                 using (var dbManager = new WarehouseDBManager(new WarehouseDbContext()))
                 {
                     var rootCategories = await dbManager.GetRootCategoriesAsync(mainViewModel.LoginService.CurrentWarehouse);
-                    if (rootCategories != null) 
+                    if (rootCategories != null)
                     {
                         foreach (var rootCategory in rootCategories)
                         {
@@ -235,13 +269,13 @@ namespace WarehouseManagementSystem.ViewModels
                     }
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
                 {
                     await logger.LogErrorAsync(ex);
                 }
-            }    
+            }
         }
 
         private async Task InitializeZonesFromDBAsync()
@@ -352,7 +386,7 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void UpdateInputQuantity(string value)
         {
-            if(value == string.Empty || int.TryParse(value, out int quantity) && quantity >= 0)
+            if (value == string.Empty || int.TryParse(value, out int quantity) && quantity >= 0)
             {
                 InputQuantity = value;
             }
@@ -360,13 +394,58 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void UpdateCapacityToBeAllocated(string? value)
         {
-            if(string.IsNullOrEmpty(value)) 
-            { 
-                CapacityToBeAllocated = 0; 
+            if (string.IsNullOrEmpty(value))
+            {
+                CapacityToBeAllocated = 0;
             }
             else
             {
                 CapacityToBeAllocated = Convert.ToInt32(inputQuantity) * SelectedProduct?.Capacity;
+            }
+        }
+
+        public async void UpdateFilteredProducts(object? state)
+        {
+            if (Products != null)
+            {
+                if (ProductSelectors.SectionUnallocatedSelected)
+                {
+                    FilteredProducts = new ObservableCollection<Product>();
+                    try
+                    {
+                        using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                        {
+                            foreach (var product in Products)
+                            {
+                                if (db.GetUnallocatedProductInstancesSum(product.Id) > 0)
+                                {
+                                    FilteredProducts.Add(product);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                        {
+                            await logger.LogErrorAsync(ex);
+                        }
+                    }                    
+                }
+                else if (ProductSelectors.SectionInStockSelected)
+                {
+                    var filProd = Products.Where(p => p.Quantity > 0).ToList();
+                    FilteredProducts = new ObservableCollection<Product>(filProd);
+                }
+                else if (ProductSelectors.SectionNotInStockSelected)
+                {
+                    var filProd = Products.Where(p => p.Quantity <= 0).ToList();
+                    FilteredProducts = new ObservableCollection<Product>(filProd);
+                }
+                else if (ProductSelectors.SectionAllProductsSelected)
+                {
+                    FilteredProducts = Products;
+                }
             }
         }
 
