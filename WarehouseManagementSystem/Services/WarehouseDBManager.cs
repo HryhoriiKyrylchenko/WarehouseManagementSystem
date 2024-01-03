@@ -170,8 +170,14 @@ namespace WarehouseManagementSystem.Services
 
         public async Task<ObservableCollection<Customer>> GetCustomersAsync()
         {
-            var suppliers = await dbContext.Customers.ToListAsync();
-            return new ObservableCollection<Customer>(suppliers);
+            var customers = await dbContext.Customers.ToListAsync();
+            return new ObservableCollection<Customer>(customers);
+        }
+
+        public async Task<ObservableCollection<Report>?> GetReportsAsync()
+        {
+            var reports = await dbContext.Reports.ToListAsync();
+            return new ObservableCollection<Report>(reports);
         }
 
         public async Task<ObservableCollection<User>> GetUsersWithoutAdminAsync()
@@ -299,6 +305,31 @@ namespace WarehouseManagementSystem.Services
                     .ThenInclude(ri => ri.Product)
                 .ToListAsync();
             return new ObservableCollection<Shipment>(result);
+        }
+
+        public async Task<ObservableCollection<Report>?> GetReportsByFilterAsync(ReportsSelectorsFilterModel filterSelectors)
+        {
+            var query = dbContext.Reports.AsQueryable();
+
+            if (filterSelectors.SectionByDateSelected && filterSelectors.SelectedDate.HasValue)
+            {
+                query = query.Where(r => r.ReportDate == filterSelectors.SelectedDate.Value);
+            }
+
+            if (filterSelectors.SectionByUserSelected && filterSelectors.SelectedUser != null)
+            {
+                query = query.Where(r => r.UserId == filterSelectors.SelectedUser.Id);
+            }
+
+            if (filterSelectors.SectionByTypeSelected && filterSelectors.SelectedType.HasValue)
+            {
+                query = query.Where(r => r.ReportType == filterSelectors.SelectedType);
+            }
+
+            var result = await query
+                .Include(r => r.User)
+                .ToListAsync();
+            return new ObservableCollection<Report>(result);
         }
     }
 }

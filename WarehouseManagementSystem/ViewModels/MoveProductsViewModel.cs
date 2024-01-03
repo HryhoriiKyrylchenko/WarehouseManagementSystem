@@ -300,6 +300,66 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private DateTime? productManufactureDate;
+
+        public DateTime? ProductManufactureDate
+        {
+            get { return productManufactureDate; }
+            set
+            {
+                if (productManufactureDate != value)
+                {
+                    productManufactureDate = value;
+                    OnPropertyChanged(nameof(ProductManufactureDate));
+                }
+            }
+        }
+
+        private DateTime? productExpiryDate;
+
+        public DateTime? ProductExpiryDate
+        {
+            get { return productExpiryDate; }
+            set
+            {
+                if (productExpiryDate != value)
+                {
+                    productExpiryDate = value;
+                    OnPropertyChanged(nameof(ProductExpiryDate));
+                }
+            }
+        }
+
+        private DateTime? reportDateFrom;
+
+        public DateTime? ReportDateFrom
+        {
+            get { return reportDateFrom; }
+            set
+            {
+                if (reportDateFrom != value)
+                {
+                    reportDateFrom = value;
+                    OnPropertyChanged(nameof(ReportDateFrom));
+                }
+            }
+        }
+
+        private DateTime? reportDateTo;
+
+        public DateTime? ReportDateTo
+        {
+            get { return reportDateTo; }
+            set
+            {
+                if (reportDateTo != value)
+                {
+                    reportDateTo = value;
+                    OnPropertyChanged(nameof(ReportDateTo));
+                }
+            }
+        }
+
         public MoveProductsViewModel(MainViewModel mainViewModel) 
         {
             this.mainViewModel = mainViewModel;
@@ -363,13 +423,6 @@ namespace WarehouseManagementSystem.ViewModels
                     await logger.LogErrorAsync(ex);
                 }
             }
-        }
-
-        public ICommand BackCommand => new RelayCommand(Back);
-
-        private void Back(object parameter)
-        {
-            mainViewModel.NavigateBack();
         }
 
         private async void UpdateProductInZonePozitionsByCategory()
@@ -543,6 +596,25 @@ namespace WarehouseManagementSystem.ViewModels
             {
                 CapacityToBeAllocated = Convert.ToInt32(inputQuantity) * SelectedProductInZonePosition?.Product?.Capacity;
             }
+        }
+
+        public ICommand BackCommand => new RelayCommand(Back);
+        public ICommand MoveCommand => new RelayCommand(MoveProduct);
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport); 
+
+        private void Back(object parameter)
+        {
+            mainViewModel.NavigateBack();
+        }
+
+        private void MoveProduct(object parameter)
+        {
+            ////////////////////////////////////
+        }
+
+        private void SaveReport(object parameter)
+        {
+            ////////////////////////////////////
         }
     }
 }

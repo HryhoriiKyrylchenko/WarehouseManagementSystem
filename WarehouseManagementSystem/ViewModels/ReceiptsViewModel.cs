@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using WarehouseManagementSystem.Commands;
+using WarehouseManagementSystem.Migrations;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
@@ -146,6 +147,9 @@ namespace WarehouseManagementSystem.ViewModels
 
         public ICommand BackCommand => new RelayCommand(Back);
         public ICommand ShowCommand => new RelayCommand(Show);
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport);
+        public ICommand AddCommand => new RelayCommand(AddReceipt);
+        public ICommand EditCommand => new RelayCommand(EditReceipt);
 
         private async void Show(object obj)
         {
@@ -169,6 +173,21 @@ namespace WarehouseManagementSystem.ViewModels
         private void Back(object parameter)
         {
             mainViewModel.NavigateBack();
+        }
+
+        private void SaveReport(object parameter)
+        {
+            /////////////////////////////////////
+        }
+
+        private void AddReceipt(object parameter)
+        {
+            /////////////////////////////////////
+        }
+
+        private void EditReceipt(object parameter)
+        {
+            /////////////////////////////////////
         }
     }
 }

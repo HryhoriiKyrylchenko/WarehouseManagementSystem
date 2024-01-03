@@ -450,10 +450,28 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         public ICommand BackCommand => new RelayCommand(Back);
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport);
+        public ICommand AddCommand => new RelayCommand(AddProduct);
+        public ICommand EditCommand => new RelayCommand(EditProduct);
 
         private void Back(object parameter)
         {
             mainViewModel.NavigateBack();
+        }
+
+        private void SaveReport(object parameter)
+        {
+            /////////////////////////////////////
+        }
+
+        private void AddProduct(object parameter)
+        {
+            /////////////////////////////////////
+        }
+
+        private void EditProduct(object parameter)
+        {
+            /////////////////////////////////////
         }
     }
 }

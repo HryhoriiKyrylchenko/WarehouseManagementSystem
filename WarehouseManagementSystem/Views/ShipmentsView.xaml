@@ -90,11 +90,15 @@
         </DataGrid>
         <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" 
                 CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" 
-                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-            <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" 
-                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        </StackPanel>
+        <DockPanel Grid.Row="2" Grid.Column="1" Margin="10,0,10,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+            </StackPanel>
+            <Button Style="{StaticResource ButtonStyle}" Content="Save as report" Command="{Binding SaveReportCommand}" HorizontalAlignment="Right" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+        </DockPanel>
     </Grid>
 </UserControl>

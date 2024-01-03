@@ -145,10 +145,12 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         public ICommand BackCommand => new RelayCommand(Back);
-
         public ICommand ShowCommand => new RelayCommand(Show);
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport);
+        public ICommand AddCommand => new RelayCommand(AddShipment);
+        public ICommand EditCommand => new RelayCommand(EditShipment);
 
-        private async void Show(object obj)
+        private async void Show(object parameter)
         {
             try
             {
@@ -170,6 +172,21 @@ namespace WarehouseManagementSystem.ViewModels
         private void Back(object parameter)
         {
             mainViewModel.NavigateBack();
+        }
+
+        private void SaveReport(object parameter)
+        {
+            /////////////////////////////////////
+        }
+
+        private void AddShipment(object parameter)
+        {
+            /////////////////////////////////////
+        }
+
+        private void EditShipment(object parameter)
+        {
+            /////////////////////////////////////
         }
     }
 }
