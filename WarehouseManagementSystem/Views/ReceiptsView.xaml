@@ -1,0 +1,104 @@
+﻿<UserControl x:Class="WarehouseManagementSystem.Views.ReceiptsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200">
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".6*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".3*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <TextBlock Text="Selected receipt" FontSize="24" FontWeight="Bold" Margin="15,50,15,15" HorizontalAlignment="Center"/>
+            <TextBlock Text="Batch number:" FontSize="20" Margin="15,5" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding SelectedReceipt.BatchNumber}" FontSize="20" FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
+            <TextBlock Text="Data:" FontSize="20" Margin="15,5" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding SelectedReceipt.ReceiptDate}" FontSize="20" FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1">
+            <TextBlock  Text="RECEIPTS" FontSize="35" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Border BorderBrush="DarkGray" BorderThickness="1" Margin="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width=".7*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width=".7*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4" Text="Filter:" FontSize="22" FontWeight="Bold" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="0" Grid.Row="1" Text="From date:" FontSize="22" Margin="10" HorizontalAlignment="Center"/>
+                    <DatePicker Grid.Column="1" Grid.Row="1" SelectedDate="{Binding FilterSelectors.SectionDateFrom, Mode=TwoWay}" 
+                                FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                    <TextBlock Grid.Column="2" Grid.Row="1" Text="To date:" FontSize="22" Margin="10" HorizontalAlignment="Center"/>
+                    <DatePicker Grid.Column="3" Grid.Row="1" SelectedDate="{Binding FilterSelectors.SectionDateTo, Mode=TwoWay}" 
+                                FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                    <StackPanel Grid.Column="0" Grid.Row="2" VerticalAlignment="Center">
+                        <RadioButton Content="All suppliers" FontSize="14" GroupName="SuppliersGroup" 
+                                 IsChecked="{Binding FilterSelectors.SectionAllSuppliersSelected}" Margin="20,0,0,0" HorizontalAlignment="Left"/>
+                        <RadioButton Content="By supplier" FontSize="14" GroupName="SuppliersGroup" 
+                                 IsChecked="{Binding FilterSelectors.SectionBySupplierSelected}" Margin="20,0,0,0" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Center">
+                        <RadioButton Content="All users" FontSize="14" GroupName="UsersGroup" 
+                                 IsChecked="{Binding FilterSelectors.SectionAllUsersSelected}" Margin="20,0,0,0" HorizontalAlignment="Left"/>
+                        <RadioButton Content="By user" FontSize="14" GroupName="UsersGroup" 
+                                 IsChecked="{Binding FilterSelectors.SectionByUserSelected}" Margin="20,0,0,0" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                    <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding Suppliers}" SelectedItem="{Binding FilterSelectors.SelectedSupplier}" 
+                              FontSize="18" Height="32" Margin="10" VerticalAlignment="Center" IsEnabled="{Binding FilterSelectors.SectionBySupplierSelected}"/>
+                    <ComboBox Grid.Column="3" Grid.Row="2" ItemsSource="{Binding Users}" SelectedItem="{Binding FilterSelectors.SelectedUser}" 
+                              FontSize="18" Height="32" Margin="10" VerticalAlignment="Center" IsEnabled="{Binding FilterSelectors.SectionByUserSelected}"/>
+                    <Button Grid.Column="4" Grid.Row="0" Grid.RowSpan="4" Margin="25" Style="{StaticResource ButtonStyle}" Content="Show" 
+                            Command="{Binding ShowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+        <DataGrid Grid.Row="1" Grid.Column="0" Margin="15" ItemsSource="{Binding SelectedReceipt.ReceiptItems, Mode=TwoWay}" 
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Product name" Width="150" Binding="{Binding Product.Name}" />
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Grid.Row="1" Grid.Column="1" x:Name="DataGridReceipts" Margin="15" ItemsSource="{Binding Receipts}" 
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False"
+                  SelectedItem="{Binding SelectedReceipt, Mode=TwoWay}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Batch number" Width="150" Binding="{Binding BatchNumber}" />
+                <DataGridTextColumn Header="Receipt date" Width="100" Binding="{Binding ReceiptDate}" />
+                <DataGridTextColumn Header="Supplier" Width="150" Binding="{Binding Supplier.Name}" />
+                <DataGridTextColumn Header="User" Width="100" Binding="{Binding User.Username}" />
+                <DataGridTextColumn Header="Products count" Width="100" Binding="{Binding ReceiptItems.Count}" />
+                <DataGridTextColumn Header="Shipment number" Width="120" Binding="{Binding ShipmentNumber}" />
+                <DataGridTextColumn Header="Additional info" Width="120" Binding="{Binding AdditionalInfo}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" 
+                CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+        <DockPanel Grid.Row="2" Grid.Column="1" Margin="10,0,10,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+            </StackPanel>
+            <Button Style="{StaticResource ButtonStyle}" Content="Save as report" Command="{Binding SaveReportCommand}" HorizontalAlignment="Right" 
+        CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+        </DockPanel>
+    </Grid>
+</UserControl>

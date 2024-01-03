@@ -33,5 +33,10 @@ namespace WarehouseManagementSystem.Models.Entities
 
             Receipts = new List<Receipt>();
         }
+
+        public override string ToString()
+        {
+            return Name.ToString();
+        }
     }
 }

@@ -12,8 +12,8 @@ using WarehouseManagementSystem.Models;
 namespace WarehouseManagementSystem.Migrations
 {
     [DbContext(typeof(WarehouseDbContext))]
-    [Migration("20231217135249_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231231111328_EditProduct")]
+    partial class EditProduct
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,31 +61,6 @@ namespace WarehouseManagementSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Addresses");
-                });
-
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AdditionalInfo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PreviousCategoryId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PreviousCategoryId");
-
-                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Customer", b =>
@@ -217,9 +192,6 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId2")
-                        .HasColumnType("int");
-
                     b.Property<int>("SourceZonePositionId")
                         .HasColumnType("int");
 
@@ -248,9 +220,6 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -267,6 +236,9 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ProductCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -277,19 +249,41 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("SubcategoryId")
-                        .HasColumnType("int");
-
                     b.Property<int>("UnitOfMeasure")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("ManufacturerId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalInfo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PreviousCategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PreviousCategoryId");
+
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ProductInZonePosition", b =>
@@ -307,9 +301,6 @@ namespace WarehouseManagementSystem.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId2")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -340,9 +331,6 @@ namespace WarehouseManagementSystem.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId2")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -599,9 +587,6 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -609,13 +594,41 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<int>("WarehouseId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<int>("ZoneCategoryId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("CategoryId");
+                    b.HasKey("Id");
 
                     b.HasIndex("WarehouseId");
 
+                    b.HasIndex("ZoneCategoryId");
+
                     b.ToTable("Zones");
+                });
+
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ZoneCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalInfo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PreviousCategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PreviousCategoryId");
+
+                    b.ToTable("ZoneCategories");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ZonePosition", b =>
@@ -644,15 +657,6 @@ namespace WarehouseManagementSystem.Migrations
                     b.HasIndex("ZoneId");
 
                     b.ToTable("ZonePositions");
-                });
-
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
-                {
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "PreviousCategory")
-                        .WithMany()
-                        .HasForeignKey("PreviousCategoryId");
-
-                    b.Navigation("PreviousCategory");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Customer", b =>
@@ -716,18 +720,27 @@ namespace WarehouseManagementSystem.Migrations
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Product", b =>
                 {
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerId");
+
                     b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.Manufacturer", "Manufacturer")
-                        .WithMany()
-                        .HasForeignKey("ManufacturerId");
+                    b.Navigation("Manufacturer");
 
                     b.Navigation("Category");
+                });
 
-                    b.Navigation("Manufacturer");
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
+                {
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "PreviousCategory")
+                        .WithMany()
+                        .HasForeignKey("PreviousCategoryId");
+
+                    b.Navigation("PreviousCategory");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ProductInZonePosition", b =>
@@ -871,21 +884,30 @@ namespace WarehouseManagementSystem.Migrations
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Zone", b =>
                 {
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("WarehouseManagementSystem.Models.Entities.Warehouse", "Warehouse")
                         .WithMany("Zones")
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.ZoneCategory", "ZoneCategory")
+                        .WithMany("Zones")
+                        .HasForeignKey("ZoneCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Warehouse");
+
+                    b.Navigation("ZoneCategory");
+                });
+
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ZoneCategory", b =>
+                {
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.ZoneCategory", "PreviousCategory")
+                        .WithMany()
+                        .HasForeignKey("PreviousCategoryId");
+
+                    b.Navigation("PreviousCategory");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ZonePosition", b =>
@@ -910,11 +932,6 @@ namespace WarehouseManagementSystem.Migrations
                     b.Navigation("Warehouses");
                 });
 
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Customer", b =>
                 {
                     b.Navigation("Shipments");
@@ -933,6 +950,11 @@ namespace WarehouseManagementSystem.Migrations
                     b.Navigation("ReceiptItems");
 
                     b.Navigation("ShipmentItems");
+                });
+
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Receipt", b =>
@@ -967,6 +989,11 @@ namespace WarehouseManagementSystem.Migrations
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Zone", b =>
                 {
                     b.Navigation("ZonePositions");
+                });
+
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ZoneCategory", b =>
+                {
+                    b.Navigation("Zones");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ZonePosition", b =>

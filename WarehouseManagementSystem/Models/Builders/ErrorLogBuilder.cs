@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.errorLog = Initialize(new ErrorLog(errorMessage, stackTrace, timestamp));
+                this.errorLog = InitializeAsync(new ErrorLog(errorMessage, stackTrace, timestamp)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.errorLog = Initialize(errorLog);
+                this.errorLog = InitializeAsync(errorLog).GetAwaiter().GetResult();
             }
             catch
             {
@@ -55,6 +55,30 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
+        private async Task<ErrorLog> InitializeAsync(ErrorLog errorLog)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddErrorLogAsync(errorLog);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return errorLog;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

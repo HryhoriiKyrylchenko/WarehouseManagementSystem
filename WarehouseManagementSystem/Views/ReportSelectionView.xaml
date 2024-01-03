@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="WarehouseManagementSystem.Views.ReportSelectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
+             xmlns:enums="clr-namespace:WarehouseManagementSystem.Enums.Support_classes"
+             mc:Ignorable="d" 
+             d:DesignHeight="330" d:DesignWidth="380">
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Select type of report to add" FontSize="18" TextWrapping="Wrap" VerticalAlignment="Center" 
+                   HorizontalAlignment="Center"/>
+        <ComboBox Grid.Row="1" ItemsSource="{Binding Source={x:Static enums:ReportTypeEnumValues.Values}}" FontSize="18" Width="250" SelectedItem="{Binding SelectedReportType}" 
+                  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Style="{StaticResource ButtonStyle}" Content="Select" Command="{Binding SelectCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Height="50"/>
+            <Button Style="{StaticResource ButtonStyle}" Content="Cancel" Command="{Binding CancelCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Height="50"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

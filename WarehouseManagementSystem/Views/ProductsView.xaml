@@ -4,12 +4,110 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1200">
+             d:DesignHeight="800" d:DesignWidth="1200"
+             xmlns:vmBehaviors="clr-namespace:WarehouseManagementSystem.ViewModels.Behaviors">
     <Grid Background="LightGray">
-        <StackPanel>
-            <TextBlock Text="Products"/>
-            <Button Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".3*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TreeView Grid.Row="0" Grid.Column="0" x:Name="TreeViewProducts" Margin="15" ItemsSource="{Binding Categories}">
+            <i:Interaction.Behaviors>
+                <vmBehaviors:TreeViewSelectedItemBehavior SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+            </i:Interaction.Behaviors>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Category.CategoryName}"/>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".3*"/>
+                <RowDefinition Height="1.2*"/>
+                <RowDefinition Height=".3*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0">
+                <TextBlock DockPanel.Dock="Left" Text="PRODUCTS" FontSize="35" Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <StackPanel DockPanel.Dock="Right" Margin="20" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <RadioButton Content="Unallocated" GroupName="ProductsGroup" IsChecked="{Binding ProductSelectors.SectionUnallocatedSelected}" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="In stock" GroupName="ProductsGroup" IsChecked="{Binding ProductSelectors.SectionInStockSelected}" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="Not in stoсk" GroupName="ProductsGroup" IsChecked="{Binding ProductSelectors.SectionNotInStockSelected}" Margin="5" VerticalAlignment="Center" />
+                    <RadioButton Content="All products" GroupName="ProductsGroup" IsChecked="{Binding ProductSelectors.SectionAllProductsSelected}" Margin="5" VerticalAlignment="Center" />
+                </StackPanel>
+            </DockPanel>
+            <DataGrid x:Name="DateGridProducts" Grid.Row="1" Margin="15" ItemsSource="{Binding FilteredProducts}" 
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False"
+                      SelectedItem="{Binding SelectedProduct, Mode=TwoWay}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Product code" Binding="{Binding ProductCode}" />
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+                    <DataGridTextColumn Header="Unit of measure" Binding="{Binding UnitOfMeasure}" />
+                    <DataGridTextColumn Header="Capacity" Binding="{Binding Capacity}" />
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
+                    <DataGridTextColumn Header="Manufacturer Id" Binding="{Binding ManufacturerId}" />
+                    <DataGridTextColumn Header="Price" Binding="{Binding Price}" />
+                    <DataGridTextColumn Header="DiscountPercentage" Binding="{Binding DiscountPercentage}" />
+                    <DataGridTextColumn Header="Product details" Binding="{Binding ProductDetails}" />
+                    <DataGridTextColumn Header="Additional info" Binding="{Binding AdditionalInfo}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <DockPanel Grid.Row="2" Margin="10,0,10,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Style="{StaticResource ButtonStyle}" Content="Add" Command="{Binding AddCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                    <Button Style="{StaticResource ButtonStyle}" Content="Edit" Command="{Binding EditCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                </StackPanel>
+                <Button Style="{StaticResource ButtonStyle}" Content="Save as report" Command="{Binding SaveReportCommand}" HorizontalAlignment="Right" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+            </DockPanel>
+            <Border Grid.Row="3" BorderBrush="DarkGray" BorderThickness="1" Margin="15,15,15,0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Selected product:" FontSize="22" Margin="10,0"/>
+                        <TextBlock Text="{Binding SelectedProduct.Name}" FontSize="22" FontWeight="Bold" Margin="10,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Unallocated balance:" FontSize="22" Margin="10"/>
+                        <TextBlock Text="{Binding UnallocatedProductInstances.UnallocatedBalance}" FontSize="22" FontWeight="Bold" Margin="10"/>
+                        <TextBlock Text="Unallocated capacity:" FontSize="22" Margin="10"/>
+                        <TextBlock Text="{Binding UnallocatedProductInstances.UnallocatedCapacity}" FontSize="22" FontWeight="Bold" Margin="10"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Zone:" FontSize="22" Margin="10"/>
+                        <ComboBox ItemsSource="{Binding Zones}" SelectedItem="{Binding SelectedZone}" FontSize="22" Width="250" Height="32"/>
+                        <TextBlock Text="Position in zone:" FontSize="22" Margin="10"/>
+                        <ComboBox ItemsSource="{Binding ZonePositions}" SelectedItem="{Binding SelectedZonePosition}" FontSize="22" Width="250" Height="32"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Free capacity:" FontSize="22" Margin="10"/>
+                        <TextBlock Text="{Binding SelectedZonePositionFreeCapacity}" FontSize="22" FontWeight="Bold" Margin="10"/>
+                        <TextBlock Text="Enter quantity to allocate:" FontSize="22" Margin="10"/>
+                        <TextBox Text="{Binding InputQuantity, UpdateSourceTrigger=PropertyChanged}" MaxLength="4" FontSize="22" Width="60" Height="30" PreviewTextInput="TextBox_PreviewTextInput" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+                        <TextBlock Text="Capacity to be allocated:" FontSize="22" Margin="10"/>
+                        <TextBlock Text="{Binding CapacityToBeAllocated}" FontSize="22" FontWeight="Bold" Margin="10"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Manufacture date:" FontSize="22" Margin="10"/>
+                        <DatePicker x:Name="DatePickerManufactureDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                        <TextBlock Text="Expiry date:" FontSize="22" Margin="10"/>
+                        <DatePicker x:Name="DatePickerExpiryDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+        <Border Grid.Row="1" Grid.Column="1" BorderBrush="DarkGray" BorderThickness="1" Margin="15,0,15,10">
+            <Button Style="{StaticResource ButtonStyle}" Content="Alocate" Command="{Binding AllocateCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" HorizontalAlignment="Center"/>
+        </Border>
     </Grid>
 </UserControl>

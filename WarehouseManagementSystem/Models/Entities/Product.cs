@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WarehouseManagementSystem.Models.Entities.Enums;
 using WarehouseManagementSystem.Models.Entities.Support_classes;
 using Newtonsoft.Json;
 using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.Exceptions;
+using WarehouseManagementSystem.Enums;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
@@ -33,6 +33,9 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public int Capacity { get; set; }
 
+        public int? ManufacturerId { get; set; }
+
+        [ForeignKey("ManufacturerId")]
         public Manufacturer? Manufacturer { get; set; } 
 
         [Required]
@@ -42,8 +45,13 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public int? CategoryId { get; set; }
 
-        [ForeignKey("SubcategoryId")]
-        public virtual Category? Category { get; set; }
+        [ForeignKey("CategoryId")]
+        public virtual ProductCategory? Category { get; set; }
+
+        public int WarehouseId { get; set; }
+
+        [ForeignKey("WarehouseId")]
+        public virtual Warehouse? Warehouse { get; set; }
 
         public string? ProductDetails { get; set; }
 
@@ -61,7 +69,7 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Label> Labels { get; set; }
 
-        public Product (string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price)
+        public Product (string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price, int warehouseId)
         {
             ProductCode = productCode;
             Name = name;
@@ -69,6 +77,7 @@ namespace WarehouseManagementSystem.Models.Entities
             Quantity = quantity;
             Capacity = capacity;
             Price = price;
+            WarehouseId = warehouseId;
 
             MovementHistories = new List<MovementHistory>();
             ShipmentItems = new List<ShipmentItem>();

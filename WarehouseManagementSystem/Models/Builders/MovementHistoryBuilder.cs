@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.movementHistory = Initialize(new MovementHistory(movementDate, productId, sourceZonePositionId, destinationZonePositionId));
+                this.movementHistory = InitializeAsync(new MovementHistory(movementDate, productId, sourceZonePositionId, destinationZonePositionId)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.movementHistory = Initialize(movementHistory);
+                this.movementHistory = InitializeAsync(movementHistory).GetAwaiter().GetResult();
             }
             catch
             {
@@ -61,6 +61,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<MovementHistory> InitializeAsync(MovementHistory movementHistory)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddMovementHistoryAsync(movementHistory);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return movementHistory;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public MovementHistoryBuilder WithAdditionalInfo(string additionalInfo)
         {
             movementHistory.AdditionalInfo = additionalInfo;
@@ -76,6 +100,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<MovementHistoryBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            movementHistory.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    movementHistory = await entityManager.UpdateMovementHistoryAsync(movementHistory);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

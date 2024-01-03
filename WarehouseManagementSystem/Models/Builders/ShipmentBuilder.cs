@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.shipment = Initialize(new Shipment(shipmentDate, customerId, userId, batchNumber));
+                this.shipment = InitializeAsync(new Shipment(shipmentDate, customerId, userId, batchNumber)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -30,7 +30,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.shipment = Initialize(shipment);
+                this.shipment = InitializeAsync(shipment).GetAwaiter().GetResult();
             }
             catch
             {
@@ -62,6 +62,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<Shipment> InitializeAsync(Shipment shipment)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddShipmentAsync(shipment);
+                    return shipment;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return shipment;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public ShipmentBuilder WithShipmentNumber(string shipmentNumber)
         {
             shipment.ShipmentNumber = shipmentNumber;
@@ -85,6 +109,29 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
+        public async Task<ShipmentBuilder> WithShipmentNumberAsync(string shipmentNumber)
+        {
+            shipment.ShipmentNumber = shipmentNumber;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    shipment = await entityManager.UpdateShipmentAsync(shipment);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
         public ShipmentBuilder WithAdditionalInfo(string additionalInfo)
         {
             shipment.AdditionalInfo = additionalInfo;
@@ -100,6 +147,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ShipmentBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            shipment.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    shipment = await entityManager.UpdateShipmentAsync(shipment);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

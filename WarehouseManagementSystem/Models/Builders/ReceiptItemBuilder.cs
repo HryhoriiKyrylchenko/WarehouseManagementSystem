@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.receiptItem = Initialize(new ReceiptItem(receiptId, productId, quantity));
+                this.receiptItem = InitializeAsync(new ReceiptItem(receiptId, productId, quantity)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.receiptItem = Initialize(receiptItem);
+                this.receiptItem = InitializeAsync(receiptItem).GetAwaiter().GetResult();
             }
             catch
             {
@@ -55,6 +55,30 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
+        private async Task<ReceiptItem> InitializeAsync(ReceiptItem receiptItem)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddReceiptItemAsync(receiptItem);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return receiptItem;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

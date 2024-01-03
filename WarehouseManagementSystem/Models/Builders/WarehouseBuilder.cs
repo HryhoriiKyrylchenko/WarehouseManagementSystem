@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.warehouse = Initialize(new Warehouse(name, addressId));
+                this.warehouse = InitializeAsync(new Warehouse(name, addressId)).GetAwaiter().GetResult();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.warehouse = Initialize(warehouse);
+                this.warehouse = InitializeAsync(warehouse).GetAwaiter().GetResult();
             }
             catch
             {
@@ -61,6 +61,30 @@ namespace WarehouseManagementSystem.Models.Builders
             }
         }
 
+        private async Task<Warehouse> InitializeAsync(Warehouse warehouse)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    var initializer = await entityManager.AddWarehouseAsync(warehouse);
+                    return initializer;
+                }
+                catch (DuplicateObjectException)
+                {
+                    return warehouse;
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+        }
+
         public WarehouseBuilder WithAdditionalInfo(string additionalInfo)
         {
             warehouse.AdditionalInfo = additionalInfo;
@@ -76,6 +100,29 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<WarehouseBuilder> WithAdditionalInfoAsync(string additionalInfo)
+        {
+            warehouse.AdditionalInfo = additionalInfo;
+
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    warehouse = await entityManager.UpdateWarehouseAsync(warehouse);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
                     }
                     throw;
                 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WarehouseManagementSystem.Models.Entities.Enums;
+using WarehouseManagementSystem.Enums;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
@@ -39,6 +39,11 @@ namespace WarehouseManagementSystem.Models.Entities
             Shipments = new List<Shipment>();
             Receipts = new List<Receipt>();
             Reports = new List<Report>();
+        }
+
+        public override string ToString()
+        {
+            return Username.ToString();
         }
     }
 }

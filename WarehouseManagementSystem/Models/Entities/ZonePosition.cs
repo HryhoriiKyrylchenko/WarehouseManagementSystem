@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
@@ -18,8 +19,6 @@ namespace WarehouseManagementSystem.Models.Entities
         public string Name { get; set; }
 
         public int Capacity { get; set; }
-
-        public int FreeSpace => Capacity - ProductsInZonePosition.Sum(p => p.Quantity * ((p.Product == null) ? 0 : p.Product.Capacity));
 
         public int ZoneId { get; set; }
 
@@ -45,6 +44,11 @@ namespace WarehouseManagementSystem.Models.Entities
             ProductsInZonePosition = new List<ProductInZonePosition>();
             SourceMovementHistories = new List<MovementHistory>();
             DestinationMovementHistories = new List<MovementHistory>();
+        }
+
+        public override string ToString()
+        {
+            return Name.ToString();
         }
     }
 }
