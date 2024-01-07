@@ -516,7 +516,7 @@ namespace WarehouseManagementSystem.ViewModels
                     using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
                     {
                         tempModel.UnallocatedBalance = await db.GetUnallocatedProductInstancesSumAsync(product.Id);
-                        tempModel.UnallocatedCapacity = tempModel.UnallocatedBalance * product.Capacity;
+                        tempModel.UnallocatedCapacity = tempModel.UnallocatedBalance * (product.Capacity ?? 0);
                     }
                 }
                 catch (Exception ex)

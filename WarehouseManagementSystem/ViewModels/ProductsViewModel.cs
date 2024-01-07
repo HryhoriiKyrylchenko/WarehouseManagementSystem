@@ -11,6 +11,7 @@ using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.ViewModels.Support_data;
+using WarehouseManagementSystem.Windows;
 using Zone = WarehouseManagementSystem.Models.Entities.Zone;
 
 namespace WarehouseManagementSystem.ViewModels
@@ -18,6 +19,11 @@ namespace WarehouseManagementSystem.ViewModels
     public class ProductsViewModel : ViewModelBase
     {
         private readonly MainViewModel mainViewModel;
+
+        public MainViewModel MainViewModel 
+        { 
+            get { return mainViewModel; }
+        }
 
         private ObservableCollection<CategoryViewModel> categories;
 
@@ -65,6 +71,21 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private ProductsCategoriesSelectorsFilterModel categoriesSelector;
+
+        public ProductsCategoriesSelectorsFilterModel CategoriesSelector
+        {
+            get { return categoriesSelector; }
+            set
+            {
+                if (categoriesSelector != value)
+                {
+                    categoriesSelector = value;
+                    OnPropertyChanged(nameof(CategoriesSelector));
+                }
+            }
+        }
+
         private ObservableCollection<Product>? products;
 
         public ObservableCollection<Product>? Products
@@ -76,8 +97,7 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     products = value;
                     OnPropertyChanged(nameof(Products));
-
-                    ThreadPool.QueueUserWorkItem(UpdateFilteredProducts);
+                    UpdateFilteredProducts();
                 }
             }
         }
@@ -242,11 +262,13 @@ namespace WarehouseManagementSystem.ViewModels
             this.mainViewModel = mainViewModel;
             categories = new ObservableCollection<CategoryViewModel>();
             productSelectors = new ProductsSelectorsFilterModel(this);
+            categoriesSelector = new ProductsCategoriesSelectorsFilterModel(this);
+            CategoriesSelector.CheckboxAllCategoriesChecked = false;
 
             InitializeAsync();
         }
 
-        private async void InitializeAsync()
+        public async void InitializeAsync()
         {
             await InitializeCategoriesFromDBAsync();
             await InitializeZonesFromDBAsync();
@@ -300,9 +322,14 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private void UpdateProducts()
+        internal void UpdateProducts()
         {
-            if (SelectedCategory != null)
+            if (CategoriesSelector.CheckboxAllCategoriesChecked)
+            {
+                var allProducts = GetAllProducts(Categories);
+                Products = new ObservableCollection<Product>(allProducts);
+            }
+            else if (CategoriesSelector.CheckboxAllCategoriesUnchecked && SelectedCategory != null)
             {
                 Products = SelectedCategory.Products;
             }
@@ -310,6 +337,14 @@ namespace WarehouseManagementSystem.ViewModels
             {
                 Products = new ObservableCollection<Product>();
             }
+        }
+
+        public IEnumerable<Product> GetAllProducts(IEnumerable<CategoryViewModel> categories)
+        {
+            var products = categories.SelectMany(category => category.Products);
+            var childProducts = categories.SelectMany(category => GetAllProducts(category.Children));
+
+            return products.Concat(childProducts);
         }
 
         private async void UpdateUnallocatedDataAsync(Product? product)
@@ -322,7 +357,7 @@ namespace WarehouseManagementSystem.ViewModels
                     using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
                     {
                         tempModel.UnallocatedBalance = await db.GetUnallocatedProductInstancesSumAsync(product.Id);
-                        tempModel.UnallocatedCapacity = tempModel.UnallocatedBalance * product.Capacity;
+                        tempModel.UnallocatedCapacity = tempModel.UnallocatedBalance * (product.Capacity ?? 0);
                     }
                 }
                 catch (Exception ex)
@@ -404,7 +439,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public async void UpdateFilteredProducts(object? state)
+        public void UpdateFilteredProducts()
         {
             if (Products != null)
             {
@@ -428,7 +463,7 @@ namespace WarehouseManagementSystem.ViewModels
                     {
                         using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
                         {
-                            await logger.LogErrorAsync(ex);
+                            logger.LogError(ex);
                         }
                     }                    
                 }
@@ -466,12 +501,18 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void AddProduct(object parameter)
         {
-            /////////////////////////////////////
+            SupportWindow supportWindow = new SupportWindow(new AddEditProductViewModel(this, Categories));
+            supportWindow.ShowDialog();
         }
 
         private void EditProduct(object parameter)
         {
-            /////////////////////////////////////
+            if (SelectedProduct != null)
+            {
+                SupportWindow supportWindow = new SupportWindow(new AddEditProductViewModel(this, SelectedProduct, Categories));
+                supportWindow.ShowDialog();
+                InitializeAsync();
+            }
         }
     }
 }

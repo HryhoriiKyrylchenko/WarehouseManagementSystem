@@ -133,6 +133,13 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void RefreshSummary()
         {
+            summaryViewModel.TotalCapacity = string.Empty;
+            summaryViewModel.FreeCapacity = string.Empty;
+            summaryViewModel.OccupancyPercentage = string.Empty;
+            summaryViewModel.TotalZones = string.Empty;
+            summaryViewModel.UnusedZones = string.Empty;
+            summaryViewModel.TotalProducts = string.Empty;
+            summaryViewModel.UnallocatedProducts = string.Empty;
             ThreadPool.QueueUserWorkItem(InitializeAsync);
         }
     }

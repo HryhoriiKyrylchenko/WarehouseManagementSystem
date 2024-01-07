@@ -17,16 +17,24 @@
             <ColumnDefinition Width=".3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TreeView Grid.Row="0" Grid.Column="0" x:Name="TreeViewProducts" Margin="15" ItemsSource="{Binding Categories}">
-            <i:Interaction.Behaviors>
-                <vmBehaviors:TreeViewSelectedItemBehavior SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
-            </i:Interaction.Behaviors>
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding Category.CategoryName}"/>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".075*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Content="All categories" FontSize="22" Margin="15,15,15,0" VerticalAlignment="Center"
+                      IsChecked="{Binding CategoriesSelector.CheckboxAllCategoriesChecked}"/>
+            <TreeView Grid.Row="1" Margin="15" ItemsSource="{Binding Categories}" IsEnabled="{Binding CategoriesSelector.CheckboxAllCategoriesUnchecked}">
+                <i:Interaction.Behaviors>
+                    <vmBehaviors:TreeViewSelectedItemBehavior SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Category.CategoryName}"/>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </Grid>
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height=".3*"/>

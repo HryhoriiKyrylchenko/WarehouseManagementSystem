@@ -4,18 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:vmBehaviors="clr-namespace:WarehouseManagementSystem.ViewModels.Behaviors"
+             xmlns:enums="clr-namespace:WarehouseManagementSystem.Enums.Support_classes"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1000">
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2.2*"/>
             <RowDefinition Height="3.5*"/>
             <RowDefinition Height="2.8*"/>
             <RowDefinition Height="1.2*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Current product:" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Text="Current product:" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"/>
         <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="1" Margin="1">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -28,14 +32,23 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Name:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="Product code:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxName" FontSize="22" Margin="10" Width="300" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="1" Grid.Row="1" x:Name="TextBoxProductCode" FontSize="22" Margin="10" Width="300" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <Button Grid.Column="2" Grid.Row="1" x:Name="ButtonGenerateProductCode" Content="Generate code" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBlock Grid.Column="2" Grid.Row="0" Text="Description:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" x:Name="TextBoxDescription" FontSize="22" Margin="10" Width="300" Height="85" VerticalAlignment="Center" HorizontalAlignment="Left" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Name:" FontSize="20" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Product code:" FontSize="20" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Right"/>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CurrentProductViewModel.Name, Mode=TwoWay}" FontSize="20" Margin="10" 
+                         Width="300" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding CurrentProductViewModel.ProductCode, Mode=TwoWay}" FontSize="20" 
+                         Margin="10" Width="300" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Button Grid.Column="2" Grid.Row="1" Command="{Binding SetProductCodeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" 
+                        Content="Generate code" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center" 
+                        HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="2" Grid.Row="0" Text="Description:" FontSize="20" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Right"/>
+                <TextBox Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Text="{Binding CurrentProductViewModel.Description, Mode=TwoWay}" 
+                         FontSize="20" Margin="10" Width="300" Height="90" VerticalAlignment="Center" HorizontalAlignment="Left" 
+                         TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+
             </Grid>
         </Border>
         <Border Grid.Row="2" BorderBrush="DarkGray" BorderThickness="1" Margin="1">
@@ -46,24 +59,64 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width=".7*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Quantity:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="Manufacturer:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Column="2" Grid.Row="0" Text="Units:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Column="2" Grid.Row="1" Text="Price:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Column="4" Grid.Row="0" Text="Capacity:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Column="4" Grid.Row="1" Text="Discount:" FontSize="22" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxQuantity" FontSize="22" Margin="10" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="1" Grid.Row="1" x:Name="TextBoxManufacturer" FontSize="22" Margin="10" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="3" Grid.Row="0" x:Name="TextBoxUnits" FontSize="22" Margin="10" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="3" Grid.Row="1" x:Name="TextBoxPrice" FontSize="22" Margin="10" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="5" Grid.Row="0" x:Name="TextBoxCapacity" FontSize="22" Margin="10" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="5" Grid.Row="1" x:Name="TextBoxDiscount" FontSize="22" Margin="10" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Quantity:" FontSize="18" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Manufacturer:" FontSize="18" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="2" Grid.Row="0" Text="Units:" FontSize="18" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Right"/>
+                <DockPanel Grid.Column="2" Grid.Row="1">
+                    <Button DockPanel.Dock="Left" Content="Add" FontSize="16" Command="{Binding AddManufacturerCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Width="40" Height="28" VerticalAlignment="Center"
+                            HorizontalAlignment="Left"/>
+                    <TextBlock DockPanel.Dock="Right" Text="Price:" FontSize="18" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                </DockPanel>
+                
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Capacity:" FontSize="18" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="2" Grid.Row="2" Text="Discount:" FontSize="18" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Right"/>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CurrentProductViewModel.QuantityString, Mode=TwoWay}" FontSize="18" Margin="10" 
+                         Width="146" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <ComboBox Grid.Column="1" Grid.Row="1" Text="{Binding Manufacturers, Mode=TwoWay}" FontSize="18" Margin="10,0,18,0" 
+                         VerticalAlignment="Center" SelectedItem="{Binding CurrentProductViewModel.Manufacturer, Mode=TwoWay}"/>
+                <ComboBox Grid.Column="3" Grid.Row="0" ItemsSource="{Binding Source={x:Static enums:UnitsOfMeasureEnumValues.Values}}" 
+                          SelectedItem="{Binding CurrentProductViewModel.UnitOfMeasure}" FontSize="18" Margin="10" Width="146" 
+                          VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding CurrentProductViewModel.PriceString, Mode=TwoWay}" FontSize="18" Margin="10"
+                         Width="146" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding CurrentProductViewModel.CapacityString, Mode=TwoWay}" FontSize="18" Margin="10" 
+                         Width="146" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="3" Grid.Row="2" Text="{Binding CurrentProductViewModel.DiscountPercentageString, Mode=TwoWay}" 
+                         FontSize="18" Margin="10" Width="146" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+                <TextBlock Grid.Column="5" Grid.Row="0" Text="&lt;- Category:" FontSize="18" Margin="10" VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"/>
+                
+                <TreeView Grid.Column="4" Grid.Row="0" Grid.RowSpan="3" Margin="5" ItemsSource="{Binding Categories}">
+                    <i:Interaction.Behaviors>
+                        <vmBehaviors:TreeViewSelectedItemBehavior SelectedItem="{Binding CurrentProductViewModel.SelectedCategory, Mode=TwoWay}" />
+                    </i:Interaction.Behaviors>
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Category.CategoryName}"/>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+
+                <Button Grid.Column="5" Grid.Row="1" Content="Add category" FontSize="12" Margin="10" Width="100" Height="23"
+                        VerticalAlignment="Center" HorizontalAlignment="Left" Command="{Binding AddCategoryCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+                <Button Grid.Column="5" Grid.Row="2" Content="Delete category" FontSize="12" Margin="10" Width="100" Height="23"
+                        VerticalAlignment="Center" HorizontalAlignment="Left" Command="{Binding DeleteCategoryCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
             </Grid>
         </Border>
         <Border Grid.Row="3" BorderBrush="DarkGray" BorderThickness="1" Margin="1">
@@ -73,8 +126,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="Product details:" FontSize="22" Margin="10" HorizontalAlignment="Left"/>
-                    <DataGrid x:Name="DateGridProducts" FontSize="18" Grid.Row="1" Margin="10,0" Height="130" ItemsSource="{Binding ProductDetails}" VerticalScrollBarVisibility="Auto">
+                    <TextBlock Text="Product details:" FontSize="20" Margin="10" HorizontalAlignment="Left"/>
+                    <DataGrid x:Name="DateGridProducts" FontSize="18" Grid.Row="1" Margin="10,0" Height="160" 
+                              ItemsSource="{Binding CurrentProductViewModel.ProductDetails}" VerticalScrollBarVisibility="Auto"
+                              SelectedItem="{Binding CurrentProductViewModel.SelectedProductDetail}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Detail name" Binding="{Binding Key}" Width="150"/>
                             <DataGridTextColumn Header="Detail value" Binding="{Binding Value}" Width="300"/>
@@ -91,14 +146,22 @@
                         <RowDefinition/>
                         <RowDefinition Height=".7*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Detail name:" FontSize="22" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxProductDetailKey" FontSize="22" Margin="10" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Detail value:" FontSize="22" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                    <TextBox Grid.Column="1" Grid.Row="1" x:Name="TextBoxProductDetailValue" FontSize="22" Margin="10" Width="250" Height="60" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Detail name:" FontSize="20" Margin="10" HorizontalAlignment="Left" 
+                               VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CurrentProductViewModel.NewProductDetailKey}" FontSize="20" 
+                             Margin="10" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Detail value:" FontSize="20" Margin="10" HorizontalAlignment="Left" 
+                               VerticalAlignment="Top"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding CurrentProductViewModel.NewProductDetailValue}" FontSize="20" 
+                             Margin="10" Width="250" Height="60" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" 
+                             AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                     <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal">
-                        <Button x:Name="ButtonAddProductDetail" Content="Add detail" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"/>
-                        <Button x:Name="ButtonEditProductDetail" Content="Edit detail" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"/>
-                        <Button x:Name="ButtonDeleteProductDetail" Content="Delete detail" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"/>
+                        <Button Content="Add detail" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"
+                                Command="{Binding AddProductDetailCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                        <Button Content="Edit detail" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"
+                                Command="{Binding EditProductDetailCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                        <Button Content="Delete detail" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"
+                                Command="{Binding DeleteProductDetailCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -111,8 +174,9 @@
                     <ColumnDefinition Width=".67*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="Product images:" FontSize="22" Margin="10,5"/>
-                    <ListBox ItemsSource="{Binding Images}" Height="70" Margin="10,5">
+                    <TextBlock Text="Product images:" FontSize="20" Margin="10,5"/>
+                    <ListBox ItemsSource="{Binding CurrentProductViewModel.ProductPhotos}" Height="70" Margin="10,5"
+                             SelectedItem="{Binding CurrentProductViewModel.SelectedProductPhotos}">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"/>
@@ -127,18 +191,24 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="ButtonAddProductPhoto" Content="Add image" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"/>
-                        <Button x:Name="ButtonDeleteProductPhoto" Content="Delete image" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"/>
+                        <Button Content="Add image" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"
+                                Command="{Binding AddPhotoCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                        <Button Content="Delete image" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"
+                                Command="{Binding DeletePhotoCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
                     </StackPanel>
                 </StackPanel>
-                <TextBlock Grid.Column="1" Text="Additional info:" FontSize="22" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                <TextBox Grid.Column="2" x:Name="TextBoxAdditionalInfo" FontSize="22" Margin="10" Width="250" Height="145" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                <TextBlock Grid.Column="1" Text="Additional info:" FontSize="20" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox Grid.Column="2" FontSize="20" Margin="10" Width="250" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                         Text="{Binding CurrentProductViewModel.AdditionalInfo}" TextWrapping="Wrap" AcceptsReturn="True" 
+                         VerticalScrollBarVisibility="Auto"/>
             </Grid>
         </Border>
         <Border Grid.Row="5" BorderBrush="DarkGray" BorderThickness="1" Margin="1">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="ButtonOk" Style="{StaticResource ButtonStyle}" Content="OK" FontSize="22" Margin="30,10" VerticalAlignment="Center"/>
-                <Button x:Name="ButtonCancel" Style="{StaticResource ButtonStyle}" Content="Cancel" FontSize="22" Margin="30,10" VerticalAlignment="Center"/>
+                <Button Style="{StaticResource ButtonStyle}" Content="OK" FontSize="22" Margin="30,10" VerticalAlignment="Center"
+                        Command="{Binding OkCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                <Button Style="{StaticResource ButtonStyle}" Content="Cancel" FontSize="22" Margin="30,10" VerticalAlignment="Center"
+                        Command="{Binding CancelCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
             </StackPanel>
         </Border>
     </Grid>

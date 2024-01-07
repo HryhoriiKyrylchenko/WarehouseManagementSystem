@@ -27,11 +27,11 @@ namespace WarehouseManagementSystem.Models.Entities
         public string? Description { get; set; }
 
         [Required]
-        public UnitsOfMeasureEnum UnitOfMeasure { get; set; }
+        public UnitsOfMeasureEnum? UnitOfMeasure { get; set; }
 
-        public decimal Quantity { get; set; }
+        public decimal? Quantity { get; set; }
 
-        public int Capacity { get; set; }
+        public int? Capacity { get; set; }
 
         public int? ManufacturerId { get; set; }
 

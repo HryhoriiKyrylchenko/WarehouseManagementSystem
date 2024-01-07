@@ -37,4 +37,16 @@
     <DataTemplate DataType="{x:Type viewModels:ReportSelectionViewModel}">
         <views:ReportSelectionView />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddManufacturerViewModel}">
+        <views:AddManufacturerView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddEditAddressViewModel}">
+        <views:AddEditAddressView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddProductCategoryViewModel}">
+        <views:AddProductCategoryView />
+    </DataTemplate>
 </ResourceDictionary>

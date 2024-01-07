@@ -280,7 +280,7 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public ProductBuilder WithProductDetails(string key, string value)
+        public ProductBuilder WithProductDetail(string key, string value)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
@@ -302,13 +302,35 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public async Task<ProductBuilder> WithProductDetailsAsync(string key, string value)
+        public async Task<ProductBuilder> WithProductDetailAsync(string key, string value)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
                     product.AddProductDetail(key, value);
+                    product = await entityManager.UpdateProductAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ProductBuilder> WithProductDetailsAsync(string productDetails)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product.ProductDetails = productDetails;
                     product = await entityManager.UpdateProductAsync(product);
                 }
                 catch (Exception ex)

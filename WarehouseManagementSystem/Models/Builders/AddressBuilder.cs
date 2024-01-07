@@ -15,7 +15,7 @@ namespace WarehouseManagementSystem.Models.Builders
     {
         private Address address;
 
-        public AddressBuilder(string country, string index, string city, string street, int buildingNumber)
+        public AddressBuilder(string country, string index, string city, string street, string buildingNumber)
         {
             try
             {

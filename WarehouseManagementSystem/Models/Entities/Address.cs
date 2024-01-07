@@ -20,7 +20,7 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public string Street { get; set; }
 
-        public int BuildingNumber { get; set; }
+        public string BuildingNumber { get; set; }
 
         public string? Room { get; set; }
 
@@ -33,7 +33,7 @@ namespace WarehouseManagementSystem.Models.Entities
         public virtual ICollection<Customer> Customers { get; set; }
         public virtual ICollection<Manufacturer> Manufacturers { get; set; }
 
-        public Address(string country, string index, string city, string street, int buildingNumber)
+        public Address(string country, string index, string city, string street, string buildingNumber)
         {
 
             Country = country;

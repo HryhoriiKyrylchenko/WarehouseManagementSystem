@@ -60,6 +60,16 @@ namespace WarehouseManagementSystem.Services
             return categoryViewModel;
         }
 
+        public bool DoesCategoryHaveProducts(ProductCategory category)
+        {
+            return (dbContext.Products.Where(p => p.CategoryId == category.Id).Count() > 0);
+        }
+
+        public bool DoesCategoryHaveChildrenCategories(ProductCategory category)
+        {
+            return (dbContext.ProductCategories.Where(pc => pc.PreviousCategoryId == category.Id).Count() > 0);
+        }
+
         private async Task<List<Product>> GetProductsForCategoryAsync(ProductCategory category, Warehouse warehouse)
         {
             return await dbContext.Products
@@ -143,7 +153,7 @@ namespace WarehouseManagementSystem.Services
                 .Select(p => p.Quantity - p.ProductsInZonePositions.Sum(z => z.Quantity))
                 .FirstOrDefault();
 
-            return unallocatedProductItems;
+            return unallocatedProductItems ?? 0;
         }
 
         public async Task<decimal> GetUnallocatedProductInstancesSumAsync(int productId)
@@ -153,7 +163,7 @@ namespace WarehouseManagementSystem.Services
                 .Select(p => p.Quantity - p.ProductsInZonePositions.Sum(z => z.Quantity))
                 .FirstOrDefaultAsync();
 
-            return unallocatedProductItems;
+            return unallocatedProductItems ?? 0;
         }
 
         public async Task<ObservableCollection<Zone>> GetZonesAsync()
@@ -178,6 +188,12 @@ namespace WarehouseManagementSystem.Services
         {
             var reports = await dbContext.Reports.ToListAsync();
             return new ObservableCollection<Report>(reports);
+        }
+
+        public async Task<ObservableCollection<Manufacturer>> GetManufacturersAsync()
+        {
+            var manufacturers = await dbContext.Manufacturers.ToListAsync();
+            return new ObservableCollection<Manufacturer>(manufacturers);
         }
 
         public async Task<ObservableCollection<User>> GetUsersWithoutAdminAsync()
