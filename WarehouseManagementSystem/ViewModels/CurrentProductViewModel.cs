@@ -237,7 +237,10 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     this.selectedProductDetail = value;
                     OnPropertyChanged(nameof(SelectedProductDetail));
-                    UpdatePropertiesData();
+                    if (value != null)
+                    {
+                        UpdatePropertiesData(value);
+                    }
                 };
             }
         }
@@ -312,10 +315,10 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private void UpdatePropertiesData()
+        private void UpdatePropertiesData(ProductDetail productDelail)
         {
-            NewProductDetailKey = SelectedProductDetail?.Key;
-            NewProductDetailValue = SelectedProductDetail?.Value;
+            NewProductDetailKey = productDelail.Key;
+            NewProductDetailValue = productDelail.Value;
         }
 
         private void UpdateQuantity()
@@ -352,6 +355,11 @@ namespace WarehouseManagementSystem.ViewModels
                 decimal.TryParse(DiscountPercentageString, out decimal res);
                 DiscountPercentage = res;
             }
+        }
+
+        public void RefreshSelectedProductDetail()
+        {
+            OnPropertyChanged(nameof(ProductDetails));
         }
     }
 }

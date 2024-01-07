@@ -270,6 +270,8 @@ namespace WarehouseManagementSystem.ViewModels
 
         public async void InitializeAsync()
         {
+            Categories.Clear();
+            Zones?.Clear();
             await InitializeCategoriesFromDBAsync();
             await InitializeZonesFromDBAsync();
         }
@@ -503,6 +505,7 @@ namespace WarehouseManagementSystem.ViewModels
         {
             SupportWindow supportWindow = new SupportWindow(new AddEditProductViewModel(this, Categories));
             supportWindow.ShowDialog();
+            InitializeAsync();
         }
 
         private void EditProduct(object parameter)

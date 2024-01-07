@@ -42,7 +42,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<CategoryViewModel> categories;
-
         public ObservableCollection<CategoryViewModel> Categories
         {
             get { return categories; }
@@ -70,14 +69,35 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private bool checkboxWithParentChecked;
-        public bool CheckboxWithParentChecked
+        private bool selectorWithParentChecked;
+        public bool SelectorWithParentChecked
         {
-            get { return checkboxWithParentChecked; }
+            get { return selectorWithParentChecked; }
             set
             {
-                checkboxWithParentChecked = value;
-                OnPropertyChanged(nameof(CheckboxWithParentChecked));
+                selectorWithParentChecked = value;
+                OnPropertyChanged(nameof(SelectorWithParentChecked));
+
+                if (value)
+                {
+                    SelectorWithoutParentChecked = false;
+                }
+            }
+        }
+
+        private bool selectorWithoutParentChecked;
+        public bool SelectorWithoutParentChecked
+        {
+            get { return selectorWithoutParentChecked; }
+            set
+            {
+                selectorWithoutParentChecked = value;
+                OnPropertyChanged(nameof(SelectorWithParentChecked));
+
+                if (value)
+                {
+                    SelectorWithParentChecked = false;
+                }
             }
         }
 
@@ -87,7 +107,7 @@ namespace WarehouseManagementSystem.ViewModels
         public AddProductCategoryViewModel(AddEditProductViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
-            CheckboxWithParentChecked = false;
+            SelectorWithoutParentChecked = true;
             categories = new ObservableCollection<CategoryViewModel>();
 
             InitializeAsync();
@@ -129,18 +149,25 @@ namespace WarehouseManagementSystem.ViewModels
         {
             if (GetConfirmation() == MessageBoxResult.OK)
             {
-                if (!string.IsNullOrWhiteSpace(CategoryName)
-                    && ((CheckboxWithParentChecked && ParentCategory != null)
-                        || !CheckboxWithParentChecked))
+                if (!string.IsNullOrWhiteSpace(CategoryName))
                 {
                     try
                     {
                         var newPCB = new ProductCategoryBuilder(CategoryName);
 
-                        if (CheckboxWithParentChecked && ParentCategory != null)
+                        if (SelectorWithParentChecked && ParentCategory != null)
                         {
                             newPCB = newPCB.WithPreviousCategory(ParentCategory.Category.Id);
                         }
+                        else if (SelectorWithParentChecked && ParentCategory != null)
+                        {
+                            MessageBox.Show("Select parent cetegory",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            return;
+                        }
+
                         if (!string.IsNullOrWhiteSpace(AdditionalInfo))
                         {
                             newPCB = newPCB.WithAdditionalInfo(AdditionalInfo);

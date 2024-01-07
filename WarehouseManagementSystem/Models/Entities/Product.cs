@@ -69,7 +69,7 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Label> Labels { get; set; }
 
-        public Product (string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price, int warehouseId)
+        public Product (string productCode, string name, UnitsOfMeasureEnum? unitOfMeasure, decimal? quantity, int? capacity, decimal price, int warehouseId)
         {
             ProductCode = productCode;
             Name = name;

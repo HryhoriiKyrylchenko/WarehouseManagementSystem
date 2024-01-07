@@ -16,11 +16,11 @@ namespace WarehouseManagementSystem.Models.Builders
     {
         private Product product;
 
-        public ProductBuilder(string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price, int warehouseId)
+        public ProductBuilder(string productCode, string name, UnitsOfMeasureEnum? unitOfMeasure, decimal? quantity, int? capacity, decimal price, int warehouseId)
         {
             try
             {
-                this.product = InitializeAsync(new Product(productCode, name, unitOfMeasure, quantity, capacity, price, warehouseId)).GetAwaiter().GetResult();
+                this.product = Initialize(new Product(productCode, name, unitOfMeasure, quantity, capacity, price, warehouseId));
             }
             catch
             {
@@ -316,6 +316,28 @@ namespace WarehouseManagementSystem.Models.Builders
                     using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
                     {
                         await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public ProductBuilder WithProductDetails(string productDetails)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product.ProductDetails = productDetails;
+                    product = entityManager.UpdateProduct(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        errorLogger.LogError(ex);
                     }
                     throw;
                 }

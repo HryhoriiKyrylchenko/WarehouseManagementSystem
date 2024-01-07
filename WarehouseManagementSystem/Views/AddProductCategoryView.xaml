@@ -26,10 +26,14 @@
             HorizontalAlignment="Right"/>
         <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding CategoryName, Mode=TwoWay}" FontSize="22" Margin="5" 
             Width="245" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        <CheckBox Grid.Column="0" Grid.Row="2" Content="With parent:" FontSize="22" Margin="10" VerticalAlignment="Center" 
-            HorizontalAlignment="Right" IsChecked="{Binding CheckboxAllCategoriesChecked}"/>
+        <StackPanel Grid.Column="0" Grid.Row="2" VerticalAlignment="Center">
+            <RadioButton Grid.Column="0" Grid.Row="2" Content="With parent:" FontSize="22" Margin="10" VerticalAlignment="Center" 
+                HorizontalAlignment="Left" IsChecked="{Binding SelectorWithParentChecked}" GroupName="ParentGroup"/>
+            <RadioButton Grid.Column="0" Grid.Row="2" Content="Without parent:" FontSize="22" Margin="10" VerticalAlignment="Center" 
+                HorizontalAlignment="Left" IsChecked="{Binding SelectorWithoutParentChecked}" GroupName="ParentGroup"/>
+        </StackPanel>
         <TreeView Grid.Column="1" Grid.Row="2" Margin="5" ItemsSource="{Binding Categories}" 
-            IsEnabled="{Binding CheckboxAllCategoriesChecked}">
+            IsEnabled="{Binding SelectorWithParentChecked}">
             <i:Interaction.Behaviors>
                 <vmBehaviors:TreeViewSelectedItemBehavior SelectedItem="{Binding ParentCategory, Mode=TwoWay}" />
             </i:Interaction.Behaviors>

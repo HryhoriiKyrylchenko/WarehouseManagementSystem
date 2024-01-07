@@ -83,7 +83,7 @@ namespace WarehouseManagementSystem.ViewModels
                         }
 
                         Manufacturer newManufacturer = newMB.Build();
-                        mainViewModel.InitializeAsync();
+                        mainViewModel.Initialize();
                         mainViewModel.CurrentProductViewModel.Manufacturer = newManufacturer;
                         CloseParentWindow();
                     }

@@ -190,6 +190,12 @@ namespace WarehouseManagementSystem.Services
             return new ObservableCollection<Report>(reports);
         }
 
+        public ObservableCollection<Manufacturer> GetManufacturers()
+        {
+            var manufacturers = dbContext.Manufacturers.ToList();
+            return new ObservableCollection<Manufacturer>(manufacturers);
+        }
+
         public async Task<ObservableCollection<Manufacturer>> GetManufacturersAsync()
         {
             var manufacturers = await dbContext.Manufacturers.ToListAsync();
@@ -346,6 +352,11 @@ namespace WarehouseManagementSystem.Services
                 .Include(r => r.User)
                 .ToListAsync();
             return new ObservableCollection<Report>(result);
+        }
+
+        public bool IsProductCodeInDB(string productCode)
+        {
+            return dbContext.Products.Any(p => p.ProductCode == productCode);
         }
     }
 }

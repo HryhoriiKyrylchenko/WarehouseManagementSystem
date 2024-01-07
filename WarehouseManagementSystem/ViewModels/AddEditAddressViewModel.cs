@@ -150,17 +150,15 @@ namespace WarehouseManagementSystem.ViewModels
                                 AddressViewModel.Street,
                                 AddressViewModel.BuildingNumber);
 
-                                Task.Run(async () =>
+
+                                if (!string.IsNullOrWhiteSpace(AddressViewModel.Room))
                                 {
-                                    if (!string.IsNullOrWhiteSpace(AddressViewModel.Room))
-                                    {
-                                        tempAddress = await tempAddress.WithRoomAsync(AddressViewModel.Room);
-                                    }
-                                    if (!string.IsNullOrWhiteSpace(AddressViewModel.AdditionalInfo))
-                                    {
-                                        tempAddress = await tempAddress.WithAdditionalInfoAsync(AddressViewModel.AdditionalInfo);
-                                    }
-                                }).GetAwaiter().GetResult();
+                                    tempAddress = tempAddress.WithRoom(AddressViewModel.Room);
+                                }
+                                if (!string.IsNullOrWhiteSpace(AddressViewModel.AdditionalInfo))
+                                {
+                                    tempAddress = tempAddress.WithAdditionalInfo(AddressViewModel.AdditionalInfo);
+                                }
 
                                 mainViewModel.ManufacturerViewModel.Address = Address;
                                 CloseParentWindow();

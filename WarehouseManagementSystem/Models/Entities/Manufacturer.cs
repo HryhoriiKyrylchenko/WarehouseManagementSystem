@@ -20,5 +20,10 @@ namespace WarehouseManagementSystem.Models.Entities
         {
             Name = name;
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

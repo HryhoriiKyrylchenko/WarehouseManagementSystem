@@ -36,18 +36,20 @@
                            HorizontalAlignment="Right"/>
                 <TextBlock Grid.Column="0" Grid.Row="1" Text="Product code:" FontSize="20" Margin="10" VerticalAlignment="Center" 
                            HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CurrentProductViewModel.Name, Mode=TwoWay}" FontSize="20" Margin="10" 
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CurrentProductViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         FontSize="20" Margin="10" 
                          Width="300" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding CurrentProductViewModel.ProductCode, Mode=TwoWay}" FontSize="20" 
-                         Margin="10" Width="300" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <Button Grid.Column="2" Grid.Row="1" Command="{Binding SetProductCodeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" 
-                        Content="Generate code" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center" 
-                        HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding CurrentProductViewModel.ProductCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         FontSize="20" Margin="10" Width="300" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Button Grid.Column="2" Grid.Row="1" Content="Generate code" FontSize="16" Margin="10" Width="130" Height="30"
+                        Command="{Binding SetProductCodeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" 
+                         VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <TextBlock Grid.Column="2" Grid.Row="0" Text="Description:" FontSize="20" Margin="10" VerticalAlignment="Center" 
                            HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Text="{Binding CurrentProductViewModel.Description, Mode=TwoWay}" 
-                         FontSize="20" Margin="10" Width="300" Height="90" VerticalAlignment="Center" HorizontalAlignment="Left" 
-                         TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                <TextBox Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" FontSize="20" Margin="10" Width="300" Height="90" 
+                         Text="{Binding CurrentProductViewModel.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center" HorizontalAlignment="Left" TextWrapping="Wrap" AcceptsReturn="True" 
+                         VerticalScrollBarVisibility="Auto"/>
 
             </Grid>
         </Border>
@@ -78,28 +80,28 @@
                             HorizontalAlignment="Left"/>
                     <TextBlock DockPanel.Dock="Right" Text="Price:" FontSize="18" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 </DockPanel>
-                
+
                 <TextBlock Grid.Column="0" Grid.Row="2" Text="Capacity:" FontSize="18" Margin="10" VerticalAlignment="Center" 
                            HorizontalAlignment="Right"/>
                 <TextBlock Grid.Column="2" Grid.Row="2" Text="Discount:" FontSize="18" Margin="10" VerticalAlignment="Center" 
                            HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CurrentProductViewModel.QuantityString, Mode=TwoWay}" FontSize="18" Margin="10" 
-                         Width="146" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <ComboBox Grid.Column="1" Grid.Row="1" Text="{Binding Manufacturers, Mode=TwoWay}" FontSize="18" Margin="10,0,18,0" 
-                         VerticalAlignment="Center" SelectedItem="{Binding CurrentProductViewModel.Manufacturer, Mode=TwoWay}"/>
+                <TextBox Grid.Column="1" Grid.Row="0"  FontSize="18" Margin="10" Width="146" VerticalAlignment="Center" 
+                         Text="{Binding CurrentProductViewModel.QuantityString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         HorizontalAlignment="Left"/>
+                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Manufacturers}" FontSize="18" Margin="10,0,18,0" 
+                         VerticalAlignment="Center" SelectedItem="{Binding CurrentProductViewModel.Manufacturer}"/>
                 <ComboBox Grid.Column="3" Grid.Row="0" ItemsSource="{Binding Source={x:Static enums:UnitsOfMeasureEnumValues.Values}}" 
                           SelectedItem="{Binding CurrentProductViewModel.UnitOfMeasure}" FontSize="18" Margin="10" Width="146" 
                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding CurrentProductViewModel.PriceString, Mode=TwoWay}" FontSize="18" Margin="10"
-                         Width="146" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding CurrentProductViewModel.CapacityString, Mode=TwoWay}" FontSize="18" Margin="10" 
-                         Width="146" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Column="3" Grid.Row="2" Text="{Binding CurrentProductViewModel.DiscountPercentageString, Mode=TwoWay}" 
-                         FontSize="18" Margin="10" Width="146" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-
-                <TextBlock Grid.Column="5" Grid.Row="0" Text="&lt;- Category:" FontSize="18" Margin="10" VerticalAlignment="Center" 
-                           HorizontalAlignment="Center"/>
-                
+                <TextBox Grid.Column="3" Grid.Row="1" FontSize="18" Margin="10" Width="146" VerticalAlignment="Center" 
+                         Text="{Binding CurrentProductViewModel.PriceString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="1" Grid.Row="2" FontSize="18" Margin="10" Width="146" VerticalAlignment="Center" 
+                         Text="{Binding CurrentProductViewModel.CapacityString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         HorizontalAlignment="Left"/>
+                <TextBox Grid.Column="3" Grid.Row="2" FontSize="18" Margin="10" Width="146" VerticalAlignment="Center" 
+                         Text="{Binding CurrentProductViewModel.DiscountPercentageString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         HorizontalAlignment="Left"/>
                 <TreeView Grid.Column="4" Grid.Row="0" Grid.RowSpan="3" Margin="5" ItemsSource="{Binding Categories}">
                     <i:Interaction.Behaviors>
                         <vmBehaviors:TreeViewSelectedItemBehavior SelectedItem="{Binding CurrentProductViewModel.SelectedCategory, Mode=TwoWay}" />
@@ -110,13 +112,24 @@
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
-
-                <Button Grid.Column="5" Grid.Row="1" Content="Add category" FontSize="12" Margin="10" Width="100" Height="23"
-                        VerticalAlignment="Center" HorizontalAlignment="Left" Command="{Binding AddCategoryCommand}" 
-                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
-                <Button Grid.Column="5" Grid.Row="2" Content="Delete category" FontSize="12" Margin="10" Width="100" Height="23"
-                        VerticalAlignment="Center" HorizontalAlignment="Left" Command="{Binding DeleteCategoryCommand}" 
-                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+                <Grid Grid.Column="5" Grid.Row="0" Grid.RowSpan="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="&lt;- Category:" FontSize="16" Margin="5" VerticalAlignment="Center" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Text="{Binding CurrentProductViewModel.SelectedCategory}" FontSize="15" FontWeight="Bold" 
+                               Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button Grid.Row="2" Content="Add category" FontSize="12" Margin="5" Width="100" Height="23"
+                            VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding AddCategoryCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />       
+                    <Button Grid.Row="3" Content="Delete category" FontSize="12" Margin="5" Width="100" Height="23"
+                            VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding DeleteCategoryCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+                </Grid>
             </Grid>
         </Border>
         <Border Grid.Row="3" BorderBrush="DarkGray" BorderThickness="1" Margin="1">
@@ -129,7 +142,7 @@
                     <TextBlock Text="Product details:" FontSize="20" Margin="10" HorizontalAlignment="Left"/>
                     <DataGrid x:Name="DateGridProducts" FontSize="18" Grid.Row="1" Margin="10,0" Height="160" 
                               ItemsSource="{Binding CurrentProductViewModel.ProductDetails}" VerticalScrollBarVisibility="Auto"
-                              SelectedItem="{Binding CurrentProductViewModel.SelectedProductDetail}">
+                              SelectedItem="{Binding CurrentProductViewModel.SelectedProductDetail}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Detail name" Binding="{Binding Key}" Width="150"/>
                             <DataGridTextColumn Header="Detail value" Binding="{Binding Value}" Width="300"/>
@@ -148,13 +161,14 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Column="0" Grid.Row="0" Text="Detail name:" FontSize="20" Margin="10" HorizontalAlignment="Left" 
                                VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CurrentProductViewModel.NewProductDetailKey}" FontSize="20" 
-                             Margin="10" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" Grid.Row="0"  FontSize="20" Margin="10,0,0,17" Width="250" HorizontalAlignment="Left" 
+                             Text="{Binding CurrentProductViewModel.NewProductDetailKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Bottom"/>
                     <TextBlock Grid.Column="0" Grid.Row="1" Text="Detail value:" FontSize="20" Margin="10" HorizontalAlignment="Left" 
                                VerticalAlignment="Top"/>
-                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding CurrentProductViewModel.NewProductDetailValue}" FontSize="20" 
-                             Margin="10" Width="250" Height="60" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" 
-                             AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" FontSize="20" Margin="10" Width="250" Height="60" HorizontalAlignment="Left" 
+                             VerticalAlignment="Center" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                             Text="{Binding CurrentProductViewModel.NewProductDetailValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal">
                         <Button Content="Add detail" FontSize="16" Margin="10" Width="130" Height="30" VerticalAlignment="Center"
                                 Command="{Binding AddProductDetailCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
@@ -197,10 +211,11 @@
                                 Command="{Binding DeletePhotoCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
                     </StackPanel>
                 </StackPanel>
-                <TextBlock Grid.Column="1" Text="Additional info:" FontSize="20" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBlock Grid.Column="1" Text="Additional info:" FontSize="20" Margin="10,10,0,0" HorizontalAlignment="Left" 
+                           VerticalAlignment="Top"/>
                 <TextBox Grid.Column="2" FontSize="20" Margin="10" Width="250" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top" 
-                         Text="{Binding CurrentProductViewModel.AdditionalInfo}" TextWrapping="Wrap" AcceptsReturn="True" 
-                         VerticalScrollBarVisibility="Auto"/>
+                         Text="{Binding CurrentProductViewModel.AdditionalInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
             </Grid>
         </Border>
         <Border Grid.Row="5" BorderBrush="DarkGray" BorderThickness="1" Margin="1">

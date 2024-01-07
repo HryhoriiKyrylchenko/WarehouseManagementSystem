@@ -61,9 +61,9 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private ObservableCollection<Manufacturer>? manufacturers;
+        private ObservableCollection<Manufacturer> manufacturers;
 
-        public ObservableCollection<Manufacturer>? Manufacturers
+        public ObservableCollection<Manufacturer> Manufacturers
         {
             get { return manufacturers; }
             set
@@ -110,7 +110,7 @@ namespace WarehouseManagementSystem.ViewModels
             currentProductViewModel = new CurrentProductViewModel();
             manufacturers = new ObservableCollection<Manufacturer>();
 
-            InitializeAsync();
+            Initialize();
         }
 
         public AddEditProductViewModel(ProductsViewModel mainViewModel, Product product, ObservableCollection<CategoryViewModel> categories)
@@ -118,15 +118,17 @@ namespace WarehouseManagementSystem.ViewModels
             this.mainViewModel = mainViewModel;
             this.product = product;
             this.categories = categories;
-            currentProductViewModel = InitializeCurrentProductViewModel(product);
             manufacturers = new ObservableCollection<Manufacturer>();
+            currentProductViewModel = new CurrentProductViewModel();
 
-            InitializeAsync();
+            Initialize();
         }
 
-        public async void InitializeAsync()
+        public void Initialize()
         {
-            await InitializeManufacturersFromDBAsync();
+            Manufacturers?.Clear();
+            InitializeManufacturersFromDB();
+            currentProductViewModel = InitializeCurrentProductViewModel(this.product);
         }
 
         private CurrentProductViewModel InitializeCurrentProductViewModel(Product? product)
@@ -138,9 +140,13 @@ namespace WarehouseManagementSystem.ViewModels
                 currentProductViewModel.Name = product.Name;
                 currentProductViewModel.Description = product.Description;
                 currentProductViewModel.UnitOfMeasure = product.UnitOfMeasure;
+                currentProductViewModel.QuantityString = product.Quantity.ToString();
                 currentProductViewModel.Quantity = product.Quantity;
+                currentProductViewModel.CapacityString = product.Capacity.ToString();
                 currentProductViewModel.Capacity = product.Capacity;
+                currentProductViewModel.PriceString = product.Price.ToString();
                 currentProductViewModel.Price = product.Price;
+                currentProductViewModel.DiscountPercentageString = product.DiscountPercentage.ToString();
                 currentProductViewModel.DiscountPercentage = product.DiscountPercentage;
                 currentProductViewModel.ProductDetails = (product.ProductDetails == null || string.IsNullOrEmpty(product.ProductDetails))
                                                         ? new ObservableCollection<ProductDetail>()
@@ -168,7 +174,7 @@ namespace WarehouseManagementSystem.ViewModels
 
         private Manufacturer? SetManufacturerById(ObservableCollection<Manufacturer>? manufacturers, int? manufacturerId)
         {
-            if (manufacturers != null)
+            if (manufacturers != null && manufacturerId != null)
             {
                 foreach (var manufacturer in manufacturers)
                 {
@@ -179,12 +185,12 @@ namespace WarehouseManagementSystem.ViewModels
                 }
             }
 
-            throw new KeyNotFoundException($"Manufacturer with Id = {manufacturerId} was not fount");
+            return null;
         }
 
         private CategoryViewModel? SetCategoryById(ObservableCollection<CategoryViewModel> categories, int? categoryId)
         {
-            if (categories != null)
+            if (categories != null && categories.Any())
             {
                 foreach (var category in categories)
                 {
@@ -193,24 +199,45 @@ namespace WarehouseManagementSystem.ViewModels
                         return category;
                     }
 
-                    var result = SetCategoryById(category.Children, categoryId);
-                    if (result != null)
+                    if(category.Children != null && category.Children.Any())
                     {
-                        return result;
+                        var result = SetCategoryById(category.Children, categoryId);
+                        if (result != null)
+                        {
+                            return result;
+                        }
                     }
                 }
             }
 
-            throw new KeyNotFoundException($"Category with Id = {categoryId} was not fount");
+            return null;
         }
 
-        private async Task<ObservableCollection<Manufacturer>> InitializeManufacturersFromDBAsync()
+        private void InitializeManufacturersFromDB()
         {
             try
             {
                 using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
                 {
-                    return await db.GetManufacturersAsync();
+                    Manufacturers = db.GetManufacturers();
+                }
+            }
+            catch (Exception ex)
+            {
+                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                {
+                    logger.LogError(ex);
+                }
+            }
+        }
+
+        private async Task InitializeManufacturersFromDBAsync()
+        {
+            try
+            {
+                using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                {
+                    Manufacturers = await db.GetManufacturersAsync();
                 }
             }
             catch (Exception ex)
@@ -220,7 +247,6 @@ namespace WarehouseManagementSystem.ViewModels
                     await logger.LogErrorAsync(ex);
                 }
             }
-            return new ObservableCollection<Manufacturer>();
         }
 
         private void SetProductCode(object parameter)
@@ -243,7 +269,7 @@ namespace WarehouseManagementSystem.ViewModels
         {
             SupportWindow supportWindow = new SupportWindow(new AddManufacturerViewModel(this));
             supportWindow.ShowDialog();
-            InitializeAsync();
+            Initialize();
         }
 
         private void AddProductCategory(object parameter)
@@ -268,10 +294,7 @@ namespace WarehouseManagementSystem.ViewModels
                         {
                             using (EntityManager db = new EntityManager(new WarehouseDbContext()))
                             {
-                                Task.Run(async () =>
-                                {
-                                    await db.DeleteProductCategoryAsync(categoryToDelete);
-                                });
+                                db.DeleteProductCategory(categoryToDelete);
                             }
                             mainViewModel.InitializeAsync();
                             Categories = mainViewModel.Categories;
@@ -284,6 +307,13 @@ namespace WarehouseManagementSystem.ViewModels
                             logger.LogError(ex);
                         }
                     }
+                }
+                else
+                {
+                    MessageBox.Show("This category cannot be deleted?",
+                        "Caution",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
                 }
             }
         }
@@ -325,7 +355,7 @@ namespace WarehouseManagementSystem.ViewModels
 
         private MessageBoxResult GetCancelConfirmation()
         {
-            return MessageBox.Show("All unseved data will be lost! Continue?",
+            return MessageBox.Show("All unsaved data will be lost! Continue?",
                 "Confirmation",
                 MessageBoxButton.OKCancel,
                 MessageBoxImage.Question);
@@ -364,7 +394,9 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     string newKey = CurrentProductViewModel.NewProductDetailKey;
                     string newValue = CurrentProductViewModel.NewProductDetailValue;
-                    CurrentProductViewModel.SelectedProductDetail = new ProductDetail(newKey, newValue);
+                    CurrentProductViewModel.SelectedProductDetail.Key = newKey;
+                    CurrentProductViewModel.SelectedProductDetail.Value = newValue;
+                    CurrentProductViewModel.RefreshSelectedProductDetail();
                 }
                 else
                 {
@@ -452,65 +484,108 @@ namespace WarehouseManagementSystem.ViewModels
                         if (CurrentProductViewModel.ProductCode != null
                         && Product.ProductCode != CurrentProductViewModel.ProductCode)
                         {
+                            if (!IsProductCodeAvailable(CurrentProductViewModel.ProductCode))
+                            {
+                                MessageBox.Show("Entered product code is already in use.",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                                return;
+                            }
+
                             Product.ProductCode = CurrentProductViewModel.ProductCode;
                         }
-                        else
+                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.ProductCode))
                         {
-                            throw new ArgumentNullException("ProductCode problem");
+                            MessageBox.Show("ProductCode is required", 
+                                "Caution", 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Error);
+                            return;
                         }
+
                         if (CurrentProductViewModel.Name != null
                             && Product.Name != CurrentProductViewModel.Name)
                         {
                             Product.Name = CurrentProductViewModel.Name;
                         }
-                        else
+                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.Name))
                         {
-                            throw new ArgumentNullException("Name problem");
+                            MessageBox.Show("Name is required",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            return;
                         }
-                        if (CurrentProductViewModel.UnitOfMeasure == null
+
+                        if (CurrentProductViewModel.UnitOfMeasure != null
                             && Product.UnitOfMeasure != CurrentProductViewModel.UnitOfMeasure)
                         {
                             Product.UnitOfMeasure = CurrentProductViewModel.UnitOfMeasure;
                         }
-                        else
+                        else if (CurrentProductViewModel.UnitOfMeasure == null)
                         {
-                            throw new ArgumentNullException("UnitOfMeasure problem");
+                            MessageBox.Show("Units of measure is required",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            return;
                         }
+
                         if (CurrentProductViewModel.Quantity != null
                             && Product.Quantity != CurrentProductViewModel.Quantity)
                         {
                             Product.Quantity = CurrentProductViewModel.Quantity;
                         }
-                        else
+                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.QuantityString))
                         {
-                            throw new ArgumentNullException("Quantity problem");
+                            MessageBox.Show("Quantity is required",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            return;
                         }
+
                         if (CurrentProductViewModel.Capacity != null
                             && Product.Capacity != CurrentProductViewModel.Capacity)
                         {
                             Product.Capacity = CurrentProductViewModel.Capacity;
                         }
-                        else
+                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.CapacityString))
                         {
-                            throw new ArgumentNullException("Capacity problem");
+                            MessageBox.Show("Capacity is required",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            return;
                         }
+
                         if (CurrentProductViewModel.Price != null
                             && Product.Price != CurrentProductViewModel.Price)
                         {
                             Product.Price = (decimal)CurrentProductViewModel.Price;
                         }
-                        else
+                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.PriceString))
                         {
-                            throw new ArgumentNullException("Price problem");
+                            MessageBox.Show("Price is required",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            return;
                         }
+
                         if (CurrentProductViewModel.SelectedCategory != null
                             && Product.CategoryId != CurrentProductViewModel.SelectedCategory.Category.Id)
                         {
                             Product.CategoryId = CurrentProductViewModel.SelectedCategory.Category.Id;
                         }
-                        else
+                        else if (CurrentProductViewModel.SelectedCategory == null)
                         {
-                            throw new ArgumentNullException("SelectedCategory problem");
+                            MessageBox.Show("Category is required",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            return;
                         }
 
                         if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.Description)
@@ -532,7 +607,7 @@ namespace WarehouseManagementSystem.ViewModels
                             Product.DiscountPercentage = CurrentProductViewModel.DiscountPercentage;
                         }
 
-                        if (CurrentProductViewModel.ProductDetails != null 
+                        if (CurrentProductViewModel.ProductDetails != null
                             && CurrentProductViewModel.ProductDetails.Any())
                         {
                             Product.ProductDetails = JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.Indented);
@@ -543,6 +618,10 @@ namespace WarehouseManagementSystem.ViewModels
                             && Product.ProductPhotos != CurrentProductViewModel.ProductPhotos)
                         {
                             Product.ProductPhotos = CurrentProductViewModel.ProductPhotos;
+                            foreach(var photo in Product.ProductPhotos)
+                            {
+                                photo.ProductId = Product.Id;
+                            }
                         }
 
                         if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.AdditionalInfo)
@@ -556,7 +635,6 @@ namespace WarehouseManagementSystem.ViewModels
                             db.UpdateProduct(Product);
                         }
 
-                        mainViewModel.InitializeAsync();
                         CloseParentWindow();
                     }
                     catch (Exception ex)
@@ -574,7 +652,7 @@ namespace WarehouseManagementSystem.ViewModels
                 }
                 else
                 {
-                    try 
+                    try
                     {
                         if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.ProductCode)
                             && !string.IsNullOrWhiteSpace(CurrentProductViewModel.Name)
@@ -584,54 +662,66 @@ namespace WarehouseManagementSystem.ViewModels
                             && CurrentProductViewModel.Price != null
                             && CurrentProductViewModel.SelectedCategory != null)
                         {
+                            if (!IsProductCodeAvailable(CurrentProductViewModel.ProductCode))
+                            {
+                                MessageBox.Show("Entered product code is already in use.",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                                return;
+                            }
+
                             var tempProduct = new ProductBuilder(CurrentProductViewModel.ProductCode,
                                 CurrentProductViewModel.Name,
                                 (UnitsOfMeasureEnum)CurrentProductViewModel.UnitOfMeasure,
                                 (decimal)CurrentProductViewModel.Quantity,
                                 (int)CurrentProductViewModel.Capacity,
                                 (decimal)CurrentProductViewModel.Price,
-                                mainViewModel.MainViewModel.LoginService.CurrentWarehouse.Id);
+                                mainViewModel.MainViewModel.LoginService.CurrentWarehouse.Id)
+                                .WithCategory(CurrentProductViewModel.SelectedCategory.Category.Id);
 
-                            Task.Run(async () =>
+
+                            if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.Description))
                             {
-                                if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.Description))
+                                tempProduct = tempProduct.WithDescription(CurrentProductViewModel.Description);
+                            }
+
+                            if (CurrentProductViewModel.Manufacturer != null)
+                            {
+                                tempProduct = tempProduct.WithManufacturer(CurrentProductViewModel.Manufacturer);
+                            }
+
+                            if (CurrentProductViewModel.DiscountPercentage != null)
+                            {
+                                tempProduct = tempProduct.WithDiscountPercentage(CurrentProductViewModel.DiscountPercentage);
+                            }
+
+                            if (CurrentProductViewModel.ProductDetails != null
+                                && CurrentProductViewModel.ProductDetails.Any())
+                            {
+                                tempProduct = tempProduct.WithProductDetails(JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.Indented));
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.AdditionalInfo))
+                            {
+                                tempProduct = tempProduct.WithAdditionalInfo(CurrentProductViewModel.AdditionalInfo);
+                            }
+
+                            if (CurrentProductViewModel.ProductPhotos != null
+                                && CurrentProductViewModel.ProductPhotos.Any())
+                            {
+                                var newProduct = tempProduct.Build();
+                                newProduct.ProductPhotos = CurrentProductViewModel.ProductPhotos;
+                                foreach (var photo in newProduct.ProductPhotos)
                                 {
-                                    tempProduct = await tempProduct.WithDescriptionAsync(CurrentProductViewModel.Description);
+                                    photo.ProductId = newProduct.Id;
                                 }
 
-                                if (CurrentProductViewModel.Manufacturer != null)
+                                using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
                                 {
-                                    tempProduct = await tempProduct.WithManufacturerAsync(CurrentProductViewModel.Manufacturer);
+                                    db.UpdateProduct(newProduct);
                                 }
-
-                                if (CurrentProductViewModel.DiscountPercentage != null)
-                                {
-                                    tempProduct = await tempProduct.WithDiscountPercentageAsync(CurrentProductViewModel.DiscountPercentage);
-                                }
-
-                                if (CurrentProductViewModel.ProductDetails != null
-                                    && CurrentProductViewModel.ProductDetails.Any())
-                                {
-                                    tempProduct = await tempProduct.WithProductDetailsAsync(JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.Indented));
-                                }
-
-                                if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.AdditionalInfo))
-                                {
-                                    tempProduct = await tempProduct.WithAdditionalInfoAsync(CurrentProductViewModel.AdditionalInfo);
-                                }
-
-                                if (CurrentProductViewModel.ProductPhotos != null
-                                    && CurrentProductViewModel.ProductPhotos.Any())
-                                {
-                                    var newProduct = tempProduct.Build();
-                                    newProduct.ProductPhotos = CurrentProductViewModel.ProductPhotos;
-
-                                    using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
-                                    {
-                                        db.UpdateProduct(newProduct);
-                                    }
-                                }
-                            }).GetAwaiter().GetResult();
+                            }
 
                             mainViewModel.InitializeAsync();
                             CloseParentWindow();
@@ -678,6 +768,28 @@ namespace WarehouseManagementSystem.ViewModels
                 return false;
             }
             return true;
+        }
+
+        private bool IsProductCodeAvailable(string productCode)
+        {
+            try
+            {
+                using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                {
+                    return !db.IsProductCodeInDB(productCode);
+                }
+            }
+            catch (Exception ex) 
+            {
+                Task.Run(async () =>
+                {
+                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                    {
+                        await logger.LogErrorAsync(ex);
+                    }
+                }).Wait();
+                return false;
+            }
         }
     }
 }
