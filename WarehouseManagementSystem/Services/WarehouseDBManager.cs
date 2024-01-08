@@ -168,7 +168,7 @@ namespace WarehouseManagementSystem.Services
 
         public async Task<ObservableCollection<Zone>> GetZonesAsync()
         {
-            var zones = await dbContext.Zones.ToListAsync();
+            var zones = await dbContext.Zones.Include(z => z.ZonePositions).ToListAsync();
             return new ObservableCollection<Zone>(zones);
         }
 
@@ -357,6 +357,34 @@ namespace WarehouseManagementSystem.Services
         public bool IsProductCodeInDB(string productCode)
         {
             return dbContext.Products.Any(p => p.ProductCode == productCode);
+        }
+
+        public ProductInZonePosition? GetProductInZonePositionByProduct(int productId, 
+                                                                        int productInZonePositionId, 
+                                                                        DateTime? manufactureDate, 
+                                                                        DateTime? expiryDate)
+        {
+            return dbContext.ProductInZonePositions.Where(pzp => pzp.ProductId == productId
+                                                && pzp.ZonePositionId == productInZonePositionId
+                                                && pzp.ManufactureDate == manufactureDate
+                                                && pzp.ExpiryDate == expiryDate).FirstOrDefault();
+        }
+
+        public List<MovementHistory> GetMovementHistoriesFiltered(DateTime? reportDateFrom, DateTime? reportDateTo)
+        {
+            IQueryable<MovementHistory> query = dbContext.MovementHistories;
+
+            if (reportDateFrom.HasValue)
+            {
+                query = query.Where(mh => mh.MovementDate >= reportDateFrom.Value);
+            }
+
+            if (reportDateTo.HasValue)
+            {
+                query = query.Where(mh => mh.MovementDate <= reportDateTo.Value);
+            }
+
+            return query.ToList();
         }
     }
 }

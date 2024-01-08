@@ -75,10 +75,10 @@
                         <TextBlock Text="{Binding SelectedProductInZonePosition.Product.Name}" FontSize="22" FontWeight="Bold" Margin="10,5"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
-                        <TextBlock Text="Unallocated balance:" FontSize="22" Margin="10,5"/>
-                        <TextBlock Text="{Binding UnallocatedProductInstances.UnallocatedBalance, Mode=TwoWay}" FontSize="22" FontWeight="Bold" Margin="10,5"/>
-                        <TextBlock Text="Unallocated capacity:" FontSize="22" Margin="10,5"/>
-                        <TextBlock Text="{Binding UnallocatedProductInstances.UnallocatedCapacity, Mode=TwoWay}" FontSize="22" FontWeight="Bold" Margin="10,5"/>
+                        <TextBlock Text="Available balance to move:" FontSize="22" Margin="10,5"/>
+                        <TextBlock Text="{Binding AvailableBalanceToMove, Mode=TwoWay}" FontSize="22" FontWeight="Bold" Margin="10,5"/>
+                        <TextBlock Text="Available capacity to move:" FontSize="22" Margin="10,5"/>
+                        <TextBlock Text="{Binding AvailableCapacityToMove, Mode=TwoWay}" FontSize="22" FontWeight="Bold" Margin="10,5"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Zone:" FontSize="22" Margin="10"/>
@@ -89,11 +89,11 @@
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="Free capacity:" FontSize="22" Margin="10,5"/>
                         <TextBlock Text="{Binding SelectedZonePositionFreeCapacity}" FontSize="22" FontWeight="Bold" Margin="10,5"/>
-                        <TextBlock Text="Enter quantity to allocate:" FontSize="22" Margin="10,5"/>
+                        <TextBlock Text="Enter quantity to move:" FontSize="22" Margin="10,5"/>
                         <TextBox Text="{Binding InputQuantity, UpdateSourceTrigger=PropertyChanged}" MaxLength="4" FontSize="22" Width="100" Height="30" Margin="10,5" 
                                  PreviewTextInput="TextBox_PreviewTextInput" PreviewKeyDown="TextBox_PreviewKeyDown"/>
-                        <TextBlock Text="Capacity to allocate:" FontSize="22" Margin="10,5"/>
-                        <TextBlock Text="{Binding CapacityToBeAllocated}" FontSize="22" FontWeight="Bold" Margin="10,5"/>
+                        <TextBlock Text="Capacity to move:" FontSize="22" Margin="10,5"/>
+                        <TextBlock Text="{Binding CapacityToBeMoved}" FontSize="22" FontWeight="Bold" Margin="10,5"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Manufacture date:" FontSize="22" Margin="10"/>

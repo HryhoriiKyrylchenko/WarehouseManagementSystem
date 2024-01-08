@@ -54,6 +54,11 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     new ReportBuilder(Title, DateTime.Now, reportType, content, userId);
 
+                    MessageBox.Show("Report saved successfully",
+                                    "Info",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
+
                     CloseParentWindow();
                 }
                 catch (Exception ex)

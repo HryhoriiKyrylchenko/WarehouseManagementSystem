@@ -1,16 +1,21 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
+using System.Windows;
 using System.Windows.Input;
 using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models;
+using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.ViewModels.Support_data;
+using WarehouseManagementSystem.Windows;
 using Zone = WarehouseManagementSystem.Models.Entities.Zone;
 
 namespace WarehouseManagementSystem.ViewModels
@@ -78,11 +83,15 @@ namespace WarehouseManagementSystem.ViewModels
                     OnPropertyChanged(nameof(SelectedProductInZonePosition));
                     if (value != null)
                     {
-                        UpdateUnallocatedDataAsync(value.Product);
+                        UpdateAvailableDataAsync(value);
+                        UpdateManufactureAndExpiryDates(value);
                     }
                     else
                     {
-                        UnallocatedProductInstances = new UnallocatedProductInstancesModel();
+                        AvailableBalanceToMove = 0;
+                        AvailableCapacityToMove = 0;
+                        ProductManufactureDate = null;
+                        ProductExpiryDate = null;
                     }
                     UpdateInputQuantity(string.Empty);
                 }
@@ -233,23 +242,37 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     selectedZonePositionMoveTo = value;
                     OnPropertyChanged(nameof(SelectedZonePositionMoveTo));
-                    UpdateProductInZonePozitionsByZonePozition();
                     UpdateSelectedZonePositionFreeCapacity(value);
                 }
             }
         }
 
-        private UnallocatedProductInstancesModel? unallocatedProductInstances;
+        private decimal? availableBalanceToMove;
 
-        public UnallocatedProductInstancesModel? UnallocatedProductInstances
+        public decimal? AvailableBalanceToMove
         {
-            get { return unallocatedProductInstances; }
+            get { return availableBalanceToMove; }
             set
             {
-                if (unallocatedProductInstances != value)
+                if (availableBalanceToMove != value)
                 {
-                    unallocatedProductInstances = value;
-                    OnPropertyChanged(nameof(UnallocatedProductInstances));
+                    availableBalanceToMove = value;
+                    OnPropertyChanged(nameof(AvailableBalanceToMove));
+                }
+            }
+        }
+
+        private decimal? availableCapacityToMove;
+
+        public decimal? AvailableCapacityToMove
+        {
+            get { return availableCapacityToMove; }
+            set
+            {
+                if (availableCapacityToMove != value)
+                {
+                    availableCapacityToMove = value;
+                    OnPropertyChanged(nameof(AvailableCapacityToMove));
                 }
             }
         }
@@ -280,22 +303,22 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     inputQuantity = value;
                     OnPropertyChanged(nameof(InputQuantity));
-                    UpdateCapacityToBeAllocated(value);
+                    UpdateCapacityToBeMoved(value);
                 }
             }
         }
 
-        private int? capacityToBeAllocated;
+        private int? capacityToBeMoved;
 
-        public int? CapacityToBeAllocated
+        public int? CapacityToBeMoved
         {
-            get { return capacityToBeAllocated; }
+            get { return capacityToBeMoved; }
             set
             {
-                if (capacityToBeAllocated != value)
+                if (capacityToBeMoved != value)
                 {
-                    capacityToBeAllocated = value;
-                    OnPropertyChanged(nameof(CapacityToBeAllocated));
+                    capacityToBeMoved = value;
+                    OnPropertyChanged(nameof(CapacityToBeMoved));
                 }
             }
         }
@@ -360,7 +383,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public MoveProductsViewModel(MainViewModel mainViewModel) 
+        public MoveProductsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
             categories = new ObservableCollection<CategoryViewModel>();
@@ -412,7 +435,6 @@ namespace WarehouseManagementSystem.ViewModels
                     if (Zones.Any())
                     {
                         SelectedZone = Zones.First();
-                        SelectedZoneMoveTo = Zones.First();
                     }
                 }
             }
@@ -429,7 +451,7 @@ namespace WarehouseManagementSystem.ViewModels
         {
             if (SelectedCategory != null)
             {
-                if (ProductInZonePozitions != null )
+                if (ProductInZonePozitions != null)
                 {
                     ProductInZonePozitions.Clear();
                 }
@@ -438,16 +460,16 @@ namespace WarehouseManagementSystem.ViewModels
                     ProductInZonePozitions = new ObservableCollection<ProductInZonePosition>();
                 }
 
-                foreach(var product in SelectedCategory.Products)
+                foreach (var product in SelectedCategory.Products)
                 {
                     try
                     {
-                        using(WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                        using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
                         {
                             var prodInZones = await db.GetProductInZonePositionsByProductAsync(product.Id);
-                            if(prodInZones.Any())
+                            if (prodInZones.Any())
                             {
-                                foreach(var prod in prodInZones)
+                                foreach (var prod in prodInZones)
                                 {
                                     ProductInZonePozitions.Add(prod);
                                 }
@@ -506,28 +528,24 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private async void UpdateUnallocatedDataAsync(Product? product)
+        private void UpdateAvailableDataAsync(ProductInZonePosition product)
         {
-            UnallocatedProductInstancesModel tempModel = new UnallocatedProductInstancesModel();
-            if (product != null)
+            if (product.Product != null)
             {
-                try
-                {
-                    using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
-                    {
-                        tempModel.UnallocatedBalance = await db.GetUnallocatedProductInstancesSumAsync(product.Id);
-                        tempModel.UnallocatedCapacity = tempModel.UnallocatedBalance * (product.Capacity ?? 0);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                    {
-                        await logger.LogErrorAsync(ex);
-                    }
-                }
+                AvailableBalanceToMove = product.Quantity;
+                AvailableCapacityToMove = product.Quantity * product.Product.Capacity;
             }
-            UnallocatedProductInstances = tempModel;
+            else
+            {
+                AvailableBalanceToMove = 0;
+                AvailableCapacityToMove = 0;
+            }
+        }
+
+        private void UpdateManufactureAndExpiryDates(ProductInZonePosition product)
+        {
+            ProductManufactureDate = product.ManufactureDate;
+            ProductExpiryDate = product.ExpiryDate;
         }
 
         private async void UpdateZonePositionsMoveTo(Zone? zone)
@@ -557,7 +575,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private async void UpdateSelectedZonePositionFreeCapacity(ZonePosition? zonePosition)
+        private void UpdateSelectedZonePositionFreeCapacity(ZonePosition? zonePosition)
         {
             if (zonePosition != null)
             {
@@ -572,7 +590,7 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
                     {
-                        await logger.LogErrorAsync(ex);
+                        logger.LogError(ex);
                     }
                 }
             }
@@ -586,21 +604,21 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private void UpdateCapacityToBeAllocated(string? value)
+        private void UpdateCapacityToBeMoved(string? value)
         {
             if (string.IsNullOrEmpty(value))
             {
-                CapacityToBeAllocated = 0;
+                CapacityToBeMoved = 0;
             }
             else
             {
-                CapacityToBeAllocated = Convert.ToInt32(inputQuantity) * SelectedProductInZonePosition?.Product?.Capacity;
+                CapacityToBeMoved = Convert.ToInt32(inputQuantity) * SelectedProductInZonePosition?.Product?.Capacity;
             }
         }
 
         public ICommand BackCommand => new RelayCommand(Back);
         public ICommand MoveCommand => new RelayCommand(MoveProduct);
-        public ICommand SaveReportCommand => new RelayCommand(SaveReport); 
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport);
 
         private void Back(object parameter)
         {
@@ -609,12 +627,250 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void MoveProduct(object parameter)
         {
-            ////////////////////////////////////
+            if (SelectedProductInZonePosition != null)
+            {
+                if (GetConfirmation() == MessageBoxResult.OK)
+                {
+                    try
+                    {
+                        if (!IsDataToMoveCorrect()) return;
+
+                        int productToMovedId = SelectedProductInZonePosition.ProductId;
+                        int quantityToBeMoved = Convert.ToInt32(InputQuantity);
+                        int zonePositionToMoveId;
+                        if (SelectedZonePositionMoveTo != null)
+                        {
+                            zonePositionToMoveId = SelectedZonePositionMoveTo.Id;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Select zone position to move product",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Exclamation);
+                            return;
+                        }
+
+                        using (var scope = new TransactionScope())
+                        {
+                            try
+                            {
+                                if (SelectedProductInZonePosition.ZonePositionId != zonePositionToMoveId
+                                    || SelectedProductInZonePosition.ManufactureDate != ProductManufactureDate
+                                    || SelectedProductInZonePosition.ExpiryDate != ProductExpiryDate)
+                                {
+
+                                    ProductInZonePosition? existingProduct;
+
+                                    using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                                    {
+                                        existingProduct = db.GetProductInZonePositionByProduct(productToMovedId,
+                                                                                                zonePositionToMoveId,
+                                                                                                ProductManufactureDate,
+                                                                                                ProductExpiryDate);
+                                    }
+
+
+                                    if (existingProduct != null)
+                                    {
+                                        using (EntityManager db = new EntityManager(new WarehouseDbContext()))
+                                        {
+                                            existingProduct.Quantity += quantityToBeMoved;
+                                            db.UpdateProductInZonePosition(existingProduct);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ProductInZonePositionBuilder newAllocator = new ProductInZonePositionBuilder(productToMovedId,
+                                                                                                            quantityToBeMoved,
+                                                                                                            zonePositionToMoveId);
+                                        if (ProductManufactureDate != null)
+                                        {
+                                            newAllocator.WithManufactureDate((DateTime)ProductManufactureDate);
+                                        }
+                                        if (ProductExpiryDate != null)
+                                        {
+                                            newAllocator.WithExpiryDate((DateTime)ProductExpiryDate);
+                                        }
+                                    }
+
+                                    MovementHistoryBuilder newMHB = new MovementHistoryBuilder(DateTime.Now,
+                                                                                               productToMovedId,
+                                                                                               quantityToBeMoved,
+                                                                                               SelectedProductInZonePosition.ZonePositionId,
+                                                                                               zonePositionToMoveId);
+
+                                    using (EntityManager db = new EntityManager(new WarehouseDbContext()))
+                                    {
+                                        if (quantityToBeMoved < SelectedProductInZonePosition.Quantity)
+                                        {
+                                            SelectedProductInZonePosition.Quantity -= quantityToBeMoved;
+                                            db.UpdateProductInZonePosition(SelectedProductInZonePosition);
+                                        }
+                                        else if (quantityToBeMoved == SelectedProductInZonePosition.Quantity)
+                                        {
+                                            db.DeleteProductInZonePosition(SelectedProductInZonePosition);
+                                        }
+                                    }
+
+
+                                    SelectedProductInZonePosition = null;
+                                }
+
+                                scope.Complete();
+                            }
+                            catch
+                            {
+                                scope.Dispose();
+                                throw;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Some error occured",
+                            "Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+
+                        using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                        {
+                            logger.LogError(ex);
+                        }
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Select product to move",
+                        "Caution",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+                return;
+            }
+        }
+
+        private bool IsDataToMoveCorrect()
+        {
+            if (SelectedZonePositionMoveTo == null)
+            {
+                MessageBox.Show("Select zone position to move product",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (SelectedZonePositionFreeCapacity <= 0)
+            {
+                MessageBox.Show("No space in selected zone position",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (CapacityToBeMoved <= 0)
+            {
+                MessageBox.Show("Enter quantity to move",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (CapacityToBeMoved > SelectedZonePositionFreeCapacity)
+            {
+                MessageBox.Show("Not enough space in selected zone position",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (AvailableBalanceToMove < CapacityToBeMoved)
+            {
+                MessageBox.Show("Not enough products to move",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (ProductManufactureDate != null && ProductManufactureDate > DateTime.Now)
+            {
+                MessageBox.Show("Incorrect manufacture date",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (ProductExpiryDate != null && ProductManufactureDate != null && ProductExpiryDate < ProductManufactureDate)
+            {
+                MessageBox.Show("Incorrect expiry date",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            return true;
         }
 
         private void SaveReport(object parameter)
         {
-            ////////////////////////////////////
+            List<MovementHistory>? movements;
+
+            using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+            {
+                 movements = db.GetMovementHistoriesFiltered(ReportDateFrom, ReportDateTo);
+            }
+
+            if (movements.Any()
+                && mainViewModel.LoginService.CurrentUser != null)
+            {
+                string title = GenereteTitle();
+                string content = GenereteContentToJson(movements);
+
+                SupportWindow supportWindow = new SupportWindow(new SaveReportViewModel(title,
+                                                                                    Enums.ReportTypeEnum.MOVEMENTS,
+                                                                                    content,
+                                                                                    mainViewModel.LoginService.CurrentUser.Id));
+                supportWindow.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("No info to be saved",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+            }
+        }
+
+        private string GenereteTitle()
+        {
+            StringBuilder newTitle = new StringBuilder();
+            newTitle.Append("Movements/");
+
+            string formattedDateFrom = ReportDateFrom?.ToString("dd-MM-yyyy") ?? "N/A";
+            newTitle.Append($"From {formattedDateFrom}/");
+
+            string formattedDateTo = ReportDateTo?.ToString("dd-MM-yyyy") ?? "N/A";
+            newTitle.Append($"To {formattedDateTo}/");
+
+            return newTitle.ToString();
+        }
+
+        private string GenereteContentToJson(List<MovementHistory> content)
+        {
+            return JsonConvert.SerializeObject(content, Formatting.None);
+        }
+
+        private MessageBoxResult GetConfirmation()
+        {
+            return MessageBox.Show("Do you want to make this changes?", "Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Question);
         }
     }
 }

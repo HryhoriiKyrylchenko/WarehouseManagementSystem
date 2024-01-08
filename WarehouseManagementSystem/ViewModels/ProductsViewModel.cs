@@ -599,34 +599,39 @@ namespace WarehouseManagementSystem.ViewModels
         {
             if (SelectedProduct != null && SelectedZonePosition != null)
             {
-                try
+                if (GetConfirmation() == MessageBoxResult.OK)
                 {
-                    if (!IsDataToAllocateCorrect()) return;
-
-                    int productToAllocateId = SelectedProduct.Id;
-                    int quantityToAllocate = Convert.ToInt32(InputQuantity);
-                    int zonePositionToAllocateId = SelectedZonePosition.Id;
-
-                    ProductInZonePositionBuilder newAllocator = new ProductInZonePositionBuilder(productToAllocateId,
-                                                                                                quantityToAllocate,
-                                                                                                zonePositionToAllocateId);
-
-                    if(ManufactureDate != null)
+                    try
                     {
-                        newAllocator.WithManufactureDate((DateTime)ManufactureDate);
+                        if (!IsDataToAllocateCorrect()) return;
+
+                        int productToAllocateId = SelectedProduct.Id;
+                        int quantityToAllocate = Convert.ToInt32(InputQuantity);
+                        int zonePositionToAllocateId = SelectedZonePosition.Id;
+
+                        ProductInZonePositionBuilder newAllocator = new ProductInZonePositionBuilder(productToAllocateId,
+                                                                                                    quantityToAllocate,
+                                                                                                    zonePositionToAllocateId);
+
+                        if (ManufactureDate != null)
+                        {
+                            newAllocator.WithManufactureDate((DateTime)ManufactureDate);
+                        }
+                        if (ExpiryDate != null)
+                        {
+                            newAllocator.WithExpiryDate((DateTime)ExpiryDate);
+                        }
+
+                        SelectedProduct = null;
+
+                        UpdateFilteredProducts();
                     }
-                    if (ExpiryDate != null)
+                    catch (Exception ex)
                     {
-                        newAllocator.WithExpiryDate((DateTime)ExpiryDate);
-                    }
-
-                    SelectedProduct = null;
-                }
-                catch (Exception ex)
-                {
-                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                    {
-                        logger.LogError(ex);
+                        using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                        {
+                            logger.LogError(ex);
+                        }
                     }
                 }
             }
@@ -723,6 +728,11 @@ namespace WarehouseManagementSystem.ViewModels
                 supportWindow.ShowDialog();
                 InitializeAsync();
             }
+        }
+
+        private MessageBoxResult GetConfirmation()
+        {
+            return MessageBox.Show("Do you want to make this changes?", "Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Question);
         }
     }
 }
