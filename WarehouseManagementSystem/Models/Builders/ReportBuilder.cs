@@ -18,7 +18,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.report = InitializeAsync(new Report(title, reportDate, reportType, content, userId)).GetAwaiter().GetResult();
+                this.report = Initialize(new Report(title, reportDate, reportType, content, userId));
             }
             catch
             {
@@ -30,7 +30,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.report = InitializeAsync(report).GetAwaiter().GetResult();
+                this.report = Initialize(report);
             }
             catch
             {

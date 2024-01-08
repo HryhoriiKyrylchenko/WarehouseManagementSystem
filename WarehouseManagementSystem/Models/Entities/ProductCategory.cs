@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -23,6 +24,7 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public string? AdditionalInfo { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Product> Products { get; set; }
 
         public ProductCategory(string categoryName)

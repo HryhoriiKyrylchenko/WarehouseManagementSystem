@@ -100,22 +100,26 @@
                         <TextBlock Text="Free capacity:" FontSize="22" Margin="10"/>
                         <TextBlock Text="{Binding SelectedZonePositionFreeCapacity}" FontSize="22" FontWeight="Bold" Margin="10"/>
                         <TextBlock Text="Enter quantity to allocate:" FontSize="22" Margin="10"/>
-                        <TextBox Text="{Binding InputQuantity, UpdateSourceTrigger=PropertyChanged}" MaxLength="4" FontSize="22" Width="60" Height="30" PreviewTextInput="TextBox_PreviewTextInput" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+                        <TextBox Text="{Binding InputQuantity, UpdateSourceTrigger=PropertyChanged}" MaxLength="4" FontSize="22" 
+                                 Width="60" Height="30" PreviewTextInput="TextBox_PreviewTextInput" PreviewKeyDown="TextBox_PreviewKeyDown"/>
                         <TextBlock Text="Capacity to be allocated:" FontSize="22" Margin="10"/>
                         <TextBlock Text="{Binding CapacityToBeAllocated}" FontSize="22" FontWeight="Bold" Margin="10"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Manufacture date:" FontSize="22" Margin="10"/>
-                        <DatePicker x:Name="DatePickerManufactureDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                        <DatePicker SelectedDate="{Binding ManufactureDate, Mode=TwoWay}" FontSize="18" 
+                                    VerticalAlignment="Center" Margin="10"/>
                         <TextBlock Text="Expiry date:" FontSize="22" Margin="10"/>
-                        <DatePicker x:Name="DatePickerExpiryDate" FontSize="18" VerticalAlignment="Center" Margin="10"/>
+                        <DatePicker SelectedDate="{Binding ExpiryDate, Mode=TwoWay}" FontSize="18" 
+                                    VerticalAlignment="Center" Margin="10"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>
         <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
         <Border Grid.Row="1" Grid.Column="1" BorderBrush="DarkGray" BorderThickness="1" Margin="15,0,15,10">
-            <Button Style="{StaticResource ButtonStyle}" Content="Alocate" Command="{Binding AllocateCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" HorizontalAlignment="Center"/>
+            <Button Style="{StaticResource ButtonStyle}" HorizontalAlignment="Center"
+                    Content="Alocate" Command="{Binding AllocateCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
         </Border>
     </Grid>
 </UserControl>

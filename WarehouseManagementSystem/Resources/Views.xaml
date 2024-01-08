@@ -49,4 +49,8 @@
     <DataTemplate DataType="{x:Type viewModels:AddProductCategoryViewModel}">
         <views:AddProductCategoryView />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:SaveReportViewModel}">
+        <views:SaveReportView />
+    </DataTemplate>
 </ResourceDictionary>

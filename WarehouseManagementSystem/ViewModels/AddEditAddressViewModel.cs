@@ -125,13 +125,11 @@ namespace WarehouseManagementSystem.ViewModels
                         {
                             MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                            Task.Run(async () =>
+                            using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
                             {
-                                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                                {
-                                    await logger.LogErrorAsync(ex);
-                                }
-                            }).Wait();
+                                logger.LogError(ex);
+                            }
+
                         }
                     }
                     else

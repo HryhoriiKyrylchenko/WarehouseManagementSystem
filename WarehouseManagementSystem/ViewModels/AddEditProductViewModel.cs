@@ -610,7 +610,7 @@ namespace WarehouseManagementSystem.ViewModels
                         if (CurrentProductViewModel.ProductDetails != null
                             && CurrentProductViewModel.ProductDetails.Any())
                         {
-                            Product.ProductDetails = JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.Indented);
+                            Product.ProductDetails = JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.None);
                         }
 
                         if (CurrentProductViewModel.ProductPhotos != null
@@ -699,7 +699,7 @@ namespace WarehouseManagementSystem.ViewModels
                             if (CurrentProductViewModel.ProductDetails != null
                                 && CurrentProductViewModel.ProductDetails.Any())
                             {
-                                tempProduct = tempProduct.WithProductDetails(JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.Indented));
+                                tempProduct = tempProduct.WithProductDetails(JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.None));
                             }
 
                             if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.AdditionalInfo))

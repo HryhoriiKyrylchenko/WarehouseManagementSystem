@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models;
+using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.ViewModels.Support_data;
@@ -257,6 +261,36 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private DateTime? manufactureDate;
+
+        public DateTime? ManufactureDate
+        {
+            get { return manufactureDate; }
+            set
+            {
+                if (manufactureDate != value)
+                {
+                    manufactureDate = value;
+                    OnPropertyChanged(nameof(ManufactureDate));
+                }
+            }
+        }
+
+        private DateTime? expiryDate;
+
+        public DateTime? ExpiryDate
+        {
+            get { return expiryDate; }
+            set
+            {
+                if (expiryDate != value)
+                {
+                    expiryDate = value;
+                    OnPropertyChanged(nameof(ExpiryDate));
+                }
+            }
+        }
+
         public ProductsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
@@ -287,7 +321,8 @@ namespace WarehouseManagementSystem.ViewModels
                     {
                         foreach (var rootCategory in rootCategories)
                         {
-                            var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory, mainViewModel.LoginService.CurrentWarehouse);
+                            var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory, 
+                                                                               mainViewModel.LoginService.CurrentWarehouse);
                             Categories.Add(rootViewModel);
                         }
                     }
@@ -490,6 +525,7 @@ namespace WarehouseManagementSystem.ViewModels
         public ICommand SaveReportCommand => new RelayCommand(SaveReport);
         public ICommand AddCommand => new RelayCommand(AddProduct);
         public ICommand EditCommand => new RelayCommand(EditProduct);
+        public ICommand AllocateCommand => new RelayCommand(AllocateProduct);
 
         private void Back(object parameter)
         {
@@ -498,7 +534,178 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void SaveReport(object parameter)
         {
-            /////////////////////////////////////
+            if (FilteredProducts != null 
+                && FilteredProducts.Any() 
+                && mainViewModel.LoginService.CurrentUser != null)
+            {
+                string title = GenereteTitle();
+                string content = GenereteContentToJson();
+
+                SupportWindow supportWindow = new SupportWindow(new SaveReportViewModel(title,
+                                                                                    Enums.ReportTypeEnum.PRODUCTS,
+                                                                                    content,
+                                                                                    mainViewModel.LoginService.CurrentUser.Id));
+                supportWindow.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("No info to be saved",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+            }
+        }
+
+        private string GenereteTitle()
+        {
+            StringBuilder newTitle = new StringBuilder();
+            newTitle.Append("Products/");
+
+            if  (CategoriesSelector.CheckboxAllCategoriesChecked)
+            {
+                newTitle.Append("All categories/");
+            }
+            else
+            {
+                newTitle.Append($"Category: {SelectedCategory}/");
+            }
+            
+            if (ProductSelectors.SectionUnallocatedSelected)
+            {
+                newTitle.Append("Unallocated/");
+            }
+            else if (ProductSelectors.SectionInStockSelected)
+            {
+                newTitle.Append("In stock/");
+            }
+            else if (ProductSelectors.SectionNotInStockSelected)
+            {
+                newTitle.Append("Not in stock/");
+            }
+            else if (ProductSelectors.SectionAllProductsSelected)
+            {
+                newTitle.Append("All products/");
+            }
+
+            return newTitle.ToString();
+        }
+
+        private string GenereteContentToJson()
+        {
+            return JsonConvert.SerializeObject(FilteredProducts, Formatting.None);
+        }
+
+        private void AllocateProduct(object parameter)
+        {
+            if (SelectedProduct != null && SelectedZonePosition != null)
+            {
+                try
+                {
+                    if (!IsDataToAllocateCorrect()) return;
+
+                    int productToAllocateId = SelectedProduct.Id;
+                    int quantityToAllocate = Convert.ToInt32(InputQuantity);
+                    int zonePositionToAllocateId = SelectedZonePosition.Id;
+
+                    ProductInZonePositionBuilder newAllocator = new ProductInZonePositionBuilder(productToAllocateId,
+                                                                                                quantityToAllocate,
+                                                                                                zonePositionToAllocateId);
+
+                    if(ManufactureDate != null)
+                    {
+                        newAllocator.WithManufactureDate((DateTime)ManufactureDate);
+                    }
+                    if (ExpiryDate != null)
+                    {
+                        newAllocator.WithExpiryDate((DateTime)ExpiryDate);
+                    }
+
+                    SelectedProduct = null;
+                }
+                catch (Exception ex)
+                {
+                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                    {
+                        logger.LogError(ex);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Select product to allocate",
+                        "Caution",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+                return;
+            }
+        }
+
+        private bool IsDataToAllocateCorrect()
+        {
+            if (selectedZonePosition == null)
+            {
+                MessageBox.Show("Select zone position to allocate product",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (SelectedZonePositionFreeCapacity <= 0)
+            {
+                MessageBox.Show("No space in selected zone position",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (CapacityToBeAllocated <= 0)
+            {
+                MessageBox.Show("Enter quantity to allocate",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (CapacityToBeAllocated > SelectedZonePositionFreeCapacity)
+            {
+                MessageBox.Show("Not enough space in selected zone position",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (UnallocatedProductInstances?.UnallocatedCapacity < CapacityToBeAllocated)
+            {
+                MessageBox.Show("Not enough products to allocate",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (ManufactureDate != null && ManufactureDate > DateTime.Now)
+            {
+                MessageBox.Show("Incorrect manufacture date",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            if (ExpiryDate != null && ManufactureDate != null && ExpiryDate < ManufactureDate)
+            {
+                MessageBox.Show("Incorrect expiry date",
+                    "Caution",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+                return false;
+            }
+
+            return true;
         }
 
         private void AddProduct(object parameter)
