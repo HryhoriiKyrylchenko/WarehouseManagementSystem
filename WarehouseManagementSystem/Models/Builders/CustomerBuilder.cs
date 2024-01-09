@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.customer = InitializeAsync(new Customer(firstname, lastname, addressId)).GetAwaiter().GetResult();
+                this.customer = Initialize(new Customer(firstname, lastname, addressId));
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.customer = InitializeAsync(customer).GetAwaiter().GetResult();
+                this.customer = Initialize(customer);
             }
             catch
             {

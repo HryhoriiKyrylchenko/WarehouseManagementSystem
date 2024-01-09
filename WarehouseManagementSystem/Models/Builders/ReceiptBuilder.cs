@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.receipt = InitializeAsync(new Receipt(receiptDate, supplierId, userId, batchNumber)).GetAwaiter().GetResult();
+                this.receipt = Initialize(new Receipt(receiptDate, supplierId, userId, batchNumber));
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.receipt = InitializeAsync(receipt).GetAwaiter().GetResult();
+                this.receipt = Initialize(receipt);
             }
             catch
             {

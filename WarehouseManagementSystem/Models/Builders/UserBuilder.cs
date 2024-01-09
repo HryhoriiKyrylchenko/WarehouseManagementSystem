@@ -18,7 +18,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.user = InitializeAsync(new User(username, password, role)).GetAwaiter().GetResult();
+                this.user = Initialize(new User(username, password, role));
             }
             catch
             {
@@ -30,7 +30,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.user = InitializeAsync(user).GetAwaiter().GetResult();
+                this.user = Initialize(user);
             }
             catch
             {

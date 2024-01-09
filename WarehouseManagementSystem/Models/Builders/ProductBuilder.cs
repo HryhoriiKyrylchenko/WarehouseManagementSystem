@@ -32,7 +32,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.product = InitializeAsync(product).GetAwaiter().GetResult();
+                this.product = Initialize(product);
             }
             catch
             {
