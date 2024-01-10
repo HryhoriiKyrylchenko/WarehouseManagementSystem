@@ -9,26 +9,26 @@ using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
-using WarehouseManagementSystem.Windows;
 using WarehouseManagementSystem.ViewModels.Interfaces;
+using WarehouseManagementSystem.Windows;
 using System.Transactions;
 
 namespace WarehouseManagementSystem.ViewModels
 {
-    public class AddSupplierViewModel : ViewModelBaseRequestClose, IHasAddress
+    public class AddCustomerViewModel : ViewModelBaseRequestClose, IHasAddress
     {
-        private readonly AddEditReceiptViewModel mainViewModel;
+        private readonly AddEditShipmentViewModel mainViewModel;
 
-        private SupplierViewModel supplierViewModel;
-        public SupplierViewModel SupplierViewModel
+        private CustomerViewModel customerViewModel;
+        public CustomerViewModel CustomerViewModel
         {
-            get { return supplierViewModel; }
+            get { return customerViewModel; }
             set
             {
-                if (supplierViewModel != value)
+                if (customerViewModel != value)
                 {
-                    this.supplierViewModel = value;
-                    OnPropertyChanged(nameof(SupplierViewModel));
+                    this.customerViewModel = value;
+                    OnPropertyChanged(nameof(CustomerViewModel));
                 };
             }
         }
@@ -38,21 +38,21 @@ namespace WarehouseManagementSystem.ViewModels
         public ICommand AddCommand => new RelayCommand(Add);
         public ICommand CancelCommand => new RelayCommand(Cancel);
 
-        public Address? Address 
-        { 
+        public Address? Address
+        {
             set
             {
-                if (SupplierViewModel.Address != value)
+                if (CustomerViewModel.Address != value)
                 {
-                    SupplierViewModel.Address = value;
+                    CustomerViewModel.Address = value;
                 };
             }
         }
 
-        public AddSupplierViewModel(AddEditReceiptViewModel mainViewModel)
+        public AddCustomerViewModel(AddEditShipmentViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
-            supplierViewModel = new SupplierViewModel();
+            customerViewModel = new CustomerViewModel();
         }
 
         private void AddAddress(object obj)
@@ -63,9 +63,9 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void EditAddress(object obj)
         {
-            if (SupplierViewModel.Address != null)
+            if (CustomerViewModel.Address != null)
             {
-                SupportWindow supportWindow = new SupportWindow(new AddEditAddressViewModel(this, SupplierViewModel.Address));
+                SupportWindow supportWindow = new SupportWindow(new AddEditAddressViewModel(this, CustomerViewModel.Address));
                 supportWindow.ShowDialog();
             }
         }
@@ -74,24 +74,38 @@ namespace WarehouseManagementSystem.ViewModels
         {
             if (GetConfirmation() == MessageBoxResult.OK)
             {
-                if (!string.IsNullOrWhiteSpace(SupplierViewModel.Name) 
-                    && SupplierViewModel.Address != null)
+                if (!string.IsNullOrWhiteSpace(CustomerViewModel.Firstname)
+                    && !string.IsNullOrWhiteSpace(CustomerViewModel.Lastname)
+                    && CustomerViewModel.Address != null)
                 {
                     using (var scope = new TransactionScope())
                     {
                         try
                         {
-                            var newSB = new SupplierBuilder(SupplierViewModel.Name, SupplierViewModel.Address.Id);
+                            var newCB = new CustomerBuilder(CustomerViewModel.Firstname,
+                                                            CustomerViewModel.Lastname,
+                                                            CustomerViewModel.Address.Id);
 
-                            if (!string.IsNullOrWhiteSpace(SupplierViewModel.AdditionalInfo))
+                            if (CustomerViewModel.DateOfBirth != null)
                             {
-                                newSB = newSB.WithAdditionalInfo(SupplierViewModel.AdditionalInfo);
+                                newCB = newCB.WithDateOfBirth((DateTime)CustomerViewModel.DateOfBirth);
                             }
 
-                            Supplier newSupplier = newSB.Build();
-                            mainViewModel.UpdateSuppliers();
-                            mainViewModel.CurrentReceiptViewModel.Supplier = mainViewModel.Suppliers
-                                                                                          .Where(s => s.Id == newSupplier.Id)
+
+                            if (!string.IsNullOrWhiteSpace(CustomerViewModel.DiscountPercentage))
+                            {
+                                newCB = newCB.WithDiscountPercentage(Convert.ToDecimal(CustomerViewModel.DiscountPercentage));
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(CustomerViewModel.AdditionalInfo))
+                            {
+                                newCB = newCB.WithAdditionalInfo(CustomerViewModel.AdditionalInfo);
+                            }
+
+                            Customer newCustomer = newCB.Build();
+                            mainViewModel.UpdateCustomers();
+                            mainViewModel.CurrentShipmentViewModel.Customer = mainViewModel.Customers
+                                                                                          .Where(c => c.Id == newCustomer.Id)
                                                                                           .FirstOrDefault();
 
                             scope.Complete();
@@ -137,11 +151,11 @@ namespace WarehouseManagementSystem.ViewModels
             {
                 try
                 {
-                    if (SupplierViewModel.Address != null)
+                    if (CustomerViewModel.Address != null)
                     {
                         using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
                         {
-                            db.DeleteAddress(SupplierViewModel.Address);
+                            db.DeleteAddress(CustomerViewModel.Address);
                         }
                     }
                 }

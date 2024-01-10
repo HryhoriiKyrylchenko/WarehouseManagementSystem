@@ -61,4 +61,12 @@
     <DataTemplate DataType="{x:Type viewModels:AddSupplierViewModel}">
         <views:AddSupplierView />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddEditShipmentViewModel}">
+        <views:AddEditShipmentView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddCustomerViewModel}">
+        <views:AddCustomerView />
+    </DataTemplate>
 </ResourceDictionary>

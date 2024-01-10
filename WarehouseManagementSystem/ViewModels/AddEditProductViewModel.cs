@@ -376,7 +376,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
             else
             {
-                MessageBox.Show("Detail name and detail value fields are required",
+                MessageBox.Show("Detail Firstname and detail value fields are required",
                         "Caution",
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
@@ -399,7 +399,7 @@ namespace WarehouseManagementSystem.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show("Detail name and detail value fields are required",
+                    MessageBox.Show("Detail Firstname and detail value fields are required",
                             "Caution",
                             MessageBoxButton.OK,
                             MessageBoxImage.Exclamation);

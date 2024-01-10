@@ -524,7 +524,7 @@ namespace WarehouseManagementSystem.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.User", b =>
@@ -876,7 +876,7 @@ namespace WarehouseManagementSystem.Migrations
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Supplier", b =>
                 {
                     b.HasOne("WarehouseManagementSystem.Models.Entities.Address", "Address")
-                        .WithMany("Suppliers")
+                        .WithMany("Customers")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -940,7 +940,7 @@ namespace WarehouseManagementSystem.Migrations
 
                     b.Navigation("Manufacturers");
 
-                    b.Navigation("Suppliers");
+                    b.Navigation("Customers");
 
                     b.Navigation("Warehouses");
                 });

@@ -68,7 +68,7 @@
                 </Grid>
             </Border>
         </StackPanel>
-        <DataGrid Grid.Row="1" Grid.Column="0" x:Name="DataGridReceiptItems" Margin="15" ItemsSource="{Binding SelectedShipment.ShipmentItems}" 
+        <DataGrid Grid.Row="1" Grid.Column="0" Margin="15" ItemsSource="{Binding SelectedShipment.ShipmentItems}" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Product name" Width="150" Binding="{Binding Product.Name}" />

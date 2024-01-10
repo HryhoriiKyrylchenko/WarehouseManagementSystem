@@ -178,6 +178,12 @@ namespace WarehouseManagementSystem.Services
             return new ObservableCollection<Supplier>(suppliers);
         }
 
+        public ObservableCollection<Customer> GetCustomers()
+        {
+            var customers = dbContext.Customers.ToList();
+            return new ObservableCollection<Customer>(customers);
+        }
+
         public async Task<ObservableCollection<Supplier>> GetSuppliersAsync()
         {
             var suppliers = await dbContext.Suppliers.ToListAsync();
@@ -205,6 +211,14 @@ namespace WarehouseManagementSystem.Services
         public async Task<ObservableCollection<Product>> GetProductsAsync()
         {
             var products = await dbContext.Products.ToListAsync();
+            return new ObservableCollection<Product>(products);
+        }
+
+        public async Task<ObservableCollection<Product>> GetProductsByWarehouseInStockAsync(int warehouseId)
+        {
+            var products = await dbContext.Products.Where(p => p.WarehouseId == warehouseId)
+                                                   .Where(p => p.Quantity > 0)
+                                                   .ToListAsync();
             return new ObservableCollection<Product>(products);
         }
 
@@ -403,6 +417,11 @@ namespace WarehouseManagementSystem.Services
             }
 
             return query.ToList();
+        }
+
+        public Product? GetProduct(int productId)
+        {
+            return dbContext.Products.Where(p => p.Id == productId).FirstOrDefault();
         }
     }
 }

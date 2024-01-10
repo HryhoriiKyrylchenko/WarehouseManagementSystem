@@ -219,7 +219,7 @@ namespace WarehouseManagementSystem.ViewModels
 
             if (FilterSelectors.SectionAllSuppliersSelected)
             {
-                newTitle.Append("All suppliers/");
+                newTitle.Append("All customers/");
             }
             else if (FilterSelectors.SectionBySupplierSelected)
             {
@@ -248,6 +248,7 @@ namespace WarehouseManagementSystem.ViewModels
             SupportWindow supportWindow = new SupportWindow(new AddEditReceiptViewModel(this));
             supportWindow.ShowDialog();
             InitializeAsync();
+            Show(this);
         }
 
         private void EditReceipt(object parameter)
@@ -257,6 +258,7 @@ namespace WarehouseManagementSystem.ViewModels
                 SupportWindow supportWindow = new SupportWindow(new AddEditReceiptViewModel(this, SelectedReceipt));
                 supportWindow.ShowDialog();
                 InitializeAsync();
+                Show(this);
             }
         }
     }

@@ -19,9 +19,13 @@ namespace WarehouseManagementSystem.ViewModels
     public class ShipmentsViewModel : ViewModelBase
     {
         private readonly MainViewModel mainViewModel;
+        public MainViewModel MainViewModel
+        {
+            get { return mainViewModel; }
+        }
+
 
         private ShipmentsSelectorsFilterModel filterSelectors;
-
         public ShipmentsSelectorsFilterModel FilterSelectors
         {
             get { return filterSelectors; }
@@ -240,12 +244,21 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void AddShipment(object parameter)
         {
-            /////////////////////////////////////
+            SupportWindow supportWindow = new SupportWindow(new AddEditShipmentViewModel(this));
+            supportWindow.ShowDialog();
+            InitializeAsync();
+            Show(this);
         }
 
         private void EditShipment(object parameter)
         {
-            /////////////////////////////////////
+            if (SelectedShipment != null)
+            {
+                SupportWindow supportWindow = new SupportWindow(new AddEditShipmentViewModel(this, SelectedShipment));
+                supportWindow.ShowDialog();
+                InitializeAsync();
+                Show(this);
+            }
         }
     }
 }
