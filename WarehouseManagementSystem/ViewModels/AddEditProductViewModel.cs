@@ -47,7 +47,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<CategoryViewModel> categories;
-
         public ObservableCollection<CategoryViewModel> Categories
         {
             get { return categories; }
@@ -199,7 +198,7 @@ namespace WarehouseManagementSystem.ViewModels
                         return category;
                     }
 
-                    if(category.Children != null && category.Children.Any())
+                    if (category.Children != null && category.Children.Any())
                     {
                         var result = SetCategoryById(category.Children, categoryId);
                         if (result != null)
@@ -477,267 +476,267 @@ namespace WarehouseManagementSystem.ViewModels
         {
             if (IsProductDataValid())
             {
-                if (Product != null)
+                if (GetConfirmation() == MessageBoxResult.OK)
                 {
-                    try
+                    if (Product != null)
                     {
-                        if (CurrentProductViewModel.ProductCode != null
-                        && Product.ProductCode != CurrentProductViewModel.ProductCode)
+                        try
                         {
-                            if (!IsProductCodeAvailable(CurrentProductViewModel.ProductCode))
+                            if (CurrentProductViewModel.ProductCode != null
+                            && Product.ProductCode != CurrentProductViewModel.ProductCode)
                             {
-                                MessageBox.Show("Entered product code is already in use.",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                                if (!IsProductCodeAvailable(CurrentProductViewModel.ProductCode))
+                                {
+                                    MessageBox.Show("Entered product code is already in use.",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                                    return;
+                                }
+
+                                Product.ProductCode = CurrentProductViewModel.ProductCode;
+                            }
+                            else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.ProductCode))
+                            {
+                                MessageBox.Show("ProductCode is required",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
                                 return;
                             }
 
-                            Product.ProductCode = CurrentProductViewModel.ProductCode;
-                        }
-                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.ProductCode))
-                        {
-                            MessageBox.Show("ProductCode is required", 
-                                "Caution", 
-                                MessageBoxButton.OK, 
-                                MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if (CurrentProductViewModel.Name != null
-                            && Product.Name != CurrentProductViewModel.Name)
-                        {
-                            Product.Name = CurrentProductViewModel.Name;
-                        }
-                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.Name))
-                        {
-                            MessageBox.Show("Name is required",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if (CurrentProductViewModel.UnitOfMeasure != null
-                            && Product.UnitOfMeasure != CurrentProductViewModel.UnitOfMeasure)
-                        {
-                            Product.UnitOfMeasure = CurrentProductViewModel.UnitOfMeasure;
-                        }
-                        else if (CurrentProductViewModel.UnitOfMeasure == null)
-                        {
-                            MessageBox.Show("Units of measure is required",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if (CurrentProductViewModel.Quantity != null
-                            && Product.Quantity != CurrentProductViewModel.Quantity)
-                        {
-                            Product.Quantity = CurrentProductViewModel.Quantity;
-                        }
-                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.QuantityString))
-                        {
-                            MessageBox.Show("Quantity is required",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if (CurrentProductViewModel.Capacity != null
-                            && Product.Capacity != CurrentProductViewModel.Capacity)
-                        {
-                            Product.Capacity = CurrentProductViewModel.Capacity;
-                        }
-                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.CapacityString))
-                        {
-                            MessageBox.Show("Capacity is required",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if (CurrentProductViewModel.Price != null
-                            && Product.Price != CurrentProductViewModel.Price)
-                        {
-                            Product.Price = (decimal)CurrentProductViewModel.Price;
-                        }
-                        else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.PriceString))
-                        {
-                            MessageBox.Show("Price is required",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if (CurrentProductViewModel.SelectedCategory != null
-                            && Product.CategoryId != CurrentProductViewModel.SelectedCategory.Category.Id)
-                        {
-                            Product.CategoryId = CurrentProductViewModel.SelectedCategory.Category.Id;
-                        }
-                        else if (CurrentProductViewModel.SelectedCategory == null)
-                        {
-                            MessageBox.Show("Category is required",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.Description)
-                            && Product.Description != CurrentProductViewModel.Description)
-                        {
-                            Product.Description = CurrentProductViewModel.Description;
-                        }
-
-                        if (CurrentProductViewModel.Manufacturer != null
-                            && Product.ManufacturerId != CurrentProductViewModel.Manufacturer.Id)
-                        {
-                            Product.ManufacturerId = CurrentProductViewModel.Manufacturer.Id;
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.DiscountPercentageString)
-                            && CurrentProductViewModel.DiscountPercentage != null
-                            && Product.DiscountPercentage != CurrentProductViewModel.DiscountPercentage)
-                        {
-                            Product.DiscountPercentage = CurrentProductViewModel.DiscountPercentage;
-                        }
-
-                        if (CurrentProductViewModel.ProductDetails != null
-                            && CurrentProductViewModel.ProductDetails.Any())
-                        {
-                            Product.ProductDetails = JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.None);
-                        }
-
-                        if (CurrentProductViewModel.ProductPhotos != null
-                            && CurrentProductViewModel.ProductPhotos.Any()
-                            && Product.ProductPhotos != CurrentProductViewModel.ProductPhotos)
-                        {
-                            Product.ProductPhotos = CurrentProductViewModel.ProductPhotos;
-                            foreach(var photo in Product.ProductPhotos)
+                            if (CurrentProductViewModel.Name != null
+                                && Product.Name != CurrentProductViewModel.Name)
                             {
-                                photo.ProductId = Product.Id;
+                                Product.Name = CurrentProductViewModel.Name;
                             }
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.AdditionalInfo)
-                            && Product.AdditionalInfo != CurrentProductViewModel.AdditionalInfo)
-                        {
-                            Product.AdditionalInfo = CurrentProductViewModel.AdditionalInfo;
-                        }
-
-                        using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
-                        {
-                            db.UpdateProduct(Product);
-                        }
-
-                        CloseParentWindow();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                        Task.Run(async () =>
-                        {
-                            using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                            else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.Name))
                             {
-                                await logger.LogErrorAsync(ex);
-                            }
-                        }).Wait();
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.ProductCode)
-                            && !string.IsNullOrWhiteSpace(CurrentProductViewModel.Name)
-                            && CurrentProductViewModel.UnitOfMeasure != null
-                            && CurrentProductViewModel.Quantity != null
-                            && CurrentProductViewModel.Capacity != null
-                            && CurrentProductViewModel.Price != null
-                            && CurrentProductViewModel.SelectedCategory != null)
-                        {
-                            if (!IsProductCodeAvailable(CurrentProductViewModel.ProductCode))
-                            {
-                                MessageBox.Show("Entered product code is already in use.",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                                MessageBox.Show("Name is required",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
                                 return;
                             }
 
-                            var tempProduct = new ProductBuilder(CurrentProductViewModel.ProductCode,
-                                CurrentProductViewModel.Name,
-                                (UnitsOfMeasureEnum)CurrentProductViewModel.UnitOfMeasure,
-                                (decimal)CurrentProductViewModel.Quantity,
-                                (int)CurrentProductViewModel.Capacity,
-                                (decimal)CurrentProductViewModel.Price,
-                                mainViewModel.MainViewModel.LoginService.CurrentWarehouse.Id)
-                                .WithCategory(CurrentProductViewModel.SelectedCategory.Category.Id);
-
-
-                            if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.Description))
+                            if (CurrentProductViewModel.UnitOfMeasure != null
+                                && Product.UnitOfMeasure != CurrentProductViewModel.UnitOfMeasure)
                             {
-                                tempProduct = tempProduct.WithDescription(CurrentProductViewModel.Description);
+                                Product.UnitOfMeasure = CurrentProductViewModel.UnitOfMeasure;
+                            }
+                            else if (CurrentProductViewModel.UnitOfMeasure == null)
+                            {
+                                MessageBox.Show("Units of measure is required",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                                return;
                             }
 
-                            if (CurrentProductViewModel.Manufacturer != null)
+                            if (CurrentProductViewModel.Quantity != null
+                                && Product.Quantity != CurrentProductViewModel.Quantity)
                             {
-                                tempProduct = tempProduct.WithManufacturer(CurrentProductViewModel.Manufacturer);
+                                Product.Quantity = CurrentProductViewModel.Quantity;
+                            }
+                            else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.QuantityString))
+                            {
+                                MessageBox.Show("Quantity is required",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                                return;
                             }
 
-                            if (CurrentProductViewModel.DiscountPercentage != null)
+                            if (CurrentProductViewModel.Capacity != null
+                                && Product.Capacity != CurrentProductViewModel.Capacity)
                             {
-                                tempProduct = tempProduct.WithDiscountPercentage(CurrentProductViewModel.DiscountPercentage);
+                                Product.Capacity = CurrentProductViewModel.Capacity;
+                            }
+                            else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.CapacityString))
+                            {
+                                MessageBox.Show("Capacity is required",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                                return;
+                            }
+
+                            if (CurrentProductViewModel.Price != null
+                                && Product.Price != CurrentProductViewModel.Price)
+                            {
+                                Product.Price = (decimal)CurrentProductViewModel.Price;
+                            }
+                            else if (string.IsNullOrWhiteSpace(CurrentProductViewModel.PriceString))
+                            {
+                                MessageBox.Show("Price is required",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                                return;
+                            }
+
+                            if (CurrentProductViewModel.SelectedCategory != null
+                                && Product.CategoryId != CurrentProductViewModel.SelectedCategory.Category.Id)
+                            {
+                                Product.CategoryId = CurrentProductViewModel.SelectedCategory.Category.Id;
+                            }
+                            else if (CurrentProductViewModel.SelectedCategory == null)
+                            {
+                                MessageBox.Show("Category is required",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                                return;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.Description)
+                                && Product.Description != CurrentProductViewModel.Description)
+                            {
+                                Product.Description = CurrentProductViewModel.Description;
+                            }
+
+                            if (CurrentProductViewModel.Manufacturer != null
+                                && Product.ManufacturerId != CurrentProductViewModel.Manufacturer.Id)
+                            {
+                                Product.ManufacturerId = CurrentProductViewModel.Manufacturer.Id;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.DiscountPercentageString)
+                                && CurrentProductViewModel.DiscountPercentage != null
+                                && Product.DiscountPercentage != CurrentProductViewModel.DiscountPercentage)
+                            {
+                                Product.DiscountPercentage = CurrentProductViewModel.DiscountPercentage;
                             }
 
                             if (CurrentProductViewModel.ProductDetails != null
                                 && CurrentProductViewModel.ProductDetails.Any())
                             {
-                                tempProduct = tempProduct.WithProductDetails(JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.None));
-                            }
-
-                            if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.AdditionalInfo))
-                            {
-                                tempProduct = tempProduct.WithAdditionalInfo(CurrentProductViewModel.AdditionalInfo);
+                                Product.ProductDetails = JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.None);
                             }
 
                             if (CurrentProductViewModel.ProductPhotos != null
-                                && CurrentProductViewModel.ProductPhotos.Any())
+                                && CurrentProductViewModel.ProductPhotos.Any()
+                                && Product.ProductPhotos != CurrentProductViewModel.ProductPhotos)
                             {
-                                var newProduct = tempProduct.Build();
-                                newProduct.ProductPhotos = CurrentProductViewModel.ProductPhotos;
-                                foreach (var photo in newProduct.ProductPhotos)
+                                Product.ProductPhotos = CurrentProductViewModel.ProductPhotos;
+                                foreach (var photo in Product.ProductPhotos)
                                 {
-                                    photo.ProductId = newProduct.Id;
-                                }
-
-                                using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
-                                {
-                                    db.UpdateProduct(newProduct);
+                                    photo.ProductId = Product.Id;
                                 }
                             }
 
-                            mainViewModel.InitializeAsync();
+                            if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.AdditionalInfo)
+                                && Product.AdditionalInfo != CurrentProductViewModel.AdditionalInfo)
+                            {
+                                Product.AdditionalInfo = CurrentProductViewModel.AdditionalInfo;
+                            }
+
+                            using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
+                            {
+                                db.UpdateProduct(Product);
+                            }
+
                             CloseParentWindow();
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                        Task.Run(async () =>
+                        catch (Exception ex)
                         {
+                            MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
                             using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
                             {
-                                await logger.LogErrorAsync(ex);
+                                logger.LogError(ex);
                             }
-                        }).Wait();
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.ProductCode)
+                                && !string.IsNullOrWhiteSpace(CurrentProductViewModel.Name)
+                                && CurrentProductViewModel.UnitOfMeasure != null
+                                && CurrentProductViewModel.Quantity != null
+                                && CurrentProductViewModel.Capacity != null
+                                && CurrentProductViewModel.Price != null
+                                && CurrentProductViewModel.SelectedCategory != null)
+                            {
+                                if (!IsProductCodeAvailable(CurrentProductViewModel.ProductCode))
+                                {
+                                    MessageBox.Show("Entered product code is already in use.",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                                    return;
+                                }
+
+                                var tempProduct = new ProductBuilder(CurrentProductViewModel.ProductCode,
+                                    CurrentProductViewModel.Name,
+                                    (UnitsOfMeasureEnum)CurrentProductViewModel.UnitOfMeasure,
+                                    (decimal)CurrentProductViewModel.Quantity,
+                                    (int)CurrentProductViewModel.Capacity,
+                                    (decimal)CurrentProductViewModel.Price,
+                                    mainViewModel.MainViewModel.LoginService.CurrentWarehouse.Id)
+                                    .WithCategory(CurrentProductViewModel.SelectedCategory.Category.Id);
+
+
+                                if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.Description))
+                                {
+                                    tempProduct = tempProduct.WithDescription(CurrentProductViewModel.Description);
+                                }
+
+                                if (CurrentProductViewModel.Manufacturer != null)
+                                {
+                                    tempProduct = tempProduct.WithManufacturer(CurrentProductViewModel.Manufacturer);
+                                }
+
+                                if (CurrentProductViewModel.DiscountPercentage != null)
+                                {
+                                    tempProduct = tempProduct.WithDiscountPercentage(CurrentProductViewModel.DiscountPercentage);
+                                }
+
+                                if (CurrentProductViewModel.ProductDetails != null
+                                    && CurrentProductViewModel.ProductDetails.Any())
+                                {
+                                    tempProduct = tempProduct.WithProductDetails(JsonConvert.SerializeObject(CurrentProductViewModel.ProductDetails, Formatting.None));
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(CurrentProductViewModel.AdditionalInfo))
+                                {
+                                    tempProduct = tempProduct.WithAdditionalInfo(CurrentProductViewModel.AdditionalInfo);
+                                }
+
+                                if (CurrentProductViewModel.ProductPhotos != null
+                                    && CurrentProductViewModel.ProductPhotos.Any())
+                                {
+                                    var newProduct = tempProduct.Build();
+                                    newProduct.ProductPhotos = CurrentProductViewModel.ProductPhotos;
+                                    foreach (var photo in newProduct.ProductPhotos)
+                                    {
+                                        photo.ProductId = newProduct.Id;
+                                    }
+
+                                    using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
+                                    {
+                                        db.UpdateProduct(newProduct);
+                                    }
+                                }
+
+                                mainViewModel.InitializeAsync();
+                                CloseParentWindow();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                            Task.Run(async () =>
+                            {
+                                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
+                                {
+                                    await logger.LogErrorAsync(ex);
+                                }
+                            }).Wait();
+                        }
                     }
                 }
             }
@@ -779,7 +778,7 @@ namespace WarehouseManagementSystem.ViewModels
                     return !db.IsProductCodeInDB(productCode);
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Task.Run(async () =>
                 {

@@ -53,4 +53,12 @@
     <DataTemplate DataType="{x:Type viewModels:SaveReportViewModel}">
         <views:SaveReportView />
     </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type viewModels:AddEditReceiptViewModel}">
+        <views:AddEditReceiptView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddSupplierViewModel}">
+        <views:AddSupplierView />
+    </DataTemplate>
 </ResourceDictionary>

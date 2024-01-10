@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +7,7 @@ using WarehouseManagementSystem.Models.Entities;
 
 namespace WarehouseManagementSystem.ViewModels
 {
-    public class ManufacturerViewModel : ViewModelBase 
+    public class SupplierViewModel : ViewModelBase 
     {
         private string? name;
         public string? Name
@@ -20,20 +19,6 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     this.name = value;
                     OnPropertyChanged(nameof(Name));
-                };
-            }
-        }
-
-        private string? description;
-        public string? Description
-        {
-            get { return description; }
-            set
-            {
-                if (description != value)
-                {
-                    this.description = value;
-                    OnPropertyChanged(nameof(Description));
                 };
             }
         }

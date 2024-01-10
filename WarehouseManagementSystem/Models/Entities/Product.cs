@@ -133,5 +133,10 @@ namespace WarehouseManagementSystem.Models.Entities
                 return new List<ProductDetail>();
             }
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

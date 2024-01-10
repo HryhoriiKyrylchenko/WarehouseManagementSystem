@@ -539,7 +539,7 @@ namespace WarehouseManagementSystem.ViewModels
                 && mainViewModel.LoginService.CurrentUser != null)
             {
                 string title = GenereteTitle();
-                string content = GenereteContentToJson();
+                string content = GenereteContentToJson(FilteredProducts);
 
                 SupportWindow supportWindow = new SupportWindow(new SaveReportViewModel(title,
                                                                                     Enums.ReportTypeEnum.PRODUCTS,
@@ -590,9 +590,9 @@ namespace WarehouseManagementSystem.ViewModels
             return newTitle.ToString();
         }
 
-        private string GenereteContentToJson()
+        private string GenereteContentToJson(ICollection<Product> products)
         {
-            return JsonConvert.SerializeObject(FilteredProducts, Formatting.None);
+            return JsonConvert.SerializeObject(products, Formatting.None);
         }
 
         private void AllocateProduct(object parameter)

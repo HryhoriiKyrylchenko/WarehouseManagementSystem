@@ -11,11 +11,12 @@ using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Interfaces;
 using WarehouseManagementSystem.Windows;
 
 namespace WarehouseManagementSystem.ViewModels
 {
-    class AddManufacturerViewModel : ViewModelBaseRequestClose
+    class AddManufacturerViewModel : ViewModelBaseRequestClose, IHasAddress
     {
         private readonly AddEditProductViewModel mainViewModel;
 
@@ -37,6 +38,17 @@ namespace WarehouseManagementSystem.ViewModels
         public ICommand EditAddressCommand => new RelayCommand(EditAddress);
         public ICommand AddCommand => new RelayCommand(Add);
         public ICommand CancelCommand => new RelayCommand(Cancel);
+
+        public Address? Address 
+        { 
+            set
+            {
+                if (ManufacturerViewModel.Address != value)
+                {
+                    ManufacturerViewModel.Address = value;
+                };
+            }
+        }
 
         public AddManufacturerViewModel(AddEditProductViewModel mainViewModel)
         {
@@ -83,7 +95,6 @@ namespace WarehouseManagementSystem.ViewModels
                         }
 
                         Manufacturer newManufacturer = newMB.Build();
-                        mainViewModel.Initialize();
                         mainViewModel.CurrentProductViewModel.Manufacturer = newManufacturer;
                         CloseParentWindow();
                     }
@@ -94,6 +105,13 @@ namespace WarehouseManagementSystem.ViewModels
                             logger.LogError(ex);
                         }
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Name is required", 
+                        "Caution", 
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Exclamation);
                 }
             }
         }

@@ -140,7 +140,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Product details:" FontSize="20" Margin="10" HorizontalAlignment="Left"/>
-                    <DataGrid x:Name="DateGridProducts" FontSize="18" Grid.Row="1" Margin="10,0" Height="160" 
+                    <DataGrid FontSize="18" Grid.Row="1" Margin="10,0" Height="160" 
                               ItemsSource="{Binding CurrentProductViewModel.ProductDetails}" VerticalScrollBarVisibility="Auto"
                               SelectedItem="{Binding CurrentProductViewModel.SelectedProductDetail}" AutoGenerateColumns="False">
                         <DataGrid.Columns>

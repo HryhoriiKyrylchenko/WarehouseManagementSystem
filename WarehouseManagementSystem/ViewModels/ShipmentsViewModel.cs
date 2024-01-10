@@ -1,15 +1,18 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.ViewModels.Support_data;
+using WarehouseManagementSystem.Windows;
 
 namespace WarehouseManagementSystem.ViewModels
 {
@@ -176,7 +179,63 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void SaveReport(object parameter)
         {
-            /////////////////////////////////////
+            if (Shipments != null
+                && Shipments.Any()
+                && mainViewModel.LoginService.CurrentUser != null)
+            {
+                string title = GenereteTitle();
+                string content = GenereteContentToJson(Shipments);
+
+                SupportWindow supportWindow = new SupportWindow(new SaveReportViewModel(title,
+                                                                                    Enums.ReportTypeEnum.SHIPMENTS,
+                                                                                    content,
+                                                                                    mainViewModel.LoginService.CurrentUser.Id));
+                supportWindow.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("No info to be saved",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+            }
+        }
+
+        private string GenereteTitle()
+        {
+            StringBuilder newTitle = new StringBuilder();
+            newTitle.Append("Receipts/");
+
+            string formattedDateFrom = FilterSelectors.SectionDateFrom?.ToString("dd-MM-yyyy") ?? "N/A";
+            newTitle.Append($"From {formattedDateFrom}/");
+
+            string formattedDateTo = FilterSelectors.SectionDateTo?.ToString("dd-MM-yyyy") ?? "N/A";
+            newTitle.Append($"To {formattedDateTo}/");
+
+            if (FilterSelectors.SectionAllCustomersSelected)
+            {
+                newTitle.Append("All customers/");
+            }
+            else if (FilterSelectors.SectionByCustomerSelected)
+            {
+                newTitle.Append($"Customer: {FilterSelectors.SelectedCustomer}/");
+            }
+
+            if (FilterSelectors.SectionAllUsersSelected)
+            {
+                newTitle.Append("All users/");
+            }
+            else if (FilterSelectors.SectionByUserSelected)
+            {
+                newTitle.Append($"User: {FilterSelectors.SelectedUser}/");
+            }
+
+            return newTitle.ToString();
+        }
+
+        private string GenereteContentToJson(ICollection<Shipment> content)
+        {
+            return JsonConvert.SerializeObject(content, Formatting.None);
         }
 
         private void AddShipment(object parameter)

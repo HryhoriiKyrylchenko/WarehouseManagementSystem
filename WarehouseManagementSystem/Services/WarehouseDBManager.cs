@@ -172,6 +172,12 @@ namespace WarehouseManagementSystem.Services
             return new ObservableCollection<Zone>(zones);
         }
 
+        public ObservableCollection<Supplier> GetSuppliers()
+        {
+            var suppliers = dbContext.Suppliers.ToList();
+            return new ObservableCollection<Supplier>(suppliers);
+        }
+
         public async Task<ObservableCollection<Supplier>> GetSuppliersAsync()
         {
             var suppliers = await dbContext.Suppliers.ToListAsync();
@@ -188,6 +194,18 @@ namespace WarehouseManagementSystem.Services
         {
             var reports = await dbContext.Reports.ToListAsync();
             return new ObservableCollection<Report>(reports);
+        }
+
+        public ObservableCollection<Product> GetProducts()
+        {
+            var products = dbContext.Products.ToList();
+            return new ObservableCollection<Product>(products);
+        }
+
+        public async Task<ObservableCollection<Product>> GetProductsAsync()
+        {
+            var products = await dbContext.Products.ToListAsync();
+            return new ObservableCollection<Product>(products);
         }
 
         public ObservableCollection<Manufacturer> GetManufacturers()

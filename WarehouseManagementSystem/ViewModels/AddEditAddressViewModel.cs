@@ -4,12 +4,13 @@ using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Interfaces;
 
 namespace WarehouseManagementSystem.ViewModels
 {
     internal class AddEditAddressViewModel : ViewModelBaseRequestClose
     {
-        private AddManufacturerViewModel mainViewModel;
+        private IHasAddress mainViewModel;
 
         private Address? address;
         public Address? Address
@@ -42,13 +43,13 @@ namespace WarehouseManagementSystem.ViewModels
         public ICommand AddCommand => new RelayCommand(SetAddress);
         public ICommand CancelCommand => new RelayCommand(Cancel);
 
-        public AddEditAddressViewModel(AddManufacturerViewModel mainViewModel)
+        public AddEditAddressViewModel(IHasAddress mainViewModel)
         {
             this.mainViewModel = mainViewModel;
             addressViewModel = new AddressViewModel();
         }
 
-        public AddEditAddressViewModel(AddManufacturerViewModel mainViewModel, Address address)
+        public AddEditAddressViewModel(IHasAddress mainViewModel, Address address)
         {
             this.mainViewModel = mainViewModel;
             addressViewModel = new AddressViewModel();
@@ -118,7 +119,7 @@ namespace WarehouseManagementSystem.ViewModels
                                 db.UpdateAddress(Address);
                             }
 
-                            mainViewModel.ManufacturerViewModel.Address = Address;
+                            mainViewModel.Address = Address;
                             CloseParentWindow();
                         }
                         catch (Exception ex)
@@ -158,7 +159,7 @@ namespace WarehouseManagementSystem.ViewModels
                                     tempAddress = tempAddress.WithAdditionalInfo(AddressViewModel.AdditionalInfo);
                                 }
 
-                                mainViewModel.ManufacturerViewModel.Address = Address;
+                                mainViewModel.Address = Address;
                                 CloseParentWindow();
                             }
                         }
@@ -181,7 +182,7 @@ namespace WarehouseManagementSystem.ViewModels
                     MessageBox.Show("Invalid address data, enter valid data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                mainViewModel.ManufacturerViewModel.Address = Address;
+                mainViewModel.Address = Address;
                 CloseParentWindow();
             }
         }
