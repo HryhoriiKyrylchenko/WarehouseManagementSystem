@@ -38,8 +38,8 @@
         <TextBlock Grid.Column="0" Grid.Row="4" Text="Address:" FontSize="22" Margin="10" VerticalAlignment="Center" 
                  HorizontalAlignment="Right"/>
         <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal">
-            <TextBox Text="{Binding CustomerViewModel.Address, Mode=TwoWay}" FontSize="18" Margin="10,5" 
-                 Width="190" Height="70" VerticalAlignment="Center" IsEnabled="False"/>
+            <TextBlock Text="{Binding CustomerViewModel.Address, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Margin="10,5" 
+                 Width="190" Height="70" VerticalAlignment="Center"/>
             <StackPanel>
                 <Button DockPanel.Dock="Left" Content="Add" FontSize="16" Command="{Binding AddAddressCommand}" Margin="0,5"
                     CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Width="40" Height="28" VerticalAlignment="Center"

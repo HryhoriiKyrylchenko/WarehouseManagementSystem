@@ -120,7 +120,6 @@ namespace WarehouseManagementSystem.ViewModels
                             }
 
                             mainViewModel.Address = Address;
-                            CloseParentWindow();
                         }
                         catch (Exception ex)
                         {
@@ -159,8 +158,7 @@ namespace WarehouseManagementSystem.ViewModels
                                     tempAddress = tempAddress.WithAdditionalInfo(AddressViewModel.AdditionalInfo);
                                 }
 
-                                mainViewModel.Address = Address;
-                                CloseParentWindow();
+                                mainViewModel.Address = tempAddress.Build();
                             }
                         }
                         catch (Exception ex)
@@ -182,7 +180,6 @@ namespace WarehouseManagementSystem.ViewModels
                     MessageBox.Show("Invalid address data, enter valid data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                mainViewModel.Address = Address;
                 CloseParentWindow();
             }
         }

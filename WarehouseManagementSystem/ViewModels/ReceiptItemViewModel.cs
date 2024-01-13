@@ -23,7 +23,7 @@ namespace WarehouseManagementSystem.ViewModels
 
         public ReceiptItemViewModel(int? id, Product? product, int quantity) : this(product, quantity)
         {
-            Id = Id;
+            Id = id;
         }
     }
 }

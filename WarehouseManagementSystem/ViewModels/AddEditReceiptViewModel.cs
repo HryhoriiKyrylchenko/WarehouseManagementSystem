@@ -278,22 +278,24 @@ namespace WarehouseManagementSystem.ViewModels
                 && Convert.ToInt32(InputQuantity) > 0
                 && GetConfirmation() == MessageBoxResult.OK)
                 {
-                    if (SelectedReceiptItem.Id != null
-                        && SelectedReceiptItem.Quantity > Convert.ToInt32(InputQuantity))
+                    if (SelectedReceiptItem.Id != null)
                     {
-                        MessageBox.Show("You cannot independently reduce the quantity of " +
-                            "a product previously entered into the database. To make the " +
-                            "appropriate changes, contact your program administrator.",
-                            "Caution",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Exclamation);
+                        if (SelectedReceiptItem.Product != SelectedProduct
+                            || SelectedReceiptItem.Quantity > Convert.ToInt32(InputQuantity))
+                        {
+                            MessageBox.Show("You cannot independently change a product or reduce its quantity if " +
+                                "it was previously entered into the database. To make the " +
+                                "appropriate changes, contact your program administrator.",
+                                "Caution",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Exclamation);
 
-                        return;
+                            return;
+                        }
                     }
 
                     try
                     {
-                        SelectedReceiptItem.Product = SelectedProduct;
                         SelectedReceiptItem.Quantity = Convert.ToInt32(InputQuantity);
                         CurrentReceiptViewModel.RefreshReceiptItems();
                     }
@@ -322,7 +324,9 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private void DeleteReceiptItem(object obj)
+
+        // Change logic of the method "AddEditReceipt" if added functionality to delete existing in DB ReceiptItems
+        private void DeleteReceiptItem(object obj)   
         {
             if (CurrentReceiptViewModel.ReceiptItems != null
                 && SelectedReceiptItem != null)
@@ -420,6 +424,7 @@ namespace WarehouseManagementSystem.ViewModels
                                         var newReceiptItems = CurrentReceiptViewModel.ReceiptItems.ToList();
 
                                         var itemsToDelete = Receipt.ReceiptItems.Where(ri => !newReceiptItems.Any(i => i.Id == ri.Id)).ToList();
+                                        
                                         if (itemsToDelete.Count > 0)
                                         {
                                             foreach (var item in itemsToDelete)
@@ -439,30 +444,53 @@ namespace WarehouseManagementSystem.ViewModels
                                                     var itemToUpdate = Receipt.ReceiptItems.FirstOrDefault(x => x.Id == item.Id);
                                                     if (itemToUpdate != null)
                                                     {
-                                                        if (itemToUpdate.Quantity < item.Quantity)
+                                                        if (itemToUpdate.ProductId == item.Product.Id)
                                                         {
-                                                            var prod = dbW.GetProduct(itemToUpdate.ProductId);
-                                                            if (prod != null)
+                                                            if (itemToUpdate.Quantity > item.Quantity)
                                                             {
-                                                                prod.Quantity += (item.Quantity - itemToUpdate.Quantity);
-                                                                db.UpdateProduct(prod);
-                                                            }
-                                                        }
+                                                                MessageBox.Show("You cannot independently change reduce a product quantity if " +
+                                                                            "it was previously entered into the database. To make the " +
+                                                                            "appropriate changes, contact your program administrator.",
+                                                                            "Caution",
+                                                                            MessageBoxButton.OK,
+                                                                            MessageBoxImage.Exclamation);
 
-                                                        itemToUpdate.ProductId = item.Product.Id;
-                                                        itemToUpdate.Quantity = item.Quantity;
-                                                        db.UpdateReceiptItem(itemToUpdate);
+                                                                return;
+                                                            }
+                                                            else
+                                                            {
+                                                                var prod = dbW.GetProduct(itemToUpdate.ProductId);
+                                                                if (prod != null)
+                                                                {
+                                                                    prod.Quantity += (item.Quantity - itemToUpdate.Quantity);
+                                                                    db.UpdateProduct(prod);
+                                                                }
+                                                            }
+
+                                                            itemToUpdate.Quantity = item.Quantity;
+                                                            db.UpdateReceiptItem(itemToUpdate);
+                                                        }
+                                                        else
+                                                        {
+                                                            MessageBox.Show("You cannot independently change a product if " +
+                                                                            "it was previously entered into the database. To make the " +
+                                                                            "appropriate changes, contact your program administrator.",
+                                                                            "Caution",
+                                                                            MessageBoxButton.OK,
+                                                                            MessageBoxImage.Exclamation);
+
+                                                            return;
+                                                        }
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    var newItem = new ReceiptItemBuilder(Receipt.Id, item.Product.Id, item.Quantity).Build();
-                                                    Receipt.ReceiptItems.Add(newItem);
-
-                                                    var prod = dbW.GetProduct(newItem.ProductId);
+                                                    var prod = dbW.GetProduct(item.Product.Id);
                                                     if (prod != null)
                                                     {
-                                                        prod.Quantity += newItem.Quantity;
+                                                        prod.Quantity += item.Quantity;
+
+                                                        new ReceiptItemBuilder(Receipt.Id, item.Product.Id, item.Quantity);
                                                         db.UpdateProduct(prod);
                                                     }
                                                 }
@@ -529,12 +557,14 @@ namespace WarehouseManagementSystem.ViewModels
                                             {
                                                 if (item.Product != null)
                                                 {
-                                                    var newItem = new ReceiptItemBuilder(Receipt.Id, item.Product.Id, item.Quantity).Build();
+                                                    
 
-                                                    var prod = dbW.GetProduct(newItem.ProductId);
+                                                    var prod = dbW.GetProduct(item.Product.Id);
                                                     if (prod != null)
                                                     {
-                                                        prod.Quantity += newItem.Quantity;
+                                                        prod.Quantity += item.Quantity;
+
+                                                        new ReceiptItemBuilder(Receipt.Id, item.Product.Id, item.Quantity);
                                                         dbE.UpdateProduct(prod);
                                                     }
                                                 }

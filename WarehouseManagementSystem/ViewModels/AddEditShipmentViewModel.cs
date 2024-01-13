@@ -13,6 +13,7 @@ using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.Windows;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace WarehouseManagementSystem.ViewModels
 {
@@ -253,6 +254,21 @@ namespace WarehouseManagementSystem.ViewModels
                     CurrentShipmentViewModel.ShipmentItems = new ObservableCollection<ShipmentItemViewModel>();
                 }
 
+                using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                {
+                    var prod = db.GetProduct(SelectedProduct.Id);
+                    if (prod != null
+                        && prod.Quantity < (Convert.ToInt32(OutputQuantity)))
+                    {
+                        MessageBox.Show("Not enough selected products in stock",
+                                    "Caution",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Exclamation);
+
+                        return;
+                    }
+                }
+
                 CurrentShipmentViewModel.ShipmentItems.Add(new ShipmentItemViewModel(SelectedProduct, Convert.ToInt32(OutputQuantity)));
             }
             else
@@ -277,29 +293,55 @@ namespace WarehouseManagementSystem.ViewModels
                     {
                         try
                         {
-                            if (SelectedShipmentItem.Id != null
-                                && SelectedShipmentItem.Product != null
-                                && SelectedShipmentItem.Quantity < Convert.ToInt32(OutputQuantity))
+                            if (SelectedShipmentItem.Product != null)
                             {
-                                using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                                if (SelectedShipmentItem.Product == SelectedProduct)
                                 {
-                                    var prod = db.GetProduct(SelectedShipmentItem.Product.Id);
-                                    if (prod != null
-                                        && prod.Quantity < (Convert.ToInt32(OutputQuantity) - SelectedShipmentItem.Quantity))
+                                    if (SelectedShipmentItem.Quantity < Convert.ToInt32(OutputQuantity))
                                     {
-                                        MessageBox.Show("Not enough selected products in stock",
-                                                    "Caution",
-                                                    MessageBoxButton.OK,
-                                                    MessageBoxImage.Exclamation);
+                                        using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                                        {
+                                            var prod = db.GetProduct(SelectedShipmentItem.Product.Id);
+                                            if (prod != null
+                                                && prod.Quantity < (Convert.ToInt32(OutputQuantity) - SelectedShipmentItem.Quantity))
+                                            {
+                                                MessageBox.Show("Not enough selected products in stock",
+                                                            "Caution",
+                                                            MessageBoxButton.OK,
+                                                            MessageBoxImage.Exclamation);
 
-                                        return;
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        SelectedShipmentItem.Quantity = Convert.ToInt32(OutputQuantity);
+                                        CurrentShipmentViewModel.RefreshShipmentItems();
                                     }
                                 }
-                            }
+                                else
+                                {
+                                    using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+                                    {
+                                        var newProd = db.GetProduct(SelectedProduct.Id);
+                                        if (newProd != null
+                                            && newProd.Quantity < (Convert.ToInt32(OutputQuantity)))
+                                        {
+                                            MessageBox.Show("Not enough selected products in stock",
+                                                        "Caution",
+                                                        MessageBoxButton.OK,
+                                                        MessageBoxImage.Exclamation);
 
-                            SelectedShipmentItem.Product = SelectedProduct;
-                            SelectedShipmentItem.Quantity = Convert.ToInt32(OutputQuantity);
-                            CurrentShipmentViewModel.RefreshShipmentItems();
+                                            return;
+                                        }
+                                    }
+
+                                    SelectedShipmentItem.Product = SelectedProduct;
+                                    SelectedShipmentItem.Quantity = Convert.ToInt32(OutputQuantity);
+                                    CurrentShipmentViewModel.RefreshShipmentItems();
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -433,8 +475,7 @@ namespace WarehouseManagementSystem.ViewModels
                                                 var productToUpdate = dbW.GetProduct(item.ProductId);
                                                 if (productToUpdate != null)
                                                 {
-                                                    productToUpdate.Quantity += item.Quantity;
-                                                    db.UpdateProduct(productToUpdate);
+                                                    AddQuantityToProduct(productToUpdate.Id, item.Quantity);
                                                 }
 
                                                 db.DeleteShipmentItem(item);
@@ -447,7 +488,7 @@ namespace WarehouseManagementSystem.ViewModels
                                                 MessageBoxImage.Error);
                                         }
 
-                                        foreach (var item in newShipmentItems) /////////////////////
+                                        foreach (var item in newShipmentItems)
                                         {
                                             if (item.Product != null)
                                             {
@@ -457,26 +498,94 @@ namespace WarehouseManagementSystem.ViewModels
 
                                                     if (itemToUpdate != null)
                                                     {
-                                                        var prod = dbW.GetProduct(item.Product.Id);
-
-                                                        if (prod != null
-                                                            && itemToUpdate.Quantity < item.Quantity
-                                                            && prod.Quantity < (item.Quantity - itemToUpdate.Quantity))
+                                                        if (itemToUpdate.ProductId == item.Product.Id)
                                                         {
-                                                            
-                                                            
-                                                        }
-                                                        
+                                                            var prod = dbW.GetProduct(item.Product.Id);
 
-                                                            itemToUpdate.ProductId = item.Product.Id;
-                                                        itemToUpdate.Quantity = item.Quantity;
-                                                        db.UpdateShipmentItem(itemToUpdate);
+                                                            if (prod != null)
+                                                            {
+                                                                if (itemToUpdate.Quantity < item.Quantity)
+                                                                {
+                                                                    if (prod.Quantity < (item.Quantity - itemToUpdate.Quantity))
+                                                                    {
+                                                                        MessageBox.Show($"There is not enough quantity of product  {prod.Name}" +
+                                                                            $" in stock to ship. Change the quantity to the available " +
+                                                                            $"quantity ({prod.Quantity}).",
+                                                                            "Caution",
+                                                                            MessageBoxButton.OK,
+                                                                            MessageBoxImage.Error);
+
+                                                                        return;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        DeductProduct(prod.Id, (item.Quantity - itemToUpdate.Quantity));
+                                                                    }
+                                                                }
+                                                                else if (itemToUpdate.Quantity > item.Quantity)
+                                                                {
+                                                                    AddQuantityToProduct(prod.Id, (itemToUpdate.Quantity - item.Quantity));
+                                                                }
+
+                                                                itemToUpdate.Quantity = item.Quantity;
+                                                                db.UpdateShipmentItem(itemToUpdate);
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            var oldProd = dbW.GetProduct(itemToUpdate.ProductId);
+                                                            var newProd = dbW.GetProduct(item.Product.Id);
+
+                                                            if (oldProd != null
+                                                                && newProd != null)
+                                                            {
+                                                                if (newProd.Quantity < item.Quantity)
+                                                                {
+                                                                    MessageBox.Show($"There is not enough quantity of product  " +
+                                                                        $"{newProd.Name} in stock to ship. Change the quantity to the " +
+                                                                        $"available quantity ({newProd.Quantity}).",
+                                                                        "Caution",
+                                                                        MessageBoxButton.OK,
+                                                                        MessageBoxImage.Error);
+
+                                                                    return;
+                                                                }
+                                                                else
+                                                                {
+                                                                    AddQuantityToProduct(oldProd.Id, itemToUpdate.Quantity);
+                                                                    DeductProduct(newProd.Id, item.Quantity);
+                                                                    itemToUpdate.ProductId = item.Product.Id;
+                                                                    itemToUpdate.Quantity = item.Quantity;
+                                                                }
+
+                                                                db.UpdateShipmentItem(itemToUpdate);
+                                                            }
+                                                        }
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    var newItem = new ShipmentItemBuilder(Shipment.Id, item.Product.Id, item.Quantity).Build();
-                                                    Shipment.ShipmentItems.Add(newItem);
+                                                    var prod = dbW.GetProduct(item.Product.Id);
+
+                                                    if (prod != null)
+                                                    {
+                                                        if (prod.Quantity < item.Quantity)
+                                                        {
+                                                            MessageBox.Show($"There is not enough quantity of product  {prod.Name}" +
+                                                                            $" in stock to ship. Change the quantity to the available " +
+                                                                            $"quantity ({prod.Quantity}).",
+                                                                            "Caution",
+                                                                            MessageBoxButton.OK,
+                                                                            MessageBoxImage.Error);
+
+                                                            return;
+                                                        }
+                                                        else
+                                                        {
+                                                            new ShipmentItemBuilder(Shipment.Id, item.Product.Id, item.Quantity);
+                                                            DeductProduct(prod.Id, item.Quantity);
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -534,11 +643,35 @@ namespace WarehouseManagementSystem.ViewModels
                                     if (CurrentShipmentViewModel.ShipmentItems.Count > 0)
                                     {
                                         Shipment = tempShipment.Build();
-                                        foreach (var item in CurrentShipmentViewModel.ShipmentItems)
+
+                                        using (WarehouseDBManager dbW = new WarehouseDBManager(new WarehouseDbContext()))
                                         {
-                                            if (item.Product != null)
+                                            foreach (var item in CurrentShipmentViewModel.ShipmentItems)
                                             {
-                                                var newItem = new ShipmentItemBuilder(Shipment.Id, item.Product.Id, item.Quantity).Build();
+                                                if (item.Product != null)
+                                                {
+                                                    var prod = dbW.GetProduct(item.Product.Id);
+
+                                                    if (prod != null)
+                                                    {
+                                                        if (prod.Quantity < item.Quantity)
+                                                        {
+                                                            MessageBox.Show($"There is not enough quantity of product  {prod.Name}" +
+                                                                            $" in stock to ship. Change the quantity to the available " +
+                                                                            $"quantity ({prod.Quantity}).",
+                                                                            "Caution",
+                                                                            MessageBoxButton.OK,
+                                                                            MessageBoxImage.Error);
+
+                                                            return;
+                                                        }
+                                                        else
+                                                        {
+                                                            new ShipmentItemBuilder(Shipment.Id, item.Product.Id, item.Quantity);
+                                                            DeductProduct(prod.Id, item.Quantity);
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -568,6 +701,89 @@ namespace WarehouseManagementSystem.ViewModels
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+        }
+
+        public void AddQuantityToProduct(int productId, int quantity)
+        {
+            using (WarehouseDBManager dbW = new WarehouseDBManager(new WarehouseDbContext()))
+            using (EntityManager db = new EntityManager(new WarehouseDbContext()))
+            {
+                var product = dbW.GetProduct(productId);
+                if (product != null)
+                {
+                    product.Quantity += quantity;
+                    db.UpdateProduct(product);
+                }
+            }
+        }
+
+        public void DeductProduct(int productId, decimal quantity)
+        {
+            using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
+            {
+                decimal unallocatedQuantity = db.GetUnallocatedProductInstancesSum(productId);
+
+                if (unallocatedQuantity >= quantity)
+                {
+                    DeductQuantityFromProduct(productId, quantity);
+                }
+                else
+                {
+                    DeductQuantityFromZonePositions(productId, quantity);
+                    DeductQuantityFromProduct(productId, quantity);
+                }
+            }
+        }
+
+        private void DeductQuantityFromProduct(int productId, decimal quantity)
+        {
+            using (WarehouseDBManager dbW = new WarehouseDBManager(new WarehouseDbContext()))
+            using (EntityManager db = new EntityManager(new WarehouseDbContext()))
+            {
+                var product = dbW.GetProduct(productId);
+                if (product != null)
+                {
+                    product.Quantity -= quantity;
+                    db.UpdateProduct(product);
+                }
+            }
+        }
+
+        private void DeductQuantityFromZonePositions(int productId, decimal quantity)
+        {
+            try
+            {
+                using (WarehouseDBManager dbW = new WarehouseDBManager(new WarehouseDbContext()))
+                using (EntityManager db = new EntityManager(new WarehouseDbContext()))
+                {
+                    var positionsWithProduct = dbW.GetProductInZonePozitionsByProduct(productId);
+
+                    foreach (var position in positionsWithProduct)
+                    {
+                        if (position.Quantity <= quantity)
+                        {
+                            quantity -= position.Quantity;
+
+                            // Add logic to control shipment from position
+
+                            db.DeleteProductInZonePosition(position);
+
+                            if (quantity == 0) break;
+                        }
+                        else
+                        {
+                            position.Quantity -= (int)quantity;
+                            db.UpdateProductInZonePosition(position);
+                            break;
+                        }
+                    }
+                }
+
+            }
+            catch
+            {
+                throw;
             }
         }
 

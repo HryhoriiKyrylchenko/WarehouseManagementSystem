@@ -47,5 +47,12 @@ namespace WarehouseManagementSystem.Models.Entities
             Customers = new List<Customer>();
             Manufacturers = new List<Manufacturer>();
         }
+
+        public override string ToString()
+        { 
+            string number = (Room == null) ? $"{BuildingNumber}" : $"{BuildingNumber}/{Room}";
+
+            return $"{Street} {number}, {Index} {City}";
+        }
     }
 }
