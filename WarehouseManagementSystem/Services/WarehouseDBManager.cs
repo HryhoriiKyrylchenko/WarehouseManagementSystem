@@ -198,7 +198,7 @@ namespace WarehouseManagementSystem.Services
 
         public async Task<ObservableCollection<Report>?> GetReportsAsync()
         {
-            var reports = await dbContext.Reports.ToListAsync();
+            var reports = await dbContext.Reports.Include(r => r.User).ToListAsync();
             return new ObservableCollection<Report>(reports);
         }
 

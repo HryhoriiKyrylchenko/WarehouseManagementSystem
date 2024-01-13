@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
              xmlns:enums="clr-namespace:WarehouseManagementSystem.Enums.Support_classes"
+             xmlns:entities="clr-namespace:WarehouseManagementSystem.Models.Entities"    
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200">
     <Grid Background="LightGray">
@@ -22,13 +23,13 @@
                 <StackPanel>
                     <TextBlock Text="Filter:" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
                     <CheckBox IsChecked="{Binding FilterSelectors.SectionByUserSelected}" Content="By user:" FontSize="16" Margin="15,5"/>
-                    <ComboBox ItemsSource="{Binding Users}" FontSize="20" Height="25" Margin="15,10" 
+                    <ComboBox ItemsSource="{Binding Users}" FontSize="16" Height="25" Margin="15,10" 
                               SelectedItem="{Binding FilterSelectors.SelectedUser}" IsEnabled="{Binding FilterSelectors.SectionByUserSelected}"/>
                     <CheckBox IsChecked="{Binding FilterSelectors.SectionByTypeSelected}" Content="By type:" FontSize="16" Margin="15,5"/>
-                    <ComboBox ItemsSource="{Binding Source={x:Static enums:ReportTypeEnumValues.Values}}" FontSize="20" Height="25" Margin="15,10" 
+                    <ComboBox ItemsSource="{Binding Source={x:Static enums:ReportTypeEnumValues.Values}}" FontSize="16" Height="25" Margin="15,10" 
                               SelectedItem="{Binding FilterSelectors.SelectedType}" IsEnabled="{Binding FilterSelectors.SectionByTypeSelected}"/>
                     <CheckBox IsChecked="{Binding FilterSelectors.SectionByDateSelected}" Content="By date:" FontSize="16" Margin="15,5"/>
-                    <ComboBox ItemsSource="{Binding ReportsDates}" FontSize="20" Height="25" Margin="15,10" 
+                    <ComboBox ItemsSource="{Binding ReportsDates}" FontSize="16" Height="25" Margin="15,10" 
                               SelectedItem="{Binding FilterSelectors.SelectedDate}" IsEnabled="{Binding FilterSelectors.SectionByDateSelected}"/>
                     <Button Grid.Column="4" Grid.Row="0" Grid.RowSpan="4" Margin="25" Style="{StaticResource ButtonStyle}" Content="Show" 
                               Command="{Binding ShowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
@@ -60,7 +61,25 @@
                         CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
             </UniformGrid>
             <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="15" ItemsSource="{Binding SelectedReportContent}" 
-                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                      AutoGenerateColumns="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <DataGrid.Resources>
+                    <DataTemplate DataType="{x:Type entities:Product}">
+                        
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type entities:Shipment}">
+
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type entities:MovementHistory}">
+
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type entities:Receipt}">
+
+                    </DataTemplate>
+                </DataGrid.Resources>
+            </DataGrid>
         </Grid>
         <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Back" Command="{Binding BackCommand}" 
                 CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>

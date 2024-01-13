@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+
 
 namespace WarehouseManagementSystem.Models.Entities
 {
@@ -16,6 +18,7 @@ namespace WarehouseManagementSystem.Models.Entities
         public int ReceiptId { get; set; }
 
         [ForeignKey("ReceiptId")]
+        [JsonIgnore]
         public virtual Receipt? Receipt { get; set; }
 
         public int ProductId { get; set; }

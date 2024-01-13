@@ -208,7 +208,7 @@ namespace WarehouseManagementSystem.ViewModels
         private string GenereteTitle()
         {
             StringBuilder newTitle = new StringBuilder();
-            newTitle.Append("Receipts/");
+            newTitle.Append("Shipment/");
 
             string formattedDateFrom = FilterSelectors.SectionDateFrom?.ToString("dd-MM-yyyy") ?? "N/A";
             newTitle.Append($"From {formattedDateFrom}/");

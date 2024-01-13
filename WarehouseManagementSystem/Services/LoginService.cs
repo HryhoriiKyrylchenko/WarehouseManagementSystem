@@ -7,10 +7,11 @@ using System.Windows;
 using WarehouseManagementSystem.Enums;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
+using WarehouseManagementSystem.ViewModels;
 
 namespace WarehouseManagementSystem.Services
 {
-    public class LoginService
+    public class LoginService : ViewModelBase
     {
         private User? currentUser;
 
@@ -22,6 +23,7 @@ namespace WarehouseManagementSystem.Services
                 if (currentUser != value)
                 {
                     currentUser = value;
+                    OnPropertyChanged(nameof(CurrentUser));
                 }
             }
         }

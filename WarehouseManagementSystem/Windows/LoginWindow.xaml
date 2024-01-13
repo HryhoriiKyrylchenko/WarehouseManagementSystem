@@ -30,7 +30,7 @@
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Username:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="1" Grid.Column="1" x:Name="TextBoxUsername" Text="admin" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Password:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <TextBox Grid.Row="2" Grid.Column="1" x:Name="TextBoxPassword" Text="admin" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <PasswordBox Grid.Row="2" Grid.Column="1" x:Name="PasswordBox" Password="admin" FontSize="24" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Warehouse:" FontSize="24" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 <ComboBox Grid.Row="3" Grid.Column="1" x:Name="ComboBoxWarehouses" ItemsSource="{Binding Warehouses}" SelectedItem="{Binding SelectedWarehouse}" FontSize="18" Height="30" Width="300" VerticalAlignment="Center" HorizontalAlignment="Center" SelectionChanged="ComboBox_SelectionChanged"/>
 

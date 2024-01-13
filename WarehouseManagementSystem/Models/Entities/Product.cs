@@ -59,8 +59,10 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<MovementHistory> MovementHistories { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<ShipmentItem> ShipmentItems { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<ReceiptItem> ReceiptItems { get; set; }
 
         public virtual ICollection<ProductPhoto> ProductPhotos { get; set; }
