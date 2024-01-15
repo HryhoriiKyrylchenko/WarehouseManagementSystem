@@ -534,7 +534,7 @@ namespace WarehouseManagementSystem.ViewModels
                             }
 
                             if (CurrentProductViewModel.Quantity != null
-                                && Product.Quantity != CurrentProductViewModel.Quantity)
+                                && Product.Quantity > CurrentProductViewModel.Quantity)
                             {
                                 Product.Quantity = CurrentProductViewModel.Quantity;
                             }
@@ -544,6 +544,17 @@ namespace WarehouseManagementSystem.ViewModels
                                     "Caution",
                                     MessageBoxButton.OK,
                                     MessageBoxImage.Error);
+                                return;
+                            }
+                            else
+                            {
+                                MessageBox.Show("You cannot independently change reduce a product quantity if " +
+                                                                            "it was previously entered into the database. To make the " +
+                                                                            "appropriate changes, contact your program administrator.",
+                                                                            "Caution",
+                                                                            MessageBoxButton.OK,
+                                                                            MessageBoxImage.Exclamation);
+
                                 return;
                             }
 

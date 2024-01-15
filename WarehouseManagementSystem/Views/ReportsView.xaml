@@ -5,9 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
              xmlns:enums="clr-namespace:WarehouseManagementSystem.Enums.Support_classes"
-             xmlns:entities="clr-namespace:WarehouseManagementSystem.Models.Entities"    
+             xmlns:entities="clr-namespace:WarehouseManagementSystem.Models.Entities" 
+             xmlns:converters="clr-namespace:WarehouseManagementSystem.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <converters:DateTimeToStringConverter x:Key="DateTimeConverter"/>
+    </UserControl.Resources>
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -49,7 +53,8 @@
                       VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" SelectedItem="{Binding SelectedReport, Mode=TwoWay}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Title" Width="300" Binding="{Binding Title}" />
-                    <DataGridTextColumn Header="Report date" Width="100" Binding="{Binding ReportDate}" />
+                    <DataGridTextColumn Header="Report date" Width="100" Binding="{Binding ReportDate, 
+                        Converter={StaticResource DateTimeConverter}}" />
                     <DataGridTextColumn Header="Report type" Width="100" Binding="{Binding ReportType}" />
                     <DataGridTextColumn Header="User" Width="100" Binding="{Binding User.Username}" />
                 </DataGrid.Columns>
