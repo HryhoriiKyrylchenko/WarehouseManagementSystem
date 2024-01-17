@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.shipmentItem = InitializeAsync(new ShipmentItem(shipmentId, productId, quantity)).GetAwaiter().GetResult();
+                this.shipmentItem = Initialize(new ShipmentItem(shipmentId, productId, quantity));
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.shipmentItem = InitializeAsync(shipmentItem).GetAwaiter().GetResult();
+                this.shipmentItem = Initialize(shipmentItem);
             }
             catch
             {

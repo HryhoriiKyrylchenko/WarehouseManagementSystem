@@ -21,6 +21,8 @@ namespace WarehouseManagementSystem.Models.Entities
         [ForeignKey("ProductId")]
         public virtual Product? Product { get; set; }
 
+        public decimal Quantity { get; set; }
+
         public int SourceZonePositionId { get; set; }
 
         [ForeignKey("SourceZonePositionId")]
@@ -35,10 +37,11 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public string? AdditionalInfo { get; set; }
 
-        public MovementHistory(DateTime movementDate, int productId, int sourceZonePositionId, int destinationZonePositionId)
+        public MovementHistory(DateTime movementDate, int productId, decimal quantity, int sourceZonePositionId, int destinationZonePositionId)
         {
             MovementDate = movementDate;
             ProductId = productId;
+            Quantity = quantity;
             SourceZonePositionId = sourceZonePositionId;
             DestinationZonePositionId = destinationZonePositionId;
         }

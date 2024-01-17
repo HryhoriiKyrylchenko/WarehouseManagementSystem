@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Threading;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 
 namespace WarehouseManagementSystem.ViewModels
 {
@@ -137,13 +138,10 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using(ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    logger.LogError(ex);
-                }
+                ExceptionHelper.HandleException(ex);
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    MessageBox.Show($"Error while receiving data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageHelper.ShowErrorMessage($"Error while receiving data: {ex.Message}");
                 });
             }
         }

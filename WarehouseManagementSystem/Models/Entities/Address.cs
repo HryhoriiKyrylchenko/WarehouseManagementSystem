@@ -20,7 +20,7 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public string Street { get; set; }
 
-        public int BuildingNumber { get; set; }
+        public string BuildingNumber { get; set; }
 
         public string? Room { get; set; }
 
@@ -33,7 +33,7 @@ namespace WarehouseManagementSystem.Models.Entities
         public virtual ICollection<Customer> Customers { get; set; }
         public virtual ICollection<Manufacturer> Manufacturers { get; set; }
 
-        public Address(string country, string index, string city, string street, int buildingNumber)
+        public Address(string country, string index, string city, string street, string buildingNumber)
         {
 
             Country = country;
@@ -46,6 +46,13 @@ namespace WarehouseManagementSystem.Models.Entities
             Suppliers = new List<Supplier>();
             Customers = new List<Customer>();
             Manufacturers = new List<Manufacturer>();
+        }
+
+        public override string ToString()
+        { 
+            string number = (Room == null) ? $"{BuildingNumber}" : $"{BuildingNumber}/{Room}";
+
+            return $"{Street} {number}, {Index} {City}";
         }
     }
 }

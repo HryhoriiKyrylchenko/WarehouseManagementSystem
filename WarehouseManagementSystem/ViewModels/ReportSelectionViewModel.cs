@@ -18,7 +18,6 @@ namespace WarehouseManagementSystem.ViewModels
     {
         private readonly MainViewModel mainViewModel;
 
-
         private ReportTypeEnum? selectedReportType;
 
         public ReportTypeEnum? SelectedReportType

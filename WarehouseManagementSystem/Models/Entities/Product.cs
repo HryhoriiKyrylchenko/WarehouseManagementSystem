@@ -27,11 +27,11 @@ namespace WarehouseManagementSystem.Models.Entities
         public string? Description { get; set; }
 
         [Required]
-        public UnitsOfMeasureEnum UnitOfMeasure { get; set; }
+        public UnitsOfMeasureEnum? UnitOfMeasure { get; set; }
 
-        public decimal Quantity { get; set; }
+        public decimal? Quantity { get; set; }
 
-        public int Capacity { get; set; }
+        public int? Capacity { get; set; }
 
         public int? ManufacturerId { get; set; }
 
@@ -59,8 +59,10 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<MovementHistory> MovementHistories { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<ShipmentItem> ShipmentItems { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<ReceiptItem> ReceiptItems { get; set; }
 
         public virtual ICollection<ProductPhoto> ProductPhotos { get; set; }
@@ -69,7 +71,7 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public virtual ICollection<Label> Labels { get; set; }
 
-        public Product (string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price, int warehouseId)
+        public Product (string productCode, string name, UnitsOfMeasureEnum? unitOfMeasure, decimal? quantity, int? capacity, decimal price, int warehouseId)
         {
             ProductCode = productCode;
             Name = name;
@@ -132,6 +134,11 @@ namespace WarehouseManagementSystem.Models.Entities
                 }
                 return new List<ProductDetail>();
             }
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

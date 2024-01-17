@@ -20,7 +20,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.productInZonePosition = InitializeAsync(new ProductInZonePosition(productId, quantity, zonePositionId)).GetAwaiter().GetResult();
+                this.productInZonePosition = Initialize(new ProductInZonePosition(productId, quantity, zonePositionId));
             }
             catch
             {
@@ -32,7 +32,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.productInZonePosition = InitializeAsync(productInZonePosition).GetAwaiter().GetResult();
+                this.productInZonePosition = Initialize(productInZonePosition);
             }
             catch
             {

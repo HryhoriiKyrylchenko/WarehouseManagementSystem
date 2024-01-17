@@ -20,7 +20,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.manufacturer = InitializeAsync(new Manufacturer(name)).GetAwaiter().GetResult();
+                this.manufacturer = Initialize(new Manufacturer(name));
             }
             catch
             {
@@ -32,7 +32,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.manufacturer = InitializeAsync(manufacturer).GetAwaiter().GetResult();
+                this.manufacturer = Initialize(manufacturer);
             }
             catch
             {

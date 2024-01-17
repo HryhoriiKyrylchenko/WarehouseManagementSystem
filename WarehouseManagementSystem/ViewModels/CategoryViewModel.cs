@@ -20,5 +20,10 @@ namespace WarehouseManagementSystem.ViewModels
             Children = new ObservableCollection<CategoryViewModel>();
             Products = new ObservableCollection<Product>();
         }
+
+        public override string ToString()
+        {
+            return Category.CategoryName.ToString();
+        }
     }
 }

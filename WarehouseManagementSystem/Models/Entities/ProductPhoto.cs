@@ -15,11 +15,15 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public byte[] PhotoData { get; set; }
 
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
 
         [ForeignKey("ProductId")]
         public virtual Product? Product { get; set; }
 
+        public ProductPhoto(byte[] photoData)
+        {
+            PhotoData = photoData;
+        }
         public ProductPhoto(byte[] photoData, int productId) 
         {
             PhotoData = photoData;

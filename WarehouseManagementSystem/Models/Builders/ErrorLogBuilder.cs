@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.errorLog = InitializeAsync(new ErrorLog(errorMessage, stackTrace, timestamp)).GetAwaiter().GetResult();
+                this.errorLog = Initialize(new ErrorLog(errorMessage, stackTrace, timestamp));
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.errorLog = InitializeAsync(errorLog).GetAwaiter().GetResult();
+                this.errorLog = Initialize(errorLog);
             }
             catch
             {

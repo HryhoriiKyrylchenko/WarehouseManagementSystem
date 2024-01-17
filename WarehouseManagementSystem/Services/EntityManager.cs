@@ -36,7 +36,7 @@ namespace WarehouseManagementSystem.Services
 
         public async Task<Product> AddProductAsync(Product newProduct)
         {
-            var existingProduct = await dbContext.Products.FindAsync(newProduct.Id);
+            var existingProduct = dbContext.Products.Find(newProduct.Id);
 
             if (existingProduct == null)
             {

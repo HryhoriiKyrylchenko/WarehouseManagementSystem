@@ -1,22 +1,30 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Migrations;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 using WarehouseManagementSystem.ViewModels.Support_data;
+using WarehouseManagementSystem.Windows;
 
 namespace WarehouseManagementSystem.ViewModels
 {
     public class ReceiptsViewModel : ViewModelBase
     {
         private readonly MainViewModel mainViewModel;
+        public MainViewModel MainViewModel
+        {
+            get { return mainViewModel; }
+        }
 
         private ReceiptsSelectorsFilterModel filterSelectors;
 
@@ -157,16 +165,13 @@ namespace WarehouseManagementSystem.ViewModels
             {
                 using (var dbManager = new WarehouseDBManager(new WarehouseDbContext()))
                 {
-                    
+
                     Receipts = await dbManager.GetReceiptsByFilterAsync(FilterSelectors);
                 }
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    await logger.LogErrorAsync(ex);
-                }
+                await ExceptionHelper.HandleExceptionAsync(ex);
             }
         }
 
@@ -177,17 +182,95 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void SaveReport(object parameter)
         {
-            /////////////////////////////////////
+            try
+            {
+                if (Receipts == null
+                || !Receipts.Any())
+                {
+                    MessageHelper.ShowErrorMessage("No info to be saved");
+                    return;
+                }
+
+                if (mainViewModel.LoginService.CurrentUser == null)
+                {
+                    throw new ArgumentNullException("Current program user is null");
+                }
+
+                string title = GenereteTitle();
+                string content = GenereteContentToJson(Receipts);
+
+                SupportWindow supportWindow = new SupportWindow(new SaveReportViewModel(title,
+                                                                                    Enums.ReportTypeEnum.RECEIPTS,
+                                                                                    content,
+                                                                                    mainViewModel.LoginService.CurrentUser.Id));
+                supportWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                HandleSaveReportException(ex);
+            }
+        }
+
+        private void HandleSaveReportException(Exception ex)
+        {
+            MessageHelper.ShowErrorMessage("Failed to save a report");
+            ExceptionHelper.HandleException(ex);
+        }
+
+        private string GenereteTitle()
+        {
+            StringBuilder newTitle = new StringBuilder();
+            newTitle.Append("Receipts/");
+
+            string formattedDateFrom = FilterSelectors.SectionDateFrom?.ToString("dd-MM-yyyy") ?? "N/A";
+            newTitle.Append($"From {formattedDateFrom}/");
+
+            string formattedDateTo = FilterSelectors.SectionDateTo?.ToString("dd-MM-yyyy") ?? "N/A";
+            newTitle.Append($"To {formattedDateTo}/");
+
+            if (FilterSelectors.SectionAllSuppliersSelected)
+            {
+                newTitle.Append("All customers/");
+            }
+            else if (FilterSelectors.SectionBySupplierSelected)
+            {
+                newTitle.Append($"Supplier: {FilterSelectors.SelectedSupplier}/");
+            }
+
+            if (FilterSelectors.SectionAllUsersSelected)
+            {
+                newTitle.Append("All users/");
+            }
+            else if (FilterSelectors.SectionByUserSelected)
+            {
+                newTitle.Append($"User: {FilterSelectors.SelectedSupplier}/");
+            }
+
+            return newTitle.ToString();
+        }
+
+        private string GenereteContentToJson(ICollection<Receipt> content)
+        {
+            return JsonConvert.SerializeObject(content, Formatting.None);
         }
 
         private void AddReceipt(object parameter)
         {
-            /////////////////////////////////////
+            SupportWindow supportWindow = new SupportWindow(new AddEditReceiptViewModel(this));
+            supportWindow.ShowDialog();
+            InitializeAsync();
+            Show(this);
         }
 
         private void EditReceipt(object parameter)
         {
-            /////////////////////////////////////
+            if (SelectedReceipt != null)
+            {
+                SupportWindow supportWindow = new SupportWindow(new AddEditReceiptViewModel(this, SelectedReceipt));
+                supportWindow.ShowDialog();
+                InitializeAsync();
+                Show(this);
+            }
         }
     }
 }

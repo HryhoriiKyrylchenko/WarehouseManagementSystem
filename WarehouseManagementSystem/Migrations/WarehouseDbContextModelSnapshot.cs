@@ -33,8 +33,9 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<string>("AdditionalInfo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("BuildingNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("BuildingNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -189,6 +190,9 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("SourceZonePositionId")
                         .HasColumnType("int");
 
@@ -214,7 +218,10 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<string>("AdditionalInfo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Capacity")
+                    b.Property<int?>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -233,9 +240,6 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ProductCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -243,7 +247,7 @@ namespace WarehouseManagementSystem.Migrations
                     b.Property<string>("ProductDetails")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Quantity")
+                    b.Property<decimal?>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UnitOfMeasure")
@@ -254,16 +258,16 @@ namespace WarehouseManagementSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ManufacturerId");
-
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ManufacturerId");
 
                     b.HasIndex("WarehouseId");
 
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ProductCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -332,7 +336,7 @@ namespace WarehouseManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -520,7 +524,7 @@ namespace WarehouseManagementSystem.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.User", b =>
@@ -722,14 +726,14 @@ namespace WarehouseManagementSystem.Migrations
 
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Product", b =>
                 {
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.Manufacturer", "Manufacturer")
-                        .WithMany()
-                        .HasForeignKey("ManufacturerId");
-
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "Category")
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.ProductCategory", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerId");
 
                     b.HasOne("WarehouseManagementSystem.Models.Entities.Warehouse", "Warehouse")
                         .WithMany("Products")
@@ -737,16 +741,16 @@ namespace WarehouseManagementSystem.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Manufacturer");
-
                     b.Navigation("Category");
+
+                    b.Navigation("Manufacturer");
 
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ProductCategory", b =>
                 {
-                    b.HasOne("WarehouseManagementSystem.Models.Entities.Category", "PreviousCategory")
+                    b.HasOne("WarehouseManagementSystem.Models.Entities.ProductCategory", "PreviousCategory")
                         .WithMany()
                         .HasForeignKey("PreviousCategoryId");
 
@@ -777,8 +781,7 @@ namespace WarehouseManagementSystem.Migrations
                     b.HasOne("WarehouseManagementSystem.Models.Entities.Product", "Product")
                         .WithMany("ProductPhotos")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Product");
                 });
@@ -873,7 +876,7 @@ namespace WarehouseManagementSystem.Migrations
             modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Supplier", b =>
                 {
                     b.HasOne("WarehouseManagementSystem.Models.Entities.Address", "Address")
-                        .WithMany("Suppliers")
+                        .WithMany("Customers")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -937,7 +940,7 @@ namespace WarehouseManagementSystem.Migrations
 
                     b.Navigation("Manufacturers");
 
-                    b.Navigation("Suppliers");
+                    b.Navigation("Customers");
 
                     b.Navigation("Warehouses");
                 });
@@ -962,7 +965,7 @@ namespace WarehouseManagementSystem.Migrations
                     b.Navigation("ShipmentItems");
                 });
 
-            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.Category", b =>
+            modelBuilder.Entity("WarehouseManagementSystem.Models.Entities.ProductCategory", b =>
                 {
                     b.Navigation("Products");
                 });

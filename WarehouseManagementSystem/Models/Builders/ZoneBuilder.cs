@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.zone = InitializeAsync(new Zone(name, warehouseId, categoryId, capacity)).GetAwaiter().GetResult();
+                this.zone = Initialize(new Zone(name, warehouseId, categoryId, capacity));
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.zone = InitializeAsync(zone).GetAwaiter().GetResult();
+                this.zone = Initialize(zone);
             }
             catch
             {

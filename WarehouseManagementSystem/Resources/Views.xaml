@@ -37,4 +37,36 @@
     <DataTemplate DataType="{x:Type viewModels:ReportSelectionViewModel}">
         <views:ReportSelectionView />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddManufacturerViewModel}">
+        <views:AddManufacturerView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddEditAddressViewModel}">
+        <views:AddEditAddressView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddProductCategoryViewModel}">
+        <views:AddProductCategoryView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:SaveReportViewModel}">
+        <views:SaveReportView />
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type viewModels:AddEditReceiptViewModel}">
+        <views:AddEditReceiptView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddSupplierViewModel}">
+        <views:AddSupplierView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddEditShipmentViewModel}">
+        <views:AddEditShipmentView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:AddCustomerViewModel}">
+        <views:AddCustomerView />
+    </DataTemplate>
 </ResourceDictionary>

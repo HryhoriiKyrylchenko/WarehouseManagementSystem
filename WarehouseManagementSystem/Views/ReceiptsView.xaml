@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
+             xmlns:converters="clr-namespace:WarehouseManagementSystem.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <converters:DateTimeToStringConverter x:Key="DateTimeConverter"/>
+    </UserControl.Resources>
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height=".6*"/>
@@ -80,7 +84,8 @@
                   SelectedItem="{Binding SelectedReceipt, Mode=TwoWay}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Batch number" Width="150" Binding="{Binding BatchNumber}" />
-                <DataGridTextColumn Header="Receipt date" Width="100" Binding="{Binding ReceiptDate}" />
+                <DataGridTextColumn Header="Receipt date" Width="100" Binding="{Binding ReceiptDate, 
+                        Converter={StaticResource DateTimeConverter}}" />
                 <DataGridTextColumn Header="Supplier" Width="150" Binding="{Binding Supplier.Name}" />
                 <DataGridTextColumn Header="User" Width="100" Binding="{Binding User.Username}" />
                 <DataGridTextColumn Header="Products count" Width="100" Binding="{Binding ReceiptItems.Count}" />
