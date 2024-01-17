@@ -240,6 +240,14 @@ namespace WarehouseManagementSystem.Services
             return new ObservableCollection<User>(users);
         }
 
+        public ObservableCollection<ZonePosition> GetZonePozitions(int zoneId)
+        {
+            var zonePositions = dbContext.ZonePositions
+                .Where(zp => zp.ZoneId == zoneId)
+                .ToList();
+            return new ObservableCollection<ZonePosition>(zonePositions);
+        }
+
         public async Task<ObservableCollection<ZonePosition>> GetZonePozitionsAsync(int zoneId)
         {
             var zonePositions = await dbContext.ZonePositions
@@ -248,12 +256,12 @@ namespace WarehouseManagementSystem.Services
             return new ObservableCollection<ZonePosition>(zonePositions);
         }
 
-        public List<ProductInZonePosition> GetProductInZonePozitionsByProduct(int productId)
+        public ObservableCollection<ProductInZonePosition> GetProductInZonePozitionsByProduct(int productId)
         {
             var zonePositions = dbContext.ProductInZonePositions
                 .Where(zp => zp.ProductId == productId)
                 .ToList();
-            return zonePositions;
+            return new ObservableCollection<ProductInZonePosition>(zonePositions);
         }
 
         public async Task<ObservableCollection<ProductInZonePosition>> GetProductInZonePositionsByProductAsync(int productId)

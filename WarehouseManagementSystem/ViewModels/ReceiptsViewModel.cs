@@ -12,6 +12,7 @@ using WarehouseManagementSystem.Migrations;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 using WarehouseManagementSystem.ViewModels.Support_data;
 using WarehouseManagementSystem.Windows;
 
@@ -164,16 +165,13 @@ namespace WarehouseManagementSystem.ViewModels
             {
                 using (var dbManager = new WarehouseDBManager(new WarehouseDbContext()))
                 {
-                    
+
                     Receipts = await dbManager.GetReceiptsByFilterAsync(FilterSelectors);
                 }
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    await logger.LogErrorAsync(ex);
-                }
+                await ExceptionHelper.HandleExceptionAsync(ex);
             }
         }
 
@@ -184,10 +182,20 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void SaveReport(object parameter)
         {
-            if (Receipts != null
-                && Receipts.Any()
-                && mainViewModel.LoginService.CurrentUser != null)
+            try
             {
+                if (Receipts == null
+                || !Receipts.Any())
+                {
+                    MessageHelper.ShowErrorMessage("No info to be saved");
+                    return;
+                }
+
+                if (mainViewModel.LoginService.CurrentUser == null)
+                {
+                    throw new ArgumentNullException("Current program user is null");
+                }
+
                 string title = GenereteTitle();
                 string content = GenereteContentToJson(Receipts);
 
@@ -197,13 +205,16 @@ namespace WarehouseManagementSystem.ViewModels
                                                                                     mainViewModel.LoginService.CurrentUser.Id));
                 supportWindow.ShowDialog();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("No info to be saved",
-                                "Error",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                HandleSaveReportException(ex);
             }
+        }
+
+        private void HandleSaveReportException(Exception ex)
+        {
+            MessageHelper.ShowErrorMessage("Failed to save a report");
+            ExceptionHelper.HandleException(ex);
         }
 
         private string GenereteTitle()

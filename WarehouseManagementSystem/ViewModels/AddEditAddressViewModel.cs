@@ -4,6 +4,7 @@ using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 using WarehouseManagementSystem.ViewModels.Interfaces;
 
 namespace WarehouseManagementSystem.ViewModels
@@ -70,118 +71,133 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void SetAddress(object obj)
         {
-            if (GetConfirmation() == MessageBoxResult.OK)
+            if (ConfirmationHelper.GetConfirmation() == MessageBoxResult.OK)
             {
                 if (IsAddressDataValid())
                 {
                     if (Address != null)
                     {
-                        if (AddressViewModel.Country != null
-                            && Address.Country != AddressViewModel.Country)
-                        {
-                            Address.Country = AddressViewModel.Country;
-                        }
-                        if (AddressViewModel.Index != null
-                            && Address.Index != AddressViewModel.Index)
-                        {
-                            Address.Index = AddressViewModel.Index;
-                        }
-                        if (AddressViewModel.City != null
-                            && Address.City != AddressViewModel.City)
-                        {
-                            Address.City = AddressViewModel.City;
-                        }
-                        if (AddressViewModel.Street != null
-                            && Address.Street != AddressViewModel.Street)
-                        {
-                            Address.Street = AddressViewModel.Street;
-                        }
-                        if (AddressViewModel.BuildingNumber != null
-                            && Address.BuildingNumber != AddressViewModel.BuildingNumber)
-                        {
-                            Address.BuildingNumber = AddressViewModel.BuildingNumber;
-                        }
-                        if (!string.IsNullOrWhiteSpace(AddressViewModel.Room)
-                            && Address.Room != AddressViewModel.Room)
-                        {
-                            Address.Room = AddressViewModel.Room;
-                        }
-                        if (!string.IsNullOrWhiteSpace(AddressViewModel.AdditionalInfo)
-                            && Address.AdditionalInfo != AddressViewModel.AdditionalInfo)
-                        {
-                            Address.AdditionalInfo = AddressViewModel.AdditionalInfo;
-                        }
-
                         try
                         {
-                            using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
-                            {
-                                db.UpdateAddress(Address);
-                            }
-
-                            mainViewModel.Address = Address;
+                            mainViewModel.Address = UpdateAddress(Address);
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                            using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                            {
-                                logger.LogError(ex);
-                            }
-
+                            HandleAddressUpdateException(ex);
                         }
                     }
                     else
                     {
                         try
                         {
-                            if (AddressViewModel.Country != null
-                            && AddressViewModel.Index != null
-                            && AddressViewModel.City != null
-                            && AddressViewModel.Street != null
-                            && AddressViewModel.BuildingNumber != null)
-                            {
-                                var tempAddress = new AddressBuilder(AddressViewModel.Country,
-                                AddressViewModel.Index,
-                                AddressViewModel.City,
-                                AddressViewModel.Street,
-                                AddressViewModel.BuildingNumber);
-
-
-                                if (!string.IsNullOrWhiteSpace(AddressViewModel.Room))
-                                {
-                                    tempAddress = tempAddress.WithRoom(AddressViewModel.Room);
-                                }
-                                if (!string.IsNullOrWhiteSpace(AddressViewModel.AdditionalInfo))
-                                {
-                                    tempAddress = tempAddress.WithAdditionalInfo(AddressViewModel.AdditionalInfo);
-                                }
-
-                                mainViewModel.Address = tempAddress.Build();
-                            }
+                            mainViewModel.Address = CreateAddress();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                            Task.Run(async () =>
-                            {
-                                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                                {
-                                    await logger.LogErrorAsync(ex);
-                                }
-                            }).Wait();
+                            HandleAddressCreationException(ex);
                         }
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Invalid address data, enter valid data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageHelper.ShowErrorMessage("Invalid address data, enter valid data");
                 }
 
                 CloseParentWindow();
             }
+        }
+
+        private Address UpdateAddress(Address Address)
+        {
+            if (AddressViewModel.Country != null
+                && Address.Country != AddressViewModel.Country)
+            {
+                Address.Country = AddressViewModel.Country;
+            }
+            if (AddressViewModel.Index != null
+                && Address.Index != AddressViewModel.Index)
+            {
+                Address.Index = AddressViewModel.Index;
+            }
+            if (AddressViewModel.City != null
+                && Address.City != AddressViewModel.City)
+            {
+                Address.City = AddressViewModel.City;
+            }
+            if (AddressViewModel.Street != null
+                && Address.Street != AddressViewModel.Street)
+            {
+                Address.Street = AddressViewModel.Street;
+            }
+            if (AddressViewModel.BuildingNumber != null
+                && Address.BuildingNumber != AddressViewModel.BuildingNumber)
+            {
+                Address.BuildingNumber = AddressViewModel.BuildingNumber;
+            }
+            if (!string.IsNullOrWhiteSpace(AddressViewModel.Room)
+                && Address.Room != AddressViewModel.Room)
+            {
+                Address.Room = AddressViewModel.Room;
+            }
+            if (!string.IsNullOrWhiteSpace(AddressViewModel.AdditionalInfo)
+                && Address.AdditionalInfo != AddressViewModel.AdditionalInfo)
+            {
+                Address.AdditionalInfo = AddressViewModel.AdditionalInfo;
+            }
+
+            try
+            {
+                using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
+                {
+                    return db.UpdateAddress(Address);
+                }
+            }
+            catch 
+            {
+                throw;
+            }
+        }
+
+        private Address CreateAddress()
+        {
+            if (AddressViewModel.Country == null
+                            || AddressViewModel.Index == null
+                            || AddressViewModel.City == null
+                            || AddressViewModel.Street == null
+                            || AddressViewModel.BuildingNumber == null)
+            {
+                throw new NullReferenceException("Required parametr is null");
+            }
+
+            var tempAddress = new AddressBuilder(AddressViewModel.Country,
+            AddressViewModel.Index,
+            AddressViewModel.City,
+            AddressViewModel.Street,
+            AddressViewModel.BuildingNumber);
+
+
+            if (!string.IsNullOrWhiteSpace(AddressViewModel.Room))
+            {
+                tempAddress = tempAddress.WithRoom(AddressViewModel.Room);
+            }
+            if (!string.IsNullOrWhiteSpace(AddressViewModel.AdditionalInfo))
+            {
+                tempAddress = tempAddress.WithAdditionalInfo(AddressViewModel.AdditionalInfo);
+            }
+
+            return tempAddress.Build();
+        }
+
+        private void HandleAddressUpdateException(Exception ex)
+        {
+            MessageHelper.ShowErrorMessage("Failed to update the address");
+            ExceptionHelper.HandleException(ex);
+        }
+
+        private void HandleAddressCreationException(Exception ex)
+        {
+            MessageHelper.ShowErrorMessage("Failed to create a new address");
+            ExceptionHelper.HandleException(ex);
         }
 
         private bool IsAddressDataValid()
@@ -197,14 +213,12 @@ namespace WarehouseManagementSystem.ViewModels
             return true;
         }
 
-        private MessageBoxResult GetConfirmation()
-        {
-            return MessageBox.Show("Do you want to make this changes?", "Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-        }
-
         private void Cancel(object obj)
         {
-            CloseParentWindow();
+            if (ConfirmationHelper.GetCancelConfirmation() == MessageBoxResult.OK)
+            {
+                CloseParentWindow();
+            }
         }
     }
 }

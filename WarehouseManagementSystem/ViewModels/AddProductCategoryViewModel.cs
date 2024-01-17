@@ -6,6 +6,7 @@ using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 
 namespace WarehouseManagementSystem.ViewModels
 {
@@ -129,7 +130,7 @@ namespace WarehouseManagementSystem.ViewModels
                     {
                         foreach (var rootCategory in rootCategories)
                         {
-                            var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory, 
+                            var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory,
                                 mainViewModel.MainViewModel.MainViewModel.LoginService.CurrentWarehouse);
                             Categories.Add(rootViewModel);
                         }
@@ -138,61 +139,55 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    await logger.LogErrorAsync(ex);
-                }
+                await ExceptionHelper.HandleExceptionAsync(ex);
             }
         }
 
         private void AddProductCategory(object obj)
         {
-            if (GetConfirmation() == MessageBoxResult.OK)
+
+            if (string.IsNullOrWhiteSpace(CategoryName))
             {
-                if (!string.IsNullOrWhiteSpace(CategoryName))
-                {
-                    try
-                    {
-                        var newPCB = new ProductCategoryBuilder(CategoryName);
-
-                        if (SelectorWithParentChecked && ParentCategory != null)
-                        {
-                            newPCB = newPCB.WithPreviousCategory(ParentCategory.Category.Id);
-                        }
-                        else if (SelectorWithParentChecked && ParentCategory != null)
-                        {
-                            MessageBox.Show("Select parent cetegory",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                            return;
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(AdditionalInfo))
-                        {
-                            newPCB = newPCB.WithAdditionalInfo(AdditionalInfo);
-                        }
-
-                        CloseParentWindow();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                        {
-                            logger.LogError(ex);
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Incorrect data entered", "Caution", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
+                MessageHelper.ShowCautionMessage("Incorrect data entered");
+                return;
             }
-        }
 
-        private MessageBoxResult GetConfirmation()
-        {
-            return MessageBox.Show("Do you want to make this changes?", "Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (ConfirmationHelper.GetConfirmation() != MessageBoxResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                var productCategoryBuilder = new ProductCategoryBuilder(CategoryName);
+
+                if (SelectorWithParentChecked)
+                {
+                    if (ParentCategory != null)
+                    {
+                        productCategoryBuilder.WithPreviousCategory(ParentCategory.Category.Id);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Select parent category",
+                                        "Caution",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Error);
+                        return;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(AdditionalInfo))
+                {
+                    productCategoryBuilder.WithAdditionalInfo(AdditionalInfo);
+                }
+
+                CloseParentWindow();
+            }
+            catch (Exception ex)
+            {
+                ExceptionHelper.HandleException(ex);
+            }
         }
 
         private void Cancel(object obj)

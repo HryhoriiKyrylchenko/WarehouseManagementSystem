@@ -10,6 +10,7 @@ using WarehouseManagementSystem.Enums;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 
 namespace WarehouseManagementSystem.ViewModels
 {
@@ -54,33 +55,19 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     new ReportBuilder(Title, DateTime.Now, reportType, content, userId);
 
-                    MessageBox.Show("Report saved successfully",
-                                    "Info",
-                                    MessageBoxButton.OK,
-                                    MessageBoxImage.Information);
+                    MessageHelper.ShowInfoMessage("Report saved successfully");
 
                     CloseParentWindow();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Some error occured", 
-                                    "Error", 
-                                    MessageBoxButton.OK, 
-                                    MessageBoxImage.Error);
-
-                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                    {
-                        logger.LogError(ex);
-                    }
-
+                    MessageHelper.ShowErrorMessage("Some error occured");
+                    ExceptionHelper.HandleException(ex);
                 }
             }
             else
             {
-                MessageBox.Show("Title is required",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Exclamation);
+                MessageHelper.ShowErrorMessage("Title is required");
             }
         }
 

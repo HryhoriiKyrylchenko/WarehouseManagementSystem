@@ -15,6 +15,7 @@ using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Models.Entities.Support_classes;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 using WarehouseManagementSystem.ViewModels.Support_data;
 using WarehouseManagementSystem.Windows;
 
@@ -149,10 +150,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    await logger.LogErrorAsync(ex);
-                }
+                await ExceptionHelper.HandleExceptionAsync(ex);
             }
         }
 
@@ -167,10 +165,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    await logger.LogErrorAsync(ex);
-                }
+                await ExceptionHelper.HandleExceptionAsync(ex);
             }
         }
 
@@ -186,10 +181,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    await logger.LogErrorAsync(ex);
-                }
+                await ExceptionHelper.HandleExceptionAsync(ex);
             }
         }
 
@@ -206,37 +198,37 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void DeleteReport(object parameter)
         {
-            if (SelectedReport != null
-                && mainViewModel.LoginService.CurrentUser != null
-                && SelectedReport.User != null)
+            if (SelectedReport == null
+                || mainViewModel.LoginService.CurrentUser == null
+                || SelectedReport.User == null)
             {
-                if(mainViewModel.LoginService.CurrentUser.Role == UserRolesEnum.ADMIN
-                || mainViewModel.LoginService.CurrentUser.Role == UserRolesEnum.DIRECTOR
-                || mainViewModel.LoginService.CurrentUser.Role == UserRolesEnum.MANAGER)
+                MessageHelper.ShowCautionMessage("Select report to delete");
+                return;
+            }
+
+            if (mainViewModel.LoginService.CurrentUser.Role == UserRolesEnum.ADMIN
+            || mainViewModel.LoginService.CurrentUser.Role == UserRolesEnum.DIRECTOR
+            || mainViewModel.LoginService.CurrentUser.Role == UserRolesEnum.MANAGER)
+            {
+                if (ConfirmationHelper.GetConfirmation() == MessageBoxResult.OK)
                 {
-                    if (GetConfirmation() == MessageBoxResult.OK)
-                    {
-                        DeleteSelectedReport(SelectedReport);
-                        Reports?.Remove(SelectedReport);
-                        SelectedReport = null;
-                    }
+                    DeleteSelectedReport(SelectedReport);
+                    Reports?.Remove(SelectedReport);
+                    SelectedReport = null;
                 }
-                else if (mainViewModel.LoginService.CurrentUser.Role == UserRolesEnum.GUEST
-                    || mainViewModel.LoginService.CurrentUser.Username != SelectedReport.User.Username)
+            }
+            else if (mainViewModel.LoginService.CurrentUser.Role == UserRolesEnum.GUEST
+                || mainViewModel.LoginService.CurrentUser.Username != SelectedReport.User.Username)
+            {
+                MessageHelper.ShowCautionMessage("You do not have rigts to do this changes");
+            }
+            else if (mainViewModel.LoginService.CurrentUser.Username == SelectedReport.User.Username)
+            {
+                if (ConfirmationHelper.GetConfirmation() == MessageBoxResult.OK)
                 {
-                    MessageBox.Show("You do not have rigts to do this changes",
-                        "Caution",
-                        MessageBoxButton.OKCancel,
-                        MessageBoxImage.Exclamation);
+                    DeleteSelectedReport(SelectedReport);
                 }
-                else if (mainViewModel.LoginService.CurrentUser.Username == SelectedReport.User.Username)
-                {
-                    if (GetConfirmation() == MessageBoxResult.OK)
-                    {
-                        DeleteSelectedReport(SelectedReport);
-                    }
-                }
-            } 
+            }
         }
 
         private void DeleteSelectedReport(Report report)
@@ -250,63 +242,56 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    logger.LogError(ex);
-                }
-
-                MessageBox.Show("Something went wrong, try again or contact your system administrator",
-                        "Caution",
-                        MessageBoxButton.OKCancel,
-                        MessageBoxImage.Exclamation);
+                ExceptionHelper.HandleException(ex);
+                MessageHelper.ShowCautionMessage("Something went wrong, try again or contact your system administrator");
             }
-        }
-
-        private MessageBoxResult GetConfirmation()
-        {
-            return MessageBox.Show("Do you want to make this changes?",
-                "Confirmation",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Question);
         }
 
         private void UpdateSelectedReportContent()
         {
-            if (SelectedReport != null)
+            try
             {
-                switch (SelectedReport.ReportType)
+                if (SelectedReport != null)
                 {
-                    case ReportTypeEnum.PRODUCTS:
-                        var products = JsonConvert.DeserializeObject<ObservableCollection<Product>>(SelectedReport.Content);
-                        if (products != null)
-                        {
-                            SelectedReportContent = new ObservableCollection<object>(products);
-                        }
-                        break;
-                    case ReportTypeEnum.MOVEMENTS:
-                        var movements = JsonConvert.DeserializeObject<ObservableCollection<MovementHistory>>(SelectedReport.Content);
-                        if (movements != null)
-                        {
-                            SelectedReportContent = new ObservableCollection<object>(movements);
-                        }
-                        break;
-                    case ReportTypeEnum.RECEIPTS:
-                        var receipts = JsonConvert.DeserializeObject<ObservableCollection<Receipt>>(SelectedReport.Content);
-                        if (receipts != null)
-                        {
-                            SelectedReportContent = new ObservableCollection<object>(receipts);
-                        }
-                        break;
-                    case ReportTypeEnum.SHIPMENTS:
-                        var shipments = JsonConvert.DeserializeObject<ObservableCollection<Shipment>>(SelectedReport.Content);
-                        if (shipments != null)
-                        {
-                            SelectedReportContent = new ObservableCollection<object>(shipments);
-                        }
-                        break;
-                    default:
-                        break;
+                    switch (SelectedReport.ReportType)
+                    {
+                        case ReportTypeEnum.PRODUCTS:
+                            var products = JsonConvert.DeserializeObject<ObservableCollection<Product>>(SelectedReport.Content);
+                            if (products != null)
+                            {
+                                SelectedReportContent = new ObservableCollection<object>(products);
+                            }
+                            break;
+                        case ReportTypeEnum.MOVEMENTS:
+                            var movements = JsonConvert.DeserializeObject<ObservableCollection<MovementHistory>>(SelectedReport.Content);
+                            if (movements != null)
+                            {
+                                SelectedReportContent = new ObservableCollection<object>(movements);
+                            }
+                            break;
+                        case ReportTypeEnum.RECEIPTS:
+                            var receipts = JsonConvert.DeserializeObject<ObservableCollection<Receipt>>(SelectedReport.Content);
+                            if (receipts != null)
+                            {
+                                SelectedReportContent = new ObservableCollection<object>(receipts);
+                            }
+                            break;
+                        case ReportTypeEnum.SHIPMENTS:
+                            var shipments = JsonConvert.DeserializeObject<ObservableCollection<Shipment>>(SelectedReport.Content);
+                            if (shipments != null)
+                            {
+                                SelectedReportContent = new ObservableCollection<object>(shipments);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                ExceptionHelper.HandleException(ex);
+                MessageHelper.ShowCautionMessage("Something went wrong");
             }
         }
     }

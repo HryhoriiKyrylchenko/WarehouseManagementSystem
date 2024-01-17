@@ -12,6 +12,7 @@ using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.ViewModels.Interfaces;
 using WarehouseManagementSystem.Windows;
 using System.Transactions;
+using WarehouseManagementSystem.ViewModels.Helpers;
 
 namespace WarehouseManagementSystem.ViewModels
 {
@@ -32,12 +33,6 @@ namespace WarehouseManagementSystem.ViewModels
                 };
             }
         }
-
-        public ICommand AddAddressCommand => new RelayCommand(AddAddress);
-        public ICommand EditAddressCommand => new RelayCommand(EditAddress);
-        public ICommand AddCommand => new RelayCommand(Add);
-        public ICommand CancelCommand => new RelayCommand(Cancel);
-
         public Address? Address
         {
             set
@@ -48,6 +43,11 @@ namespace WarehouseManagementSystem.ViewModels
                 };
             }
         }
+
+        public ICommand AddAddressCommand => new RelayCommand(AddAddress);
+        public ICommand EditAddressCommand => new RelayCommand(EditAddress);
+        public ICommand AddCommand => new RelayCommand(Add);
+        public ICommand CancelCommand => new RelayCommand(Cancel);
 
         public AddCustomerViewModel(AddEditShipmentViewModel mainViewModel)
         {
@@ -72,41 +72,19 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void Add(object obj)
         {
-            if (GetConfirmation() == MessageBoxResult.OK)
+            if (ConfirmationHelper.GetConfirmation() == MessageBoxResult.OK)
             {
-                if (!string.IsNullOrWhiteSpace(CustomerViewModel.Firstname)
-                    && !string.IsNullOrWhiteSpace(CustomerViewModel.Lastname)
-                    && CustomerViewModel.Address != null)
+                if (IsValidCustomer())
                 {
                     using (var scope = new TransactionScope())
                     {
                         try
                         {
-                            var newCB = new CustomerBuilder(CustomerViewModel.Firstname,
-                                                            CustomerViewModel.Lastname,
-                                                            CustomerViewModel.Address.Id);
-
-                            if (CustomerViewModel.DateOfBirth != null)
-                            {
-                                newCB = newCB.WithDateOfBirth((DateTime)CustomerViewModel.DateOfBirth);
-                            }
-
-
-                            if (!string.IsNullOrWhiteSpace(CustomerViewModel.DiscountPercentage))
-                            {
-                                newCB = newCB.WithDiscountPercentage(Convert.ToDecimal(CustomerViewModel.DiscountPercentage));
-                            }
-
-                            if (!string.IsNullOrWhiteSpace(CustomerViewModel.AdditionalInfo))
-                            {
-                                newCB = newCB.WithAdditionalInfo(CustomerViewModel.AdditionalInfo);
-                            }
-
-                            Customer newCustomer = newCB.Build();
+                            Customer newCustomer = CreateCustomer();
                             mainViewModel.UpdateCustomers();
-                            mainViewModel.CurrentShipmentViewModel.Customer = mainViewModel.Customers
-                                                                                          .Where(c => c.Id == newCustomer.Id)
-                                                                                          .FirstOrDefault();
+                            mainViewModel.CurrentShipmentViewModel.Customer = mainViewModel
+                                                                                .Customers
+                                                                                .FirstOrDefault(c => c.Id == newCustomer.Id);
 
                             scope.Complete();
                             CloseParentWindow();
@@ -115,39 +93,58 @@ namespace WarehouseManagementSystem.ViewModels
                         {
                             scope.Dispose();
 
-                            using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                            {
-                                logger.LogError(ex);
-                            }
+                            ExceptionHelper.HandleException(ex);
                         }
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Name and address is required",
-                        "Caution",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Exclamation);
+                    MessageHelper.ShowCautionMessage("Name and address is required");
                 }
             }
         }
 
-        private MessageBoxResult GetConfirmation()
+        private bool IsValidCustomer()
         {
-            return MessageBox.Show("Do you want to make this changes?", "Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            return !string.IsNullOrWhiteSpace(CustomerViewModel.Firstname)
+                && !string.IsNullOrWhiteSpace(CustomerViewModel.Lastname)
+                && CustomerViewModel.Address != null;
         }
 
-        private MessageBoxResult GetCancelConfirmation()
+        private Customer CreateCustomer()
         {
-            return MessageBox.Show("All unsaved data will be lost! Continue?",
-                "Confirmation",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Question);
+            if (CustomerViewModel.Firstname == null 
+                || CustomerViewModel.Lastname == null 
+                || CustomerViewModel.Address == null)
+            {
+                throw new NullReferenceException("Required parametr is null");
+            }
+
+            var newCB = new CustomerBuilder(CustomerViewModel.Firstname,
+                                            CustomerViewModel.Lastname,
+                                            CustomerViewModel.Address.Id);
+
+            if (CustomerViewModel.DateOfBirth != null)
+            {
+                newCB = newCB.WithDateOfBirth((DateTime)CustomerViewModel.DateOfBirth);
+            }
+
+            if (!string.IsNullOrWhiteSpace(CustomerViewModel.DiscountPercentage))
+            {
+                newCB = newCB.WithDiscountPercentage(Convert.ToDecimal(CustomerViewModel.DiscountPercentage));
+            }
+
+            if (!string.IsNullOrWhiteSpace(CustomerViewModel.AdditionalInfo))
+            {
+                newCB = newCB.WithAdditionalInfo(CustomerViewModel.AdditionalInfo);
+            }
+
+            return newCB.Build();
         }
 
         private void Cancel(object obj)
         {
-            if (GetCancelConfirmation() == MessageBoxResult.OK)
+            if (ConfirmationHelper.GetCancelConfirmation() == MessageBoxResult.OK)
             {
                 try
                 {
@@ -161,13 +158,12 @@ namespace WarehouseManagementSystem.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                    {
-                        logger.LogError(ex);
-                    }
+                    ExceptionHelper.HandleException(ex);
                 }
-
-                CloseParentWindow();
+                finally
+                {
+                    CloseParentWindow();
+                }
             }
         }
     }

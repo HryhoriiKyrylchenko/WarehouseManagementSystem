@@ -11,6 +11,7 @@ using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 using WarehouseManagementSystem.ViewModels.Interfaces;
 using WarehouseManagementSystem.Windows;
 
@@ -39,8 +40,8 @@ namespace WarehouseManagementSystem.ViewModels
         public ICommand AddCommand => new RelayCommand(Add);
         public ICommand CancelCommand => new RelayCommand(Cancel);
 
-        public Address? Address 
-        { 
+        public Address? Address
+        {
             set
             {
                 if (ManufacturerViewModel.Address != value)
@@ -73,52 +74,42 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void Add(object obj)
         {
-            if (GetConfirmation() == MessageBoxResult.OK)
+            if (string.IsNullOrWhiteSpace(ManufacturerViewModel.Name))
             {
-                if (!string.IsNullOrWhiteSpace(ManufacturerViewModel.Name))
-                {
-                    try
-                    {
-                        var newMB = new ManufacturerBuilder(ManufacturerViewModel.Name);
-
-                        if (!string.IsNullOrWhiteSpace(ManufacturerViewModel.Description))
-                        {
-                            newMB = newMB.WithDescription(ManufacturerViewModel.Description);
-                        }
-                        if (ManufacturerViewModel.Address != null)
-                        {
-                            newMB = newMB.WithAddress(ManufacturerViewModel.Address.Id);
-                        }
-                        if (!string.IsNullOrWhiteSpace(ManufacturerViewModel.AdditionalInfo))
-                        {
-                            newMB = newMB.WithAdditionalInfo(ManufacturerViewModel.AdditionalInfo);
-                        }
-
-                        Manufacturer newManufacturer = newMB.Build();
-                        mainViewModel.CurrentProductViewModel.Manufacturer = newManufacturer;
-                        CloseParentWindow();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                        {
-                            logger.LogError(ex);
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Name is required", 
-                        "Caution", 
-                        MessageBoxButton.OK, 
-                        MessageBoxImage.Exclamation);
-                }
+                MessageHelper.ShowCautionMessage("Name is required");
+                return;
             }
-        }
 
-        private MessageBoxResult GetConfirmation()
-        {
-            return MessageBox.Show("Do you want to make this changes?", "Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (ConfirmationHelper.GetConfirmation() != MessageBoxResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                var newManufacturerBuilder = new ManufacturerBuilder(ManufacturerViewModel.Name);
+
+                if (!string.IsNullOrWhiteSpace(ManufacturerViewModel.Description))
+                {
+                    newManufacturerBuilder.WithDescription(ManufacturerViewModel.Description);
+                }
+                if (ManufacturerViewModel.Address != null)
+                {
+                    newManufacturerBuilder.WithAddress(ManufacturerViewModel.Address.Id);
+                }
+                if (!string.IsNullOrWhiteSpace(ManufacturerViewModel.AdditionalInfo))
+                {
+                    newManufacturerBuilder.WithAdditionalInfo(ManufacturerViewModel.AdditionalInfo);
+                }
+
+                Manufacturer newManufacturer = newManufacturerBuilder.Build();
+                mainViewModel.CurrentProductViewModel.Manufacturer = newManufacturer;
+                CloseParentWindow();
+            }
+            catch (Exception ex)
+            {
+                ExceptionHelper.HandleException(ex);
+            }
         }
 
         private void Cancel(object obj)
@@ -135,10 +126,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    logger.LogError(ex);
-                }
+                ExceptionHelper.HandleException(ex);
             }
 
             CloseParentWindow();

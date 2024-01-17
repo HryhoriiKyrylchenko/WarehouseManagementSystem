@@ -14,6 +14,7 @@ using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Models.Entities.Support_classes;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 using WarehouseManagementSystem.Windows;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -152,10 +153,7 @@ namespace WarehouseManagementSystem.ViewModels
             suppliers = new ObservableCollection<Supplier>();
 
             Initialize();
-            if (Receipt.Supplier != null)
-            {
-                CurrentReceiptViewModel.Supplier = Suppliers.Where(s => s.Id == Receipt.Supplier.Id).FirstOrDefault();
-            }
+            SetSelectedSupplier(Receipt);
         }
 
         private void Initialize()
@@ -163,6 +161,14 @@ namespace WarehouseManagementSystem.ViewModels
             UpdateSuppliers();
             InitializeProductsFromDB();
             CurrentReceiptViewModel = InitializeCurrentReceiptViewModel(this.Receipt);
+        }
+
+        private void SetSelectedSupplier(Receipt receipt)
+        {
+            if (receipt.Supplier != null)
+            {
+                CurrentReceiptViewModel.Supplier = Suppliers.Where(s => s.Id == receipt.Supplier.Id).FirstOrDefault();
+            }
         }
 
         public void UpdateSuppliers()
@@ -182,10 +188,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    logger.LogError(ex);
-                }
+                ExceptionHelper.HandleException(ex);
             }
         }
 
@@ -200,10 +203,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    logger.LogError(ex);
-                }
+                ExceptionHelper.HandleException(ex);
             }
         }
 
@@ -247,355 +247,451 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void AddReceiptItem(object obj)
         {
+            if (ConfirmationHelper.GetConfirmation() != MessageBoxResult.OK)
+            {
+                return;
+            }
+
             if (SelectedProduct != null
                 && !string.IsNullOrWhiteSpace(InputQuantity)
-                && Convert.ToInt32(InputQuantity) > 0
-                && GetConfirmation() == MessageBoxResult.OK)
+                && TryParseQuantity(InputQuantity, out int quantity)
+                && quantity > 0)
             {
-                if (CurrentReceiptViewModel.ReceiptItems == null)
-                {
-                    CurrentReceiptViewModel.ReceiptItems = new ObservableCollection<ReceiptItemViewModel>();
-                }
-
-                CurrentReceiptViewModel.ReceiptItems.Add(new ReceiptItemViewModel(SelectedProduct, Convert.ToInt32(InputQuantity)));
+                AddReceiptItemToCollection(SelectedProduct, quantity);
             }
             else
             {
-                MessageBox.Show("Product and quantity fields are required",
-                        "Caution",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Exclamation);
+                MessageHelper.ShowCautionMessage("Product and valid quantity are required");
             }
+        }
+
+        private void AddReceiptItemToCollection(Product selectedProduct, int quantity)
+        {
+            InitializeReceiptItems();
+
+            CurrentReceiptViewModel.ReceiptItems.Add(new ReceiptItemViewModel(selectedProduct, quantity));
+        }
+
+        private void InitializeReceiptItems()
+        {
+            if (CurrentReceiptViewModel.ReceiptItems == null)
+            {
+                CurrentReceiptViewModel.ReceiptItems = new ObservableCollection<ReceiptItemViewModel>();
+            }
+        }
+
+        private bool TryParseQuantity(string input, out int quantity)
+        {
+            return int.TryParse(input, out quantity);
         }
 
         private void EditReceiptItem(object obj)
         {
-            if (CurrentReceiptViewModel.ReceiptItems != null
-                && SelectedReceiptItem != null)
+            if (CurrentReceiptViewModel.ReceiptItems == null
+                || SelectedReceiptItem == null)
             {
-                if (SelectedProduct != null
+                MessageHelper.ShowCautionMessage("Choose receipt item to edit");
+                return;
+            }
+
+            if (ConfirmationHelper.GetConfirmation() != MessageBoxResult.OK)
+            {
+                return;
+            }
+
+            if (SelectedProduct != null
                 && !string.IsNullOrWhiteSpace(InputQuantity)
-                && Convert.ToInt32(InputQuantity) > 0
-                && GetConfirmation() == MessageBoxResult.OK)
+                && TryParseQuantity(InputQuantity, out int newQuantity)
+                && newQuantity > 0)
+            {
+                if (SelectedReceiptItem.Id != null)
                 {
-                    if (SelectedReceiptItem.Id != null)
+                    if (SelectedReceiptItem.Product != SelectedProduct
+                        || SelectedReceiptItem.Quantity > newQuantity)
                     {
-                        if (SelectedReceiptItem.Product != SelectedProduct
-                            || SelectedReceiptItem.Quantity > Convert.ToInt32(InputQuantity))
-                        {
-                            MessageBox.Show("You cannot independently change a product or reduce its quantity if " +
-                                "it was previously entered into the database. To make the " +
-                                "appropriate changes, contact your program administrator.",
-                                "Caution",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Exclamation);
-
-                            return;
-                        }
-                    }
-
-                    try
-                    {
-                        SelectedReceiptItem.Quantity = Convert.ToInt32(InputQuantity);
-                        CurrentReceiptViewModel.RefreshReceiptItems();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                        {
-                            logger.LogError(ex);
-                        }
+                        MessageHelper.ShowCautionMessage("You cannot independently change a product or reduce its quantity if " +
+                                                         "it was previously entered into the database. To make the " +
+                                                         "appropriate changes, contact your program administrator.");
+                        return;
                     }
                 }
-                else
+
+                try
                 {
-                    MessageBox.Show("Product and quantity fields are required",
-                            "Caution",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Exclamation);
+                    UpdateReceiptItemQuantity(SelectedReceiptItem, newQuantity);
+                }
+                catch (Exception ex)
+                {
+                    ExceptionHelper.HandleException(ex);
                 }
             }
             else
             {
-                MessageBox.Show("Choose product detail to edit",
-                        "Caution",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Exclamation);
+                MessageHelper.ShowCautionMessage("Product and valid quantity are required");
             }
         }
 
-
-        // Change logic of the method "AddEditReceipt" if added functionality to delete existing in DB ReceiptItems
-        private void DeleteReceiptItem(object obj)   
+        private void UpdateReceiptItemQuantity(ReceiptItemViewModel receiptItem, int newQuantity)
         {
-            if (CurrentReceiptViewModel.ReceiptItems != null
-                && SelectedReceiptItem != null)
+            receiptItem.Quantity = newQuantity;
+            CurrentReceiptViewModel.RefreshReceiptItems();
+        }
+
+
+        // Change logic of the method "AddEditReceipt" when added functionality to delete existing in DB ReceiptItems
+        private void DeleteReceiptItem(object obj)
+        {
+            if (CurrentReceiptViewModel.ReceiptItems == null
+                || SelectedReceiptItem == null)
             {
-                if (SelectedReceiptItem.Id != null)
-                {
-                    MessageBox.Show("You cannot independently delete " +
-                        "a product previously entered into the database. To make the " +
-                        "appropriate changes, contact your program administrator.",
-                        "Caution",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Exclamation);
+                MessageHelper.ShowCautionMessage("Choose receipt item to delete");
+                return;
+            }
 
-                    return;
-                }
+            if (SelectedReceiptItem.Id != null)
+            {
+                MessageHelper.ShowCautionMessage("You cannot independently delete " +
+                                                "a product previously entered into the database. To make the " +
+                                                "appropriate changes, contact your program administrator.");
+                return;
+            }
 
-                if (GetConfirmation() == MessageBoxResult.OK)
-                {
-                    CurrentReceiptViewModel.ReceiptItems.Remove(SelectedReceiptItem);
-                }
+            if (ConfirmationHelper.GetConfirmation() == MessageBoxResult.OK)
+            {
+                CurrentReceiptViewModel.ReceiptItems.Remove(SelectedReceiptItem);
             }
         }
 
         private void AddEditReceipt(object obj)
         {
-            if (IsReceiptDataValid())
+            if (!IsReceiptDataValid())
             {
-                if (GetConfirmation() == MessageBoxResult.OK)
+                MessageHelper.ShowErrorMessage("Invalid receipt data, enter valid data");
+                return;
+            }
+
+            if (ConfirmationHelper.GetConfirmation() != MessageBoxResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                if (Receipt != null)
                 {
-                    if (Receipt != null)
+                    EditExistingReceipt();
+                }
+                else
+                {
+                    CreateNewReceipt();
+                }
+
+                CloseParentWindow();
+            }
+            catch (Exception ex)
+            {
+                HandleReceiptException(ex);
+            }
+        }
+
+        private void HandleReceiptException(Exception ex)
+        {
+            MessageHelper.ShowErrorMessage("Failed to create or edit a receipt");
+            ExceptionHelper.HandleException(ex);
+        }
+
+        private void CreateNewReceipt()
+        {
+            if (!ValidateReceiptData())
+            {
+                return;
+            }
+
+            try
+            {
+                BuildNewReceipt();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private void BuildNewReceipt()
+        {
+            if (CurrentReceiptViewModel.ReceiptDate == null
+                    || CurrentReceiptViewModel.Supplier == null
+                    || string.IsNullOrWhiteSpace(CurrentReceiptViewModel.BatchNumber)
+                    || mainViewModel.MainViewModel.LoginService.CurrentUser == null)
+            {
+                throw new ArgumentNullException("Required data to create new receipt is null");
+            }
+
+            using (var scope = new TransactionScope())
+            {
+                try
+                {
+                    var tempReceipt = new ReceiptBuilder((DateTime)CurrentReceiptViewModel.ReceiptDate,
+                                                        CurrentReceiptViewModel.Supplier.Id,
+                                                        mainViewModel.MainViewModel.LoginService.CurrentUser.Id,
+                                                        CurrentReceiptViewModel.BatchNumber);
+
+                    if (!string.IsNullOrWhiteSpace(CurrentReceiptViewModel.ShipmentNumber))
                     {
-                        using (var scope = new TransactionScope())
-                        {
-                            try
-                            {
-                                if (CurrentReceiptViewModel.ReceiptDate != null
-                                && Receipt.ReceiptDate != CurrentReceiptViewModel.ReceiptDate)
-                                {
-                                    Receipt.ReceiptDate = (DateTime)CurrentReceiptViewModel.ReceiptDate;
-                                }
-                                else if (CurrentReceiptViewModel.ReceiptDate == null)
-                                {
-                                    MessageBox.Show("Receipt date is required",
-                                            "Caution",
-                                            MessageBoxButton.OK,
-                                            MessageBoxImage.Error);
-                                    return;
-                                }
-
-                                if (CurrentReceiptViewModel.Supplier != null
-                                    && Receipt.SupplierId != CurrentReceiptViewModel.Supplier.Id)
-                                {
-                                    Receipt.SupplierId = CurrentReceiptViewModel.Supplier.Id;
-                                }
-                                else if (CurrentReceiptViewModel.Supplier == null)
-                                {
-                                    MessageBox.Show("Supplier is required",
-                                            "Caution",
-                                            MessageBoxButton.OK,
-                                            MessageBoxImage.Error);
-                                    return;
-                                }
-
-                                if (CurrentReceiptViewModel.BatchNumber != null
-                                        && Receipt.BatchNumber != CurrentReceiptViewModel.BatchNumber)
-                                {
-                                    Receipt.BatchNumber = CurrentReceiptViewModel.BatchNumber;
-                                }
-                                else if (string.IsNullOrWhiteSpace(CurrentReceiptViewModel.BatchNumber))
-                                {
-                                    MessageBox.Show("Batch number is required",
-                                        "Caution",
-                                        MessageBoxButton.OK,
-                                        MessageBoxImage.Error);
-                                    return;
-                                }
-
-                                if (!string.IsNullOrWhiteSpace(CurrentReceiptViewModel.ShipmentNumber)
-                                        && Receipt.ShipmentNumber != CurrentReceiptViewModel.ShipmentNumber)
-                                {
-                                    Receipt.ShipmentNumber = CurrentReceiptViewModel.ShipmentNumber;
-                                }
-
-                                if (!string.IsNullOrWhiteSpace(CurrentReceiptViewModel.AdditionalInfo)
-                                        && Receipt.AdditionalInfo != CurrentReceiptViewModel.AdditionalInfo)
-                                {
-                                    Receipt.AdditionalInfo = CurrentReceiptViewModel.AdditionalInfo;
-                                }
-
-                                if (CurrentReceiptViewModel.ReceiptItems.Count > 0)
-                                {
-                                    using (EntityManager db = new EntityManager(new WarehouseDbContext()))
-                                    using (WarehouseDBManager dbW = new WarehouseDBManager(new WarehouseDbContext()))
-                                    {
-                                        var newReceiptItems = CurrentReceiptViewModel.ReceiptItems.ToList();
-
-                                        var itemsToDelete = Receipt.ReceiptItems.Where(ri => !newReceiptItems.Any(i => i.Id == ri.Id)).ToList();
-                                        
-                                        if (itemsToDelete.Count > 0)
-                                        {
-                                            foreach (var item in itemsToDelete)
-                                            {
-                                                /// Logic to change product quantity if deletion available
-
-                                                //db.DeleteReceiptItem(item);
-                                            }
-                                        }
-
-                                        foreach (var item in newReceiptItems)
-                                        {
-                                            if (item.Product != null)
-                                            {
-                                                if (item.Id != null)
-                                                {
-                                                    var itemToUpdate = Receipt.ReceiptItems.FirstOrDefault(x => x.Id == item.Id);
-                                                    if (itemToUpdate != null)
-                                                    {
-                                                        if (itemToUpdate.ProductId == item.Product.Id)
-                                                        {
-                                                            if (itemToUpdate.Quantity > item.Quantity)
-                                                            {
-                                                                MessageBox.Show("You cannot independently change reduce a product quantity if " +
-                                                                            "it was previously entered into the database. To make the " +
-                                                                            "appropriate changes, contact your program administrator.",
-                                                                            "Caution",
-                                                                            MessageBoxButton.OK,
-                                                                            MessageBoxImage.Exclamation);
-
-                                                                return;
-                                                            }
-                                                            else
-                                                            {
-                                                                var prod = dbW.GetProduct(itemToUpdate.ProductId);
-                                                                if (prod != null)
-                                                                {
-                                                                    prod.Quantity += (item.Quantity - itemToUpdate.Quantity);
-                                                                    db.UpdateProduct(prod);
-                                                                }
-                                                            }
-
-                                                            itemToUpdate.Quantity = item.Quantity;
-                                                            db.UpdateReceiptItem(itemToUpdate);
-                                                        }
-                                                        else
-                                                        {
-                                                            MessageBox.Show("You cannot independently change a product if " +
-                                                                            "it was previously entered into the database. To make the " +
-                                                                            "appropriate changes, contact your program administrator.",
-                                                                            "Caution",
-                                                                            MessageBoxButton.OK,
-                                                                            MessageBoxImage.Exclamation);
-
-                                                            return;
-                                                        }
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    var prod = dbW.GetProduct(item.Product.Id);
-                                                    if (prod != null)
-                                                    {
-                                                        prod.Quantity += item.Quantity;
-
-                                                        new ReceiptItemBuilder(Receipt.Id, item.Product.Id, item.Quantity);
-                                                        db.UpdateProduct(prod);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
-                                {
-                                    db.UpdateReceipt(Receipt);
-                                }
-
-                                scope.Complete();
-                                CloseParentWindow();
-                            }
-                            catch (Exception ex)
-                            {
-                                scope.Dispose();
-
-                                MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                                {
-                                    logger.LogError(ex);
-                                }
-                            }
-                        }
+                        tempReceipt.WithShipmentNumber(CurrentReceiptViewModel.ShipmentNumber);
                     }
-                    else
+
+                    if (!string.IsNullOrWhiteSpace(CurrentReceiptViewModel.AdditionalInfo))
                     {
-                        using (var scope = new TransactionScope())
+                        tempReceipt.WithAdditionalInfo(CurrentReceiptViewModel.AdditionalInfo);
+                    }
+
+                    Receipt updatedReceipt = tempReceipt.Build();
+
+                    HandleReceiptItems(updatedReceipt);
+
+                    scope.Complete();
+                }
+                catch
+                {
+                    scope.Dispose();
+                    throw;
+                }
+            }
+        }
+
+        private void HandleReceiptItems(Receipt updatedReceipt)
+        {
+            if (CurrentReceiptViewModel.ReceiptItems.Count > 0)
+            {
+                using (EntityManager dbE = new EntityManager(new WarehouseDbContext()))
+                using (WarehouseDBManager dbW = new WarehouseDBManager(new WarehouseDbContext()))
+                {
+                    foreach (var item in CurrentReceiptViewModel.ReceiptItems)
+                    {
+                        if (item.Product != null)
                         {
-                            try
+                            var prod = dbW.GetProduct(item.Product.Id);
+                            if (prod != null)
                             {
-                                if (CurrentReceiptViewModel.ReceiptDate != null
-                                && CurrentReceiptViewModel.Supplier != null
-                                && !string.IsNullOrWhiteSpace(CurrentReceiptViewModel.BatchNumber)
-                                && mainViewModel.MainViewModel.LoginService.CurrentUser != null)
-                                {
-                                    var tempReceipt = new ReceiptBuilder((DateTime)CurrentReceiptViewModel.ReceiptDate,
-                                                                        CurrentReceiptViewModel.Supplier.Id,
-                                                                        mainViewModel.MainViewModel.LoginService.CurrentUser.Id,
-                                                                        CurrentReceiptViewModel.BatchNumber);
+                                prod.Quantity += item.Quantity;
 
-                                    if (!string.IsNullOrWhiteSpace(CurrentReceiptViewModel.ShipmentNumber))
-                                    {
-                                        tempReceipt.WithShipmentNumber(CurrentReceiptViewModel.ShipmentNumber);
-                                    }
-
-                                    if (!string.IsNullOrWhiteSpace(CurrentReceiptViewModel.AdditionalInfo))
-                                    {
-                                        tempReceipt.WithAdditionalInfo(CurrentReceiptViewModel.AdditionalInfo);
-                                    }
-
-                                    if (CurrentReceiptViewModel.ReceiptItems.Count > 0)
-                                    {
-                                        Receipt = tempReceipt.Build();
-
-                                        using (EntityManager dbE = new EntityManager(new WarehouseDbContext()))
-                                        using (WarehouseDBManager dbW = new WarehouseDBManager(new WarehouseDbContext()))
-                                        {
-                                            foreach (var item in CurrentReceiptViewModel.ReceiptItems)
-                                            {
-                                                if (item.Product != null)
-                                                {
-                                                    
-
-                                                    var prod = dbW.GetProduct(item.Product.Id);
-                                                    if (prod != null)
-                                                    {
-                                                        prod.Quantity += item.Quantity;
-
-                                                        new ReceiptItemBuilder(Receipt.Id, item.Product.Id, item.Quantity);
-                                                        dbE.UpdateProduct(prod);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                scope.Complete();
-                                CloseParentWindow();
-                            }
-                            catch (Exception ex)
-                            {
-                                scope.Dispose();
-                                MessageBox.Show("Some error occured", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                                {
-                                    logger.LogError(ex);
-                                }
+                                new ReceiptItemBuilder(updatedReceipt.Id, item.Product.Id, item.Quantity);
+                                dbE.UpdateProduct(prod);
                             }
                         }
                     }
                 }
             }
-            else
+        }
+
+        private bool ValidateReceiptData()
+        {
+            if (CurrentReceiptViewModel.ReceiptDate == null
+                    || CurrentReceiptViewModel.Supplier == null
+                    || string.IsNullOrWhiteSpace(CurrentReceiptViewModel.BatchNumber)
+                    || mainViewModel.MainViewModel.LoginService.CurrentUser == null)
             {
-                MessageBox.Show("Invalid receipt data, enter valid data",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageHelper.ShowCautionMessage("Please fill in all required fields.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void EditExistingReceipt()
+        {
+            if (!ValidateReceiptData())
+            {
+                return;
+            }
+
+            try
+            {
+                if (Receipt != null)
+                {
+                    UpdateReceipt(Receipt);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private void UpdateReceipt(Receipt receipt)
+        {
+            using (var scope = new TransactionScope())
+            {
+                try
+                {
+                    UpdateReceiptDate(receipt);
+                    UpdateSupplier(receipt);
+                    UpdateBatchNumber(receipt);
+                    UpdateShipmentNumber(receipt);
+                    UpdateAdditionalInfo(receipt);
+                    UpdateReceiptItems(receipt);
+
+                    SaveReceiptToDatabase(receipt);
+                    scope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    MessageHelper.ShowErrorMessage(ex.Message);
+                    throw;
+                }
+            }
+        }
+
+        private void SaveReceiptToDatabase(Receipt receipt)
+        {
+            try
+            {
+                using (EntityManager db = new EntityManager(new WarehouseDbContext()))
+                {
+                    db.UpdateReceipt(receipt);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private void UpdateReceiptItems(Receipt receipt)
+        {
+            if (CurrentReceiptViewModel.ReceiptItems.Count <= 0)
+            {
+                throw new ArgumentNullException("At least one receipt item required");
+            }
+
+            using (EntityManager db = new EntityManager(new WarehouseDbContext()))
+            using (WarehouseDBManager dbW = new WarehouseDBManager(new WarehouseDbContext()))
+            {
+                var newReceiptItems = CurrentReceiptViewModel.ReceiptItems.ToList();
+
+                var itemsToDelete = receipt.ReceiptItems.Where(ri => !newReceiptItems.Any(i => i.Id == ri.Id)).ToList();
+
+                if (itemsToDelete.Count > 0)
+                {
+                    foreach (var item in itemsToDelete)
+                    {
+                        /// Logic to change product quantity if deletion available
+
+                        //db.DeleteReceiptItem(item);
+                    }
+                }
+
+                foreach (var item in newReceiptItems)
+                {
+                    if (item.Product != null)
+                    {
+                        if (item.Id != null)
+                        {
+                            var itemToUpdate = receipt.ReceiptItems.FirstOrDefault(x => x.Id == item.Id);
+
+                            if (itemToUpdate != null)
+                            {
+                                if (itemToUpdate.ProductId == item.Product.Id)
+                                {
+                                    if (itemToUpdate.Quantity > item.Quantity)
+                                    {
+                                        throw new ArgumentException("Impossible reduce a product quantity if " +
+                                                    "it was previously entered into the database. To make the " +
+                                                    "appropriate changes, contact your program administrator.");
+                                    }
+                                    else
+                                    {
+                                        var prod = dbW.GetProduct(itemToUpdate.ProductId);
+                                        if (prod != null)
+                                        {
+                                            prod.Quantity += (item.Quantity - itemToUpdate.Quantity);
+                                            db.UpdateProduct(prod);
+                                        }
+                                    }
+
+                                    itemToUpdate.Quantity = item.Quantity;
+                                    db.UpdateReceiptItem(itemToUpdate);
+                                }
+                                else
+                                {
+                                    throw new ArgumentException("You cannot independently change a product if " +
+                                                    "it was previously entered into the database. To make the " +
+                                                    "appropriate changes, contact your program administrator.");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var prod = dbW.GetProduct(item.Product.Id);
+                            if (prod != null)
+                            {
+                                prod.Quantity += item.Quantity;
+
+                                new ReceiptItemBuilder(receipt.Id, item.Product.Id, item.Quantity);
+                                db.UpdateProduct(prod);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void UpdateAdditionalInfo(Receipt receipt)
+        {
+            if (!string.IsNullOrWhiteSpace(CurrentReceiptViewModel.AdditionalInfo)
+                            && receipt.AdditionalInfo != CurrentReceiptViewModel.AdditionalInfo)
+            {
+                receipt.AdditionalInfo = CurrentReceiptViewModel.AdditionalInfo;
+            }
+        }
+
+        private void UpdateShipmentNumber(Receipt receipt)
+        {
+            if (!string.IsNullOrWhiteSpace(CurrentReceiptViewModel.ShipmentNumber)
+                            && receipt.ShipmentNumber != CurrentReceiptViewModel.ShipmentNumber)
+            {
+                receipt.ShipmentNumber = CurrentReceiptViewModel.ShipmentNumber;
+            }
+        }
+
+        private void UpdateBatchNumber(Receipt receipt)
+        {
+            if (string.IsNullOrWhiteSpace(CurrentReceiptViewModel.BatchNumber))
+            {
+                throw new ArgumentNullException("Batch number is required");
+            }
+
+            if (receipt.BatchNumber != CurrentReceiptViewModel.BatchNumber)
+            {
+                receipt.BatchNumber = CurrentReceiptViewModel.BatchNumber;
+            }
+        }
+
+        private void UpdateSupplier(Receipt receipt)
+        {
+            if (CurrentReceiptViewModel.Supplier == null)
+            {
+                throw new ArgumentNullException("Supplier is required");
+            }
+
+            if (receipt.SupplierId != CurrentReceiptViewModel.Supplier.Id)
+            {
+                receipt.SupplierId = CurrentReceiptViewModel.Supplier.Id;
+            }
+        }
+
+        private void UpdateReceiptDate(Receipt receipt)
+        {
+            if (CurrentReceiptViewModel.ReceiptDate == null)
+            {
+                throw new ArgumentNullException("Receipt date is required");
+            }
+
+            if (receipt.ReceiptDate != CurrentReceiptViewModel.ReceiptDate)
+            {
+                receipt.ReceiptDate = (DateTime)CurrentReceiptViewModel.ReceiptDate;
             }
         }
 
@@ -613,26 +709,10 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void Cancel(object obj)
         {
-            if (GetCancelConfirmation() == MessageBoxResult.OK)
+            if (ConfirmationHelper.GetCancelConfirmation() == MessageBoxResult.OK)
             {
                 CloseParentWindow();
             }
-        }
-
-        private MessageBoxResult GetConfirmation()
-        {
-            return MessageBox.Show("Do you want to make this changes?",
-                "Confirmation",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Question);
-        }
-
-        private MessageBoxResult GetCancelConfirmation()
-        {
-            return MessageBox.Show("All unsaved data will be lost! Continue?",
-                "Confirmation",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Question);
         }
     }
 }

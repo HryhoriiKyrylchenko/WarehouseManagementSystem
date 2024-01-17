@@ -12,6 +12,7 @@ using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.Windows;
 using WarehouseManagementSystem.ViewModels.Interfaces;
 using System.Transactions;
+using WarehouseManagementSystem.ViewModels.Helpers;
 
 namespace WarehouseManagementSystem.ViewModels
 {
@@ -38,8 +39,8 @@ namespace WarehouseManagementSystem.ViewModels
         public ICommand AddCommand => new RelayCommand(Add);
         public ICommand CancelCommand => new RelayCommand(Cancel);
 
-        public Address? Address 
-        { 
+        public Address? Address
+        {
             set
             {
                 if (SupplierViewModel.Address != value)
@@ -72,68 +73,47 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void Add(object obj)
         {
-            if (GetConfirmation() == MessageBoxResult.OK)
+            if (ConfirmationHelper.GetConfirmation() != MessageBoxResult.OK)
             {
-                if (!string.IsNullOrWhiteSpace(SupplierViewModel.Name) 
-                    && SupplierViewModel.Address != null)
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(SupplierViewModel.Name)
+                || SupplierViewModel.Address == null)
+            {
+                MessageHelper.ShowCautionMessage("Name and address is required");
+                return;
+            }
+
+            using (var scope = new TransactionScope())
+            {
+                try
                 {
-                    using (var scope = new TransactionScope())
+                    var supplierBuilder = new SupplierBuilder(SupplierViewModel.Name, SupplierViewModel.Address.Id);
+
+                    if (!string.IsNullOrWhiteSpace(SupplierViewModel.AdditionalInfo))
                     {
-                        try
-                        {
-                            var newSB = new SupplierBuilder(SupplierViewModel.Name, SupplierViewModel.Address.Id);
-
-                            if (!string.IsNullOrWhiteSpace(SupplierViewModel.AdditionalInfo))
-                            {
-                                newSB = newSB.WithAdditionalInfo(SupplierViewModel.AdditionalInfo);
-                            }
-
-                            Supplier newSupplier = newSB.Build();
-                            mainViewModel.UpdateSuppliers();
-                            mainViewModel.CurrentReceiptViewModel.Supplier = mainViewModel.Suppliers
-                                                                                          .Where(s => s.Id == newSupplier.Id)
-                                                                                          .FirstOrDefault();
-
-                            scope.Complete();
-                            CloseParentWindow();
-                        }
-                        catch (Exception ex)
-                        {
-                            scope.Dispose();
-
-                            using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                            {
-                                logger.LogError(ex);
-                            }
-                        }
+                        supplierBuilder.WithAdditionalInfo(SupplierViewModel.AdditionalInfo);
                     }
+
+                    Supplier newSupplier = supplierBuilder.Build();
+                    mainViewModel.UpdateSuppliers();
+                    mainViewModel.CurrentReceiptViewModel.Supplier = mainViewModel.Suppliers.FirstOrDefault(s => s.Id == newSupplier.Id);
+
+                    scope.Complete();
+                    CloseParentWindow();
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Name and address is required",
-                        "Caution",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Exclamation);
+                    scope.Dispose();
+                    ExceptionHelper.HandleException(ex);
                 }
             }
         }
 
-        private MessageBoxResult GetConfirmation()
-        {
-            return MessageBox.Show("Do you want to make this changes?", "Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-        }
-
-        private MessageBoxResult GetCancelConfirmation()
-        {
-            return MessageBox.Show("All unsaved data will be lost! Continue?",
-                "Confirmation",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Question);
-        }
-
         private void Cancel(object obj)
         {
-            if (GetCancelConfirmation() == MessageBoxResult.OK)
+            if (ConfirmationHelper.GetCancelConfirmation() == MessageBoxResult.OK)
             {
                 try
                 {
@@ -147,10 +127,7 @@ namespace WarehouseManagementSystem.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                    {
-                        logger.LogError(ex);
-                    }
+                    ExceptionHelper.HandleException(ex);
                 }
 
                 CloseParentWindow();
@@ -158,3 +135,4 @@ namespace WarehouseManagementSystem.ViewModels
         }
     }
 }
+
