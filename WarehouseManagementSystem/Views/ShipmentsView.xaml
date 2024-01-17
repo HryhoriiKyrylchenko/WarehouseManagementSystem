@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WarehouseManagementSystem.Views"
+             xmlns:converters="clr-namespace:WarehouseManagementSystem.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <converters:DateTimeToStringConverter x:Key="DateTimeConverter"/>
+    </UserControl.Resources>
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height=".6*"/>
@@ -68,7 +72,7 @@
                 </Grid>
             </Border>
         </StackPanel>
-        <DataGrid Grid.Row="1" Grid.Column="0" x:Name="DataGridReceiptItems" Margin="15" ItemsSource="{Binding SelectedShipment.ShipmentItems}" 
+        <DataGrid Grid.Row="1" Grid.Column="0" Margin="15" ItemsSource="{Binding SelectedShipment.ShipmentItems}" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Product name" Width="150" Binding="{Binding Product.Name}" />
@@ -80,7 +84,8 @@
                   SelectedItem="{Binding SelectedShipment, Mode=TwoWay}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Batch number" Width="150" Binding="{Binding BatchNumber}" />
-                <DataGridTextColumn Header="Receipt date" Width="100" Binding="{Binding ShipmentDate}" />
+                <DataGridTextColumn Header="Shipment date" Width="100" Binding="{Binding ShipmentDate, 
+                        Converter={StaticResource DateTimeConverter}}" />
                 <DataGridTextColumn Header="Customer" Width="150" Binding="{Binding Customer.Fullname}" />
                 <DataGridTextColumn Header="User" Width="100" Binding="{Binding User.Username}" />
                 <DataGridTextColumn Header="Products count" Width="100" Binding="{Binding ShipmentItems.Count}" />

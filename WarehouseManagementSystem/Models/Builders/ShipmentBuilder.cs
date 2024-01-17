@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.shipment = InitializeAsync(new Shipment(shipmentDate, customerId, userId, batchNumber)).GetAwaiter().GetResult();
+                this.shipment = Initialize(new Shipment(shipmentDate, customerId, userId, batchNumber));
             }
             catch
             {
@@ -30,7 +30,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.shipment = InitializeAsync(shipment).GetAwaiter().GetResult();
+                this.shipment = Initialize(shipment);
             }
             catch
             {

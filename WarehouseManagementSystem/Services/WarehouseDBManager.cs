@@ -60,6 +60,16 @@ namespace WarehouseManagementSystem.Services
             return categoryViewModel;
         }
 
+        public bool DoesCategoryHaveProducts(ProductCategory category)
+        {
+            return (dbContext.Products.Where(p => p.CategoryId == category.Id).Count() > 0);
+        }
+
+        public bool DoesCategoryHaveChildrenCategories(ProductCategory category)
+        {
+            return (dbContext.ProductCategories.Where(pc => pc.PreviousCategoryId == category.Id).Count() > 0);
+        }
+
         private async Task<List<Product>> GetProductsForCategoryAsync(ProductCategory category, Warehouse warehouse)
         {
             return await dbContext.Products
@@ -143,7 +153,7 @@ namespace WarehouseManagementSystem.Services
                 .Select(p => p.Quantity - p.ProductsInZonePositions.Sum(z => z.Quantity))
                 .FirstOrDefault();
 
-            return unallocatedProductItems;
+            return unallocatedProductItems ?? 0;
         }
 
         public async Task<decimal> GetUnallocatedProductInstancesSumAsync(int productId)
@@ -153,13 +163,25 @@ namespace WarehouseManagementSystem.Services
                 .Select(p => p.Quantity - p.ProductsInZonePositions.Sum(z => z.Quantity))
                 .FirstOrDefaultAsync();
 
-            return unallocatedProductItems;
+            return unallocatedProductItems ?? 0;
         }
 
         public async Task<ObservableCollection<Zone>> GetZonesAsync()
         {
-            var zones = await dbContext.Zones.ToListAsync();
+            var zones = await dbContext.Zones.Include(z => z.ZonePositions).ToListAsync();
             return new ObservableCollection<Zone>(zones);
+        }
+
+        public ObservableCollection<Supplier> GetSuppliers()
+        {
+            var suppliers = dbContext.Suppliers.ToList();
+            return new ObservableCollection<Supplier>(suppliers);
+        }
+
+        public ObservableCollection<Customer> GetCustomers()
+        {
+            var customers = dbContext.Customers.ToList();
+            return new ObservableCollection<Customer>(customers);
         }
 
         public async Task<ObservableCollection<Supplier>> GetSuppliersAsync()
@@ -176,8 +198,40 @@ namespace WarehouseManagementSystem.Services
 
         public async Task<ObservableCollection<Report>?> GetReportsAsync()
         {
-            var reports = await dbContext.Reports.ToListAsync();
+            var reports = await dbContext.Reports.Include(r => r.User).ToListAsync();
             return new ObservableCollection<Report>(reports);
+        }
+
+        public ObservableCollection<Product> GetProducts()
+        {
+            var products = dbContext.Products.ToList();
+            return new ObservableCollection<Product>(products);
+        }
+
+        public async Task<ObservableCollection<Product>> GetProductsAsync()
+        {
+            var products = await dbContext.Products.ToListAsync();
+            return new ObservableCollection<Product>(products);
+        }
+
+        public async Task<ObservableCollection<Product>> GetProductsByWarehouseInStockAsync(int warehouseId)
+        {
+            var products = await dbContext.Products.Where(p => p.WarehouseId == warehouseId)
+                                                   .Where(p => p.Quantity > 0)
+                                                   .ToListAsync();
+            return new ObservableCollection<Product>(products);
+        }
+
+        public ObservableCollection<Manufacturer> GetManufacturers()
+        {
+            var manufacturers = dbContext.Manufacturers.ToList();
+            return new ObservableCollection<Manufacturer>(manufacturers);
+        }
+
+        public async Task<ObservableCollection<Manufacturer>> GetManufacturersAsync()
+        {
+            var manufacturers = await dbContext.Manufacturers.ToListAsync();
+            return new ObservableCollection<Manufacturer>(manufacturers);
         }
 
         public async Task<ObservableCollection<User>> GetUsersWithoutAdminAsync()
@@ -186,12 +240,28 @@ namespace WarehouseManagementSystem.Services
             return new ObservableCollection<User>(users);
         }
 
+        public ObservableCollection<ZonePosition> GetZonePozitions(int zoneId)
+        {
+            var zonePositions = dbContext.ZonePositions
+                .Where(zp => zp.ZoneId == zoneId)
+                .ToList();
+            return new ObservableCollection<ZonePosition>(zonePositions);
+        }
+
         public async Task<ObservableCollection<ZonePosition>> GetZonePozitionsAsync(int zoneId)
         {
             var zonePositions = await dbContext.ZonePositions
                 .Where(zp => zp.ZoneId == zoneId)
                 .ToListAsync();
             return new ObservableCollection<ZonePosition>(zonePositions);
+        }
+
+        public ObservableCollection<ProductInZonePosition> GetProductInZonePozitionsByProduct(int productId)
+        {
+            var zonePositions = dbContext.ProductInZonePositions
+                .Where(zp => zp.ProductId == productId)
+                .ToList();
+            return new ObservableCollection<ProductInZonePosition>(zonePositions);
         }
 
         public async Task<ObservableCollection<ProductInZonePosition>> GetProductInZonePositionsByProductAsync(int productId)
@@ -330,6 +400,44 @@ namespace WarehouseManagementSystem.Services
                 .Include(r => r.User)
                 .ToListAsync();
             return new ObservableCollection<Report>(result);
+        }
+
+        public bool IsProductCodeInDB(string productCode)
+        {
+            return dbContext.Products.Any(p => p.ProductCode == productCode);
+        }
+
+        public ProductInZonePosition? GetProductInZonePositionByProduct(int productId, 
+                                                                        int productInZonePositionId, 
+                                                                        DateTime? manufactureDate, 
+                                                                        DateTime? expiryDate)
+        {
+            return dbContext.ProductInZonePositions.Where(pzp => pzp.ProductId == productId
+                                                && pzp.ZonePositionId == productInZonePositionId
+                                                && pzp.ManufactureDate == manufactureDate
+                                                && pzp.ExpiryDate == expiryDate).FirstOrDefault();
+        }
+
+        public List<MovementHistory> GetMovementHistoriesFiltered(DateTime? reportDateFrom, DateTime? reportDateTo)
+        {
+            IQueryable<MovementHistory> query = dbContext.MovementHistories;
+
+            if (reportDateFrom.HasValue)
+            {
+                query = query.Where(mh => mh.MovementDate >= reportDateFrom.Value);
+            }
+
+            if (reportDateTo.HasValue)
+            {
+                query = query.Where(mh => mh.MovementDate <= reportDateTo.Value);
+            }
+
+            return query.ToList();
+        }
+
+        public Product? GetProduct(int productId)
+        {
+            return dbContext.Products.Where(p => p.Id == productId).FirstOrDefault();
         }
     }
 }

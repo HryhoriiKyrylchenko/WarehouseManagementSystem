@@ -13,11 +13,11 @@ namespace WarehouseManagementSystem.Models.Builders
     {
         private MovementHistory movementHistory;
 
-        public MovementHistoryBuilder(DateTime movementDate, int productId, int sourceZonePositionId, int destinationZonePositionId)
+        public MovementHistoryBuilder(DateTime movementDate, int productId, decimal quantity, int sourceZonePositionId, int destinationZonePositionId)
         {
             try
             {
-                this.movementHistory = InitializeAsync(new MovementHistory(movementDate, productId, sourceZonePositionId, destinationZonePositionId)).GetAwaiter().GetResult();
+                this.movementHistory = Initialize(new MovementHistory(movementDate, productId, quantity, sourceZonePositionId, destinationZonePositionId));
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.movementHistory = InitializeAsync(movementHistory).GetAwaiter().GetResult();
+                this.movementHistory = Initialize(movementHistory);
             }
             catch
             {

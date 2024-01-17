@@ -1,16 +1,22 @@
-﻿using System;
+﻿using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models;
+using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
+using WarehouseManagementSystem.ViewModels.Helpers;
 using WarehouseManagementSystem.ViewModels.Support_data;
+using WarehouseManagementSystem.Windows;
 using Zone = WarehouseManagementSystem.Models.Entities.Zone;
 
 namespace WarehouseManagementSystem.ViewModels
@@ -18,6 +24,11 @@ namespace WarehouseManagementSystem.ViewModels
     public class ProductsViewModel : ViewModelBase
     {
         private readonly MainViewModel mainViewModel;
+
+        public MainViewModel MainViewModel
+        {
+            get { return mainViewModel; }
+        }
 
         private ObservableCollection<CategoryViewModel> categories;
 
@@ -65,6 +76,21 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private ProductsCategoriesSelectorsFilterModel categoriesSelector;
+
+        public ProductsCategoriesSelectorsFilterModel CategoriesSelector
+        {
+            get { return categoriesSelector; }
+            set
+            {
+                if (categoriesSelector != value)
+                {
+                    categoriesSelector = value;
+                    OnPropertyChanged(nameof(CategoriesSelector));
+                }
+            }
+        }
+
         private ObservableCollection<Product>? products;
 
         public ObservableCollection<Product>? Products
@@ -76,8 +102,7 @@ namespace WarehouseManagementSystem.ViewModels
                 {
                     products = value;
                     OnPropertyChanged(nameof(Products));
-
-                    ThreadPool.QueueUserWorkItem(UpdateFilteredProducts);
+                    UpdateFilteredProducts();
                 }
             }
         }
@@ -237,17 +262,51 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private DateTime? manufactureDate;
+
+        public DateTime? ManufactureDate
+        {
+            get { return manufactureDate; }
+            set
+            {
+                if (manufactureDate != value)
+                {
+                    manufactureDate = value;
+                    OnPropertyChanged(nameof(ManufactureDate));
+                }
+            }
+        }
+
+        private DateTime? expiryDate;
+
+        public DateTime? ExpiryDate
+        {
+            get { return expiryDate; }
+            set
+            {
+                if (expiryDate != value)
+                {
+                    expiryDate = value;
+                    OnPropertyChanged(nameof(ExpiryDate));
+                }
+            }
+        }
+
         public ProductsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
             categories = new ObservableCollection<CategoryViewModel>();
             productSelectors = new ProductsSelectorsFilterModel(this);
+            categoriesSelector = new ProductsCategoriesSelectorsFilterModel(this);
+            CategoriesSelector.CheckboxAllCategoriesChecked = false;
 
             InitializeAsync();
         }
 
-        private async void InitializeAsync()
+        public async void InitializeAsync()
         {
+            Categories.Clear();
+            Zones?.Clear();
             await InitializeCategoriesFromDBAsync();
             await InitializeZonesFromDBAsync();
         }
@@ -263,7 +322,8 @@ namespace WarehouseManagementSystem.ViewModels
                     {
                         foreach (var rootCategory in rootCategories)
                         {
-                            var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory, mainViewModel.LoginService.CurrentWarehouse);
+                            var rootViewModel = await dbManager.BuildCategoryViewModelTreeAsync(rootCategory,
+                                                                               mainViewModel.LoginService.CurrentWarehouse);
                             Categories.Add(rootViewModel);
                         }
                     }
@@ -271,10 +331,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    await logger.LogErrorAsync(ex);
-                }
+                await ExceptionHelper.HandleExceptionAsync(ex);
             }
         }
 
@@ -293,16 +350,18 @@ namespace WarehouseManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                {
-                    await logger.LogErrorAsync(ex);
-                }
+                await ExceptionHelper.HandleExceptionAsync(ex);
             }
         }
 
-        private void UpdateProducts()
+        internal void UpdateProducts()
         {
-            if (SelectedCategory != null)
+            if (CategoriesSelector.CheckboxAllCategoriesChecked)
+            {
+                var allProducts = GetAllProducts(Categories);
+                Products = new ObservableCollection<Product>(allProducts);
+            }
+            else if (CategoriesSelector.CheckboxAllCategoriesUnchecked && SelectedCategory != null)
             {
                 Products = SelectedCategory.Products;
             }
@@ -310,6 +369,14 @@ namespace WarehouseManagementSystem.ViewModels
             {
                 Products = new ObservableCollection<Product>();
             }
+        }
+
+        public IEnumerable<Product> GetAllProducts(IEnumerable<CategoryViewModel> categories)
+        {
+            var products = categories.SelectMany(category => category.Products);
+            var childProducts = categories.SelectMany(category => GetAllProducts(category.Children));
+
+            return products.Concat(childProducts);
         }
 
         private async void UpdateUnallocatedDataAsync(Product? product)
@@ -322,15 +389,12 @@ namespace WarehouseManagementSystem.ViewModels
                     using (WarehouseDBManager db = new WarehouseDBManager(new WarehouseDbContext()))
                     {
                         tempModel.UnallocatedBalance = await db.GetUnallocatedProductInstancesSumAsync(product.Id);
-                        tempModel.UnallocatedCapacity = tempModel.UnallocatedBalance * product.Capacity;
+                        tempModel.UnallocatedCapacity = tempModel.UnallocatedBalance * (product.Capacity ?? 0);
                     }
                 }
                 catch (Exception ex)
                 {
-                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                    {
-                        await logger.LogErrorAsync(ex);
-                    }
+                    await ExceptionHelper.HandleExceptionAsync(ex);
                 }
             }
             UnallocatedProductInstances = tempModel;
@@ -350,10 +414,7 @@ namespace WarehouseManagementSystem.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                    {
-                        await logger.LogErrorAsync(ex);
-                    }
+                    await ExceptionHelper.HandleExceptionAsync(ex);
                 }
             }
             ZonePositions = zonePos;
@@ -376,10 +437,7 @@ namespace WarehouseManagementSystem.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                    {
-                        await logger.LogErrorAsync(ex);
-                    }
+                    await ExceptionHelper.HandleExceptionAsync(ex);
                 }
             }
         }
@@ -404,7 +462,7 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public async void UpdateFilteredProducts(object? state)
+        public void UpdateFilteredProducts()
         {
             if (Products != null)
             {
@@ -426,11 +484,8 @@ namespace WarehouseManagementSystem.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        using (ErrorLogger logger = new ErrorLogger(new Models.WarehouseDbContext()))
-                        {
-                            await logger.LogErrorAsync(ex);
-                        }
-                    }                    
+                        ExceptionHelper.HandleException(ex);
+                    }
                 }
                 else if (ProductSelectors.SectionInStockSelected)
                 {
@@ -453,6 +508,7 @@ namespace WarehouseManagementSystem.ViewModels
         public ICommand SaveReportCommand => new RelayCommand(SaveReport);
         public ICommand AddCommand => new RelayCommand(AddProduct);
         public ICommand EditCommand => new RelayCommand(EditProduct);
+        public ICommand AllocateCommand => new RelayCommand(AllocateProduct);
 
         private void Back(object parameter)
         {
@@ -461,17 +517,199 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void SaveReport(object parameter)
         {
-            /////////////////////////////////////
+            try
+            {
+                if (FilteredProducts == null
+                || !FilteredProducts.Any())
+                {
+                    MessageHelper.ShowErrorMessage("No info to be saved");
+                    return;
+                }
+
+                if (mainViewModel.LoginService.CurrentUser == null)
+                {
+                    throw new ArgumentNullException("Current program user is null");
+                }
+
+                string title = GenereteTitle();
+                string content = GenereteContentToJson(FilteredProducts);
+
+                SupportWindow supportWindow = new SupportWindow(new SaveReportViewModel(title,
+                                                                                    Enums.ReportTypeEnum.PRODUCTS,
+                                                                                    content,
+                                                                                    mainViewModel.LoginService.CurrentUser.Id));
+                supportWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                HandleSaveReportException(ex);
+            }
+        }
+
+        private void HandleSaveReportException(Exception ex)
+        {
+            MessageHelper.ShowErrorMessage("Failed to save a report");
+            ExceptionHelper.HandleException(ex);
+        }
+
+        private string GenereteTitle()
+        {
+            StringBuilder newTitle = new StringBuilder();
+            newTitle.Append("Products/");
+
+            if (CategoriesSelector.CheckboxAllCategoriesChecked)
+            {
+                newTitle.Append("All categories/");
+            }
+            else
+            {
+                newTitle.Append($"Category: {SelectedCategory}/");
+            }
+
+            if (ProductSelectors.SectionUnallocatedSelected)
+            {
+                newTitle.Append("Unallocated/");
+            }
+            else if (ProductSelectors.SectionInStockSelected)
+            {
+                newTitle.Append("In stock/");
+            }
+            else if (ProductSelectors.SectionNotInStockSelected)
+            {
+                newTitle.Append("Not in stock/");
+            }
+            else if (ProductSelectors.SectionAllProductsSelected)
+            {
+                newTitle.Append("All products/");
+            }
+
+            return newTitle.ToString();
+        }
+
+        private string GenereteContentToJson(ICollection<Product> products)
+        {
+            return JsonConvert.SerializeObject(products, Formatting.None);
+        }
+
+        private void AllocateProduct(object parameter)
+        {
+            if (SelectedProduct == null || SelectedZonePosition == null)
+            {
+                MessageHelper.ShowCautionMessage("Select product to allocate");
+                return;
+            }
+
+            if (ConfirmationHelper.GetConfirmation() != MessageBoxResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                if (!IsDataToAllocateCorrect())
+                {
+                    return;
+                }
+
+                int productToAllocateId = SelectedProduct.Id;
+                int quantityToAllocate = Convert.ToInt32(InputQuantity);
+                int zonePositionToAllocateId = SelectedZonePosition.Id;
+
+                CreateProductInZonePosition(productToAllocateId, 
+                                            quantityToAllocate, 
+                                            zonePositionToAllocateId,
+                                            manufactureDate,
+                                            ExpiryDate);
+
+                SelectedProduct = null;
+
+                UpdateFilteredProducts();
+            }
+            catch (Exception ex)
+            {
+                ExceptionHelper.HandleException(ex);
+            }
+        }
+
+        private void CreateProductInZonePosition(int productId, int quantity, int zonePositionId, 
+                                                DateTime? manufactureDate, DateTime? expiryDate)
+        {
+            var productInZonePositionBuilder = new ProductInZonePositionBuilder(productId,
+                                                                    quantity,
+                                                                    zonePositionId);
+
+            if (manufactureDate != null)
+            {
+                productInZonePositionBuilder.WithManufactureDate((DateTime)manufactureDate);
+            }
+            if (expiryDate != null)
+            {
+                productInZonePositionBuilder.WithExpiryDate((DateTime)expiryDate);
+            }
+        }
+
+        private bool IsDataToAllocateCorrect()
+        {
+            if (selectedZonePosition == null)
+            {
+                MessageHelper.ShowCautionMessage("Select zone position to allocate product");
+                return false;
+            }
+
+            if (SelectedZonePositionFreeCapacity <= 0)
+            {
+                MessageHelper.ShowCautionMessage("No space in selected zone position");
+                return false;
+            }
+
+            if (CapacityToBeAllocated <= 0)
+            {
+                MessageHelper.ShowCautionMessage("Enter quantity to allocate");
+                return false;
+            }
+
+            if (CapacityToBeAllocated > SelectedZonePositionFreeCapacity)
+            {
+                MessageHelper.ShowCautionMessage("Not enough space in selected zone position");
+                return false;
+            }
+
+            if (UnallocatedProductInstances?.UnallocatedCapacity < CapacityToBeAllocated)
+            {
+                MessageHelper.ShowCautionMessage("Not enough products to allocate");
+                return false;
+            }
+
+            if (ManufactureDate != null && ManufactureDate > DateTime.Now)
+            {
+                MessageHelper.ShowCautionMessage("Incorrect manufacture date");
+                return false;
+            }
+
+            if (ExpiryDate != null && ManufactureDate != null && ExpiryDate < ManufactureDate)
+            {
+                MessageHelper.ShowCautionMessage("Incorrect expiry date");
+                return false;
+            }
+
+            return true;
         }
 
         private void AddProduct(object parameter)
         {
-            /////////////////////////////////////
+            SupportWindow supportWindow = new SupportWindow(new AddEditProductViewModel(this, Categories));
+            supportWindow.ShowDialog();
+            InitializeAsync();
         }
 
         private void EditProduct(object parameter)
         {
-            /////////////////////////////////////
+            if (SelectedProduct != null)
+            {
+                SupportWindow supportWindow = new SupportWindow(new AddEditProductViewModel(this, SelectedProduct, Categories));
+                supportWindow.ShowDialog();
+                InitializeAsync();
+            }
         }
     }
 }

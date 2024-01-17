@@ -14,11 +14,16 @@ namespace WarehouseManagementSystem.Models.Entities
         public string? Description { get; set; }
         public int? AddressId { get; set; }
         [ForeignKey("AddressId")]
-        public Address? Address { get; set; }
+        public virtual Address? Address { get; set; }
         public string? AdditionalInfo {  get; set; } 
         public Manufacturer(string name) 
         {
             Name = name;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

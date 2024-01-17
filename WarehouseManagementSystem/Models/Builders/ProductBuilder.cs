@@ -16,11 +16,11 @@ namespace WarehouseManagementSystem.Models.Builders
     {
         private Product product;
 
-        public ProductBuilder(string productCode, string name, UnitsOfMeasureEnum unitOfMeasure, decimal quantity, int capacity, decimal price, int warehouseId)
+        public ProductBuilder(string productCode, string name, UnitsOfMeasureEnum? unitOfMeasure, decimal? quantity, int? capacity, decimal price, int warehouseId)
         {
             try
             {
-                this.product = InitializeAsync(new Product(productCode, name, unitOfMeasure, quantity, capacity, price, warehouseId)).GetAwaiter().GetResult();
+                this.product = Initialize(new Product(productCode, name, unitOfMeasure, quantity, capacity, price, warehouseId));
             }
             catch
             {
@@ -32,7 +32,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.product = InitializeAsync(product).GetAwaiter().GetResult();
+                this.product = Initialize(product);
             }
             catch
             {
@@ -280,7 +280,7 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public ProductBuilder WithProductDetails(string key, string value)
+        public ProductBuilder WithProductDetail(string key, string value)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
@@ -302,13 +302,57 @@ namespace WarehouseManagementSystem.Models.Builders
             return this;
         }
 
-        public async Task<ProductBuilder> WithProductDetailsAsync(string key, string value)
+        public async Task<ProductBuilder> WithProductDetailAsync(string key, string value)
         {
             using (var entityManager = new EntityManager(new WarehouseDbContext()))
             {
                 try
                 {
                     product.AddProductDetail(key, value);
+                    product = await entityManager.UpdateProductAsync(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        await errorLogger.LogErrorAsync(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public ProductBuilder WithProductDetails(string productDetails)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product.ProductDetails = productDetails;
+                    product = entityManager.UpdateProduct(product);
+                }
+                catch (Exception ex)
+                {
+                    using (var errorLogger = new ErrorLogger(new WarehouseDbContext()))
+                    {
+                        errorLogger.LogError(ex);
+                    }
+                    throw;
+                }
+            }
+
+            return this;
+        }
+
+        public async Task<ProductBuilder> WithProductDetailsAsync(string productDetails)
+        {
+            using (var entityManager = new EntityManager(new WarehouseDbContext()))
+            {
+                try
+                {
+                    product.ProductDetails = productDetails;
                     product = await entityManager.UpdateProductAsync(product);
                 }
                 catch (Exception ex)

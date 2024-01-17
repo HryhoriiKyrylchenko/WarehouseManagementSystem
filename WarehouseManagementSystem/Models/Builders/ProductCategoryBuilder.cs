@@ -19,7 +19,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.category = InitializeAsync(new ProductCategory(categoryName)).GetAwaiter().GetResult();
+                this.category = Initialize(new ProductCategory(categoryName));
             }
             catch
             {
@@ -31,7 +31,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.category = InitializeAsync(category).GetAwaiter().GetResult();
+                this.category = Initialize(category);
             }
             catch
             {

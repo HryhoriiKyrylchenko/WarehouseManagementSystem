@@ -27,7 +27,7 @@ namespace WarehouseManagementSystem.ViewModels.Support_data
                         SectionInStockSelected = false;
                         SectionNotInStockSelected = false;
                         SectionAllProductsSelected = false;
-                        ThreadPool.QueueUserWorkItem(currentViewModel.UpdateFilteredProducts);
+                        currentViewModel.UpdateFilteredProducts();
                     }
                 }
             }
@@ -50,7 +50,7 @@ namespace WarehouseManagementSystem.ViewModels.Support_data
                         SectionUnallocatedSelected = false;
                         SectionNotInStockSelected = false;
                         SectionAllProductsSelected = false;
-                        ThreadPool.QueueUserWorkItem(currentViewModel.UpdateFilteredProducts);
+                        currentViewModel.UpdateFilteredProducts();
                     }
                 }
             }
@@ -73,7 +73,7 @@ namespace WarehouseManagementSystem.ViewModels.Support_data
                         SectionUnallocatedSelected = false;
                         SectionInStockSelected = false;
                         SectionAllProductsSelected = false;
-                        ThreadPool.QueueUserWorkItem(currentViewModel.UpdateFilteredProducts);
+                        currentViewModel.UpdateFilteredProducts();
                     }
                 }
             }
@@ -96,7 +96,7 @@ namespace WarehouseManagementSystem.ViewModels.Support_data
                         SectionUnallocatedSelected = false;
                         SectionInStockSelected = false;
                         SectionNotInStockSelected = false;
-                        ThreadPool.QueueUserWorkItem(currentViewModel.UpdateFilteredProducts); 
+                        currentViewModel.UpdateFilteredProducts(); 
                     }
                 }
             }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace WarehouseManagementSystem.Models.Entities
 {
@@ -24,6 +25,7 @@ namespace WarehouseManagementSystem.Models.Entities
 
         public string? AdditionalInfo { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Receipt> Receipts { get; set; }
 
         public Supplier(string name, int addressId)

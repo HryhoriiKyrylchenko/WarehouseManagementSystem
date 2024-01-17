@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.productPhoto = InitializeAsync(new ProductPhoto(photoData, productId)).GetAwaiter().GetResult();
+                this.productPhoto = Initialize(new ProductPhoto(photoData, productId));
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.productPhoto = InitializeAsync(productPhoto).GetAwaiter().GetResult();
+                this.productPhoto = Initialize(productPhoto);
             }
             catch
             {

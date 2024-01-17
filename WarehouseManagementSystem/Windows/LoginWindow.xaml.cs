@@ -74,7 +74,7 @@ namespace WarehouseManagementSystem.Windows
         private void buttonLogin_Click(object sender, RoutedEventArgs e)
         {
             string username = TextBoxUsername.Text;
-            string password = TextBoxPassword.Text;
+            string password = PasswordBox.Password;
             if (IsValidInput(username, password, SelectedWarehouse))
             {
                 if(loginService.Login(username, password, SelectedWarehouse))
@@ -85,7 +85,7 @@ namespace WarehouseManagementSystem.Windows
                 {
                     MessageBox.Show("Wrong data entered");
                     TextBoxUsername.Text = string.Empty;
-                    TextBoxPassword.Text = string.Empty;
+                    PasswordBox.Password = string.Empty;
                 }
             }
         }

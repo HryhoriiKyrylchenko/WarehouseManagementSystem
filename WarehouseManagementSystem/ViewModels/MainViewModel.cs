@@ -27,7 +27,7 @@ namespace WarehouseManagementSystem.ViewModels
                 if (currentViewModel != value)
                 {
                     currentViewModel = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(CurrentViewModel));
                 }
             }
         }
@@ -42,7 +42,7 @@ namespace WarehouseManagementSystem.ViewModels
                 if (loginService != value)
                 {
                     loginService = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(LoginService));
                 }
             }
         }
@@ -57,11 +57,11 @@ namespace WarehouseManagementSystem.ViewModels
                 if (summaryViewModel != value)
                 {
                     summaryViewModel = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(SummaryViewModel));
                 }
             }
         }
-
+        
         public ICommand ShowProductsCommand => new RelayCommand(_ => NavigateToViewModel(new ProductsViewModel(this)));
         public ICommand ShowMoveProductsCommand => new RelayCommand(_ => NavigateToViewModel(new MoveProductsViewModel(this)));
         public ICommand ShowReceiptsCommand => new RelayCommand(_ => NavigateToViewModel(new ReceiptsViewModel(this)));
@@ -129,10 +129,18 @@ namespace WarehouseManagementSystem.ViewModels
         {
             loginService.Logout();
             CheckUserLogin();
+
         }
 
         private void RefreshSummary()
         {
+            summaryViewModel.TotalCapacity = string.Empty;
+            summaryViewModel.FreeCapacity = string.Empty;
+            summaryViewModel.OccupancyPercentage = string.Empty;
+            summaryViewModel.TotalZones = string.Empty;
+            summaryViewModel.UnusedZones = string.Empty;
+            summaryViewModel.TotalProducts = string.Empty;
+            summaryViewModel.UnallocatedProducts = string.Empty;
             ThreadPool.QueueUserWorkItem(InitializeAsync);
         }
     }

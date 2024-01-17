@@ -128,7 +128,7 @@ namespace WarehouseManagementSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Suppliers",
+                name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -297,7 +297,7 @@ namespace WarehouseManagementSystem.Migrations
                     table.ForeignKey(
                         name: "FK_Receipts_Suppliers_SupplierId",
                         column: x => x.SupplierId,
-                        principalTable: "Suppliers",
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -624,7 +624,7 @@ namespace WarehouseManagementSystem.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Suppliers_AddressId",
-                table: "Suppliers",
+                table: "Customers",
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
@@ -696,7 +696,7 @@ namespace WarehouseManagementSystem.Migrations
                 name: "Zones");
 
             migrationBuilder.DropTable(
-                name: "Suppliers");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Manufacturers");

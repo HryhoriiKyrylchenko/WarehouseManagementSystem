@@ -17,7 +17,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.label = InitializeAsync(new Label(barcode, productId)).GetAwaiter().GetResult();
+                this.label = Initialize(new Label(barcode, productId));
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace WarehouseManagementSystem.Models.Builders
         {
             try
             {
-                this.label = InitializeAsync(label).GetAwaiter().GetResult();
+                this.label = Initialize(label);
             }
             catch
             {
