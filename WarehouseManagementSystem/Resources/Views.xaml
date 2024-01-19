@@ -69,4 +69,8 @@
     <DataTemplate DataType="{x:Type viewModels:AddCustomerViewModel}">
         <views:AddCustomerView />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:LogingViewModel}">
+        <views:LogingView />
+    </DataTemplate>
 </ResourceDictionary>

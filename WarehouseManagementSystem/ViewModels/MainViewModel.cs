@@ -18,8 +18,7 @@ namespace WarehouseManagementSystem.ViewModels
         private readonly Stack<ViewModelBase> viewModelStack;
 
         private ViewModelBase? currentViewModel;
-
-        public ViewModelBase CurrentViewModel 
+        public ViewModelBase CurrentViewModel
         {
             get { return currentViewModel ?? this; }
             set
@@ -33,7 +32,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private LoginService loginService;
-
         public LoginService LoginService
         {
             get { return loginService; }
@@ -48,7 +46,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private SummaryViewModel summaryViewModel;
-
         public SummaryViewModel SummaryViewModel
         {
             get { return summaryViewModel; }
@@ -61,7 +58,7 @@ namespace WarehouseManagementSystem.ViewModels
                 }
             }
         }
-        
+
         public ICommand ShowProductsCommand => new RelayCommand(_ => NavigateToViewModel(new ProductsViewModel(this)));
         public ICommand ShowMoveProductsCommand => new RelayCommand(_ => NavigateToViewModel(new MoveProductsViewModel(this)));
         public ICommand ShowReceiptsCommand => new RelayCommand(_ => NavigateToViewModel(new ReceiptsViewModel(this)));
@@ -76,6 +73,8 @@ namespace WarehouseManagementSystem.ViewModels
             loginService = new LoginService();
             CheckUserLogin();
 
+            CloseApplicationIfUserNotLoggedIn();
+
             viewModelStack = new Stack<ViewModelBase>();
             CurrentViewModel = this;
 
@@ -85,7 +84,7 @@ namespace WarehouseManagementSystem.ViewModels
             ThreadPool.QueueUserWorkItem(InitializeAsync);
         }
 
-        private  void InitializeAsync(object? state)
+        private void InitializeAsync(object? state)
         {
             summaryViewModel.GetData();
 
@@ -99,21 +98,35 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void CheckUserLogin()
         {
-            while (!loginService.IsUserLoggedIn())
+            if (!IsUserLoggedIn())
             {
                 ShowLoginWindow();
             }
         }
 
+        private bool IsUserLoggedIn()
+        {
+            if (loginService.IsUserLoggedIn())
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void ShowLoginWindow()
         {
-            LoginWindow loginWindow = new LoginWindow(loginService);
+            SupportWindow loginWindow = new SupportWindow(new LogingViewModel(loginService));
             loginWindow.ShowDialog();
+        }
+
+        private void CloseApplication()
+        {
+            Environment.Exit(0);
         }
 
         public void NavigateToViewModel(ViewModelBase viewModel)
         {
-            viewModelStack.Push(CurrentViewModel); 
+            viewModelStack.Push(CurrentViewModel);
             CurrentViewModel = viewModel;
         }
 
@@ -127,9 +140,11 @@ namespace WarehouseManagementSystem.ViewModels
 
         public void Logout()
         {
+            EventService.RaiseVisibilityChanged(false);
             loginService.Logout();
             CheckUserLogin();
-
+            CloseApplicationIfUserNotLoggedIn();
+            EventService.RaiseVisibilityChanged(true);
         }
 
         private void RefreshSummary()
@@ -142,6 +157,14 @@ namespace WarehouseManagementSystem.ViewModels
             summaryViewModel.TotalProducts = string.Empty;
             summaryViewModel.UnallocatedProducts = string.Empty;
             ThreadPool.QueueUserWorkItem(InitializeAsync);
+        }
+
+        private void CloseApplicationIfUserNotLoggedIn()
+        {
+            if (!IsUserLoggedIn())
+            {
+                CloseApplication();
+            }
         }
     }
 }

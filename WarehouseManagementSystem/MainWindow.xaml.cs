@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WarehouseManagementSystem.Services;
 using WarehouseManagementSystem.ViewModels;
 
 namespace WarehouseManagementSystem
@@ -21,6 +22,12 @@ namespace WarehouseManagementSystem
         {
             InitializeComponent();
             DataContext = new MainViewModel();
+            EventService.VisibilityChanged += EventService_VisibilityChanged;
+        }
+
+        private void EventService_VisibilityChanged(object? sender, bool isVisible)
+        {
+            Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }
