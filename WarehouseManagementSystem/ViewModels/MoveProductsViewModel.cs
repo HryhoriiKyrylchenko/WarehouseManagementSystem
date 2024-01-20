@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
+using WarehouseManagementSystem.Attributes;
 using WarehouseManagementSystem.Commands;
+using WarehouseManagementSystem.Enums;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
@@ -24,9 +26,12 @@ namespace WarehouseManagementSystem.ViewModels
     public class MoveProductsViewModel : ViewModelBase
     {
         private readonly MainViewModel mainViewModel;
+        public MainViewModel MainViewModel
+        {
+            get { return mainViewModel; }
+        }
 
         private ObservableCollection<CategoryViewModel> categories;
-
         public ObservableCollection<CategoryViewModel> Categories
         {
             get { return categories; }
@@ -41,7 +46,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private CategoryViewModel? selectedCategory;
-
         public CategoryViewModel? SelectedCategory
         {
             get { return selectedCategory; }
@@ -57,7 +61,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<ProductInZonePosition>? productsInZonePozitions;
-
         public ObservableCollection<ProductInZonePosition>? ProductInZonePozitions
         {
             get { return productsInZonePozitions; }
@@ -72,7 +75,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ProductInZonePosition? selectedProductInZonePosition;
-
         public ProductInZonePosition? SelectedProductInZonePosition
         {
             get { return selectedProductInZonePosition; }
@@ -100,7 +102,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private bool sectionByZoneSelected;
-
         public bool SectionByZoneSelected
         {
             get { return sectionByZoneSelected; }
@@ -120,7 +121,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private bool sectionByCategorySelected;
-
         public bool SectionByCategorySelected
         {
             get { return sectionByCategorySelected; }
@@ -140,7 +140,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Zone>? zones;
-
         public ObservableCollection<Zone>? Zones
         {
             get { return zones; }
@@ -155,7 +154,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private Zone? selectedZone;
-
         public Zone? SelectedZone
         {
             get { return selectedZone; }
@@ -171,7 +169,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<ZonePosition>? zonePositions;
-
         public ObservableCollection<ZonePosition>? ZonePositions
         {
             get { return zonePositions; }
@@ -186,7 +183,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ZonePosition? selectedZonePosition;
-
         public ZonePosition? SelectedZonePosition
         {
             get { return selectedZonePosition; }
@@ -372,9 +368,30 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private PermissionManager permissionManager;
+        public PermissionManager PermissionManager
+        {
+            get { return permissionManager; }
+            private set
+            {
+                if (permissionManager != value)
+                {
+                    permissionManager = value;
+                }
+            }
+        }
+
+        public ICommand BackCommand => new RelayCommand(Back);
+        public ICommand MoveCommand => new RelayCommand(MoveProduct, parameter => permissionManager.CanExecute(parameter,
+            typeof(MoveProductsViewModel).GetMethod(nameof(MoveProduct)) ?? throw new ArgumentNullException()));
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport, parameter => permissionManager.CanExecute(parameter,
+            typeof(MoveProductsViewModel).GetMethod(nameof(SaveReport)) ?? throw new ArgumentNullException()));
+
         public MoveProductsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
+            if (MainViewModel.LoginService.CurrentUser == null) throw new ArgumentNullException();
+            permissionManager = new PermissionManager(MainViewModel.LoginService.CurrentUser.Role);
             categories = new ObservableCollection<CategoryViewModel>();
 
             InitializeAsync();
@@ -588,16 +605,14 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public ICommand BackCommand => new RelayCommand(Back);
-        public ICommand MoveCommand => new RelayCommand(MoveProduct);
-        public ICommand SaveReportCommand => new RelayCommand(SaveReport);
-
         private void Back(object parameter)
         {
             mainViewModel.NavigateBack();
         }
 
-        private void MoveProduct(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.EditProducts)]
+        public void MoveProduct(object parameter)
         {
             if (SelectedProductInZonePosition == null)
             {
@@ -828,7 +843,10 @@ namespace WarehouseManagementSystem.ViewModels
             return true;
         }
 
-        private void SaveReport(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.CreateAllReports,
+                          UserPermissionEnum.CreateSelfReports)]
+        public void SaveReport(object parameter)
         {
             try
             {

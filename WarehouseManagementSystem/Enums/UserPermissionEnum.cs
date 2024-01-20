@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WarehouseManagementSystem.Enums
 {
-    public enum UserPermissions
+    public enum UserPermissionEnum
     {
         None,
         ViewProducts,

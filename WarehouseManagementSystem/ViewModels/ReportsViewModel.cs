@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using WarehouseManagementSystem.Attributes;
 using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Enums;
 using WarehouseManagementSystem.Models;
@@ -24,9 +25,12 @@ namespace WarehouseManagementSystem.ViewModels
     public class ReportsViewModel : ViewModelBase
     {
         private readonly MainViewModel mainViewModel;
+        public MainViewModel MainViewModel
+        {
+            get { return mainViewModel; }
+        }
 
         private ReportsSelectorsFilterModel filterSelectors;
-
         public ReportsSelectorsFilterModel FilterSelectors
         {
             get { return filterSelectors; }
@@ -41,7 +45,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Report>? reports;
-
         public ObservableCollection<Report>? Reports
         {
             get { return reports; }
@@ -56,7 +59,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private Report? selectedReport;
-
         public Report? SelectedReport
         {
             get { return selectedReport; }
@@ -72,7 +74,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<object>? selectedReportContent;
-
         public ObservableCollection<object>? SelectedReportContent
         {
             get { return selectedReportContent; }
@@ -87,7 +88,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<User>? users;
-
         public ObservableCollection<User>? Users
         {
             get { return users; }
@@ -102,7 +102,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<DateTime>? reportsDates;
-
         public ObservableCollection<DateTime>? ReportsDates
         {
             get { return reportsDates; }
@@ -116,14 +115,32 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private PermissionManager permissionManager;
+        public PermissionManager PermissionManager
+        {
+            get { return permissionManager; }
+            private set
+            {
+                if (permissionManager != value)
+                {
+                    permissionManager = value;
+                }
+            }
+        }
+
         public ICommand BackCommand => new RelayCommand(Back);
-        public ICommand ShowCommand => new RelayCommand(Show);
-        public ICommand AddCommand => new RelayCommand(AddReport);
-        public ICommand DeleteCommand => new RelayCommand(DeleteReport);
+        public ICommand ShowCommand => new RelayCommand(Show, parameter => permissionManager.CanExecute(parameter,
+            typeof(ReportsViewModel).GetMethod(nameof(Show)) ?? throw new ArgumentNullException()));
+        public ICommand AddCommand => new RelayCommand(AddReport, parameter => permissionManager.CanExecute(parameter,
+            typeof(ReportsViewModel).GetMethod(nameof(AddReport)) ?? throw new ArgumentNullException()));
+        public ICommand DeleteCommand => new RelayCommand(DeleteReport, parameter => permissionManager.CanExecute(parameter,
+            typeof(ReportsViewModel).GetMethod(nameof(DeleteReport)) ?? throw new ArgumentNullException()));
 
         public ReportsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
+            if (MainViewModel.LoginService.CurrentUser == null) throw new ArgumentNullException();
+            permissionManager = new PermissionManager(MainViewModel.LoginService.CurrentUser.Role);
             filterSelectors = new ReportsSelectorsFilterModel();
 
             InitializeAsync();
@@ -169,7 +186,10 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        private async void Show(object obj)
+        [AccessPermission(UserPermissionEnum.ViewAllData,
+                          UserPermissionEnum.ViewAllReports,
+                          UserPermissionEnum.ViewSelfReports)]
+        public async void Show(object obj)
         {
             try
             {
@@ -190,13 +210,17 @@ namespace WarehouseManagementSystem.ViewModels
             mainViewModel.NavigateBack();
         }
 
-        private void AddReport(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.CreateAllReports,
+                          UserPermissionEnum.CreateSelfReports)]
+        public void AddReport(object parameter)
         {
             SupportWindow supportWindow = new SupportWindow(new ReportSelectionViewModel(mainViewModel));
             supportWindow.ShowDialog();
         }
 
-        private void DeleteReport(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData)]
+        public void DeleteReport(object parameter)
         {
             if (SelectedReport == null
                 || mainViewModel.LoginService.CurrentUser == null

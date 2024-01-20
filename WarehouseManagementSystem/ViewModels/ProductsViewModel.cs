@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using WarehouseManagementSystem.Attributes;
 using WarehouseManagementSystem.Commands;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Builders;
@@ -18,20 +19,19 @@ using WarehouseManagementSystem.ViewModels.Helpers;
 using WarehouseManagementSystem.ViewModels.Support_data;
 using WarehouseManagementSystem.Windows;
 using Zone = WarehouseManagementSystem.Models.Entities.Zone;
+using WarehouseManagementSystem.Enums;
 
 namespace WarehouseManagementSystem.ViewModels
 {
     public class ProductsViewModel : ViewModelBase
     {
         private readonly MainViewModel mainViewModel;
-
         public MainViewModel MainViewModel
         {
             get { return mainViewModel; }
         }
 
         private ObservableCollection<CategoryViewModel> categories;
-
         public ObservableCollection<CategoryViewModel> Categories
         {
             get { return categories; }
@@ -46,7 +46,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private CategoryViewModel? selectedCategory;
-
         public CategoryViewModel? SelectedCategory
         {
             get { return selectedCategory; }
@@ -62,7 +61,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ProductsSelectorsFilterModel productSelectors;
-
         public ProductsSelectorsFilterModel ProductSelectors
         {
             get { return productSelectors; }
@@ -77,7 +75,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ProductsCategoriesSelectorsFilterModel categoriesSelector;
-
         public ProductsCategoriesSelectorsFilterModel CategoriesSelector
         {
             get { return categoriesSelector; }
@@ -92,7 +89,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Product>? products;
-
         public ObservableCollection<Product>? Products
         {
             get { return products; }
@@ -108,7 +104,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Product>? filteredProducts;
-
         public ObservableCollection<Product>? FilteredProducts
         {
             get { return filteredProducts; }
@@ -123,7 +118,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private Product? selectedProduct;
-
         public Product? SelectedProduct
         {
             get { return selectedProduct; }
@@ -140,7 +134,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private UnallocatedProductInstancesModel? unallocatedProductInstances;
-
         public UnallocatedProductInstancesModel? UnallocatedProductInstances
         {
             get { return unallocatedProductInstances; }
@@ -155,7 +148,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Zone>? zones;
-
         public ObservableCollection<Zone>? Zones
         {
             get { return zones; }
@@ -170,7 +162,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private Zone? selectedZone;
-
         public Zone? SelectedZone
         {
             get { return selectedZone; }
@@ -186,7 +177,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<ZonePosition>? zonePositions;
-
         public ObservableCollection<ZonePosition>? ZonePositions
         {
             get { return zonePositions; }
@@ -201,7 +191,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ZonePosition? selectedZonePosition;
-
         public ZonePosition? SelectedZonePosition
         {
             get { return selectedZonePosition; }
@@ -217,7 +206,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private int selectedZonePositionFreeCapacity;
-
         public int SelectedZonePositionFreeCapacity
         {
             get { return selectedZonePositionFreeCapacity; }
@@ -232,7 +220,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private string? inputQuantity;
-
         public string? InputQuantity
         {
             get { return inputQuantity; }
@@ -248,7 +235,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private int? capacityToBeAllocated;
-
         public int? CapacityToBeAllocated
         {
             get { return capacityToBeAllocated; }
@@ -263,7 +249,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private DateTime? manufactureDate;
-
         public DateTime? ManufactureDate
         {
             get { return manufactureDate; }
@@ -278,7 +263,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private DateTime? expiryDate;
-
         public DateTime? ExpiryDate
         {
             get { return expiryDate; }
@@ -292,9 +276,34 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private PermissionManager permissionManager;
+        public PermissionManager PermissionManager
+        {
+            get { return permissionManager; }
+            private set
+            {
+                if (permissionManager != value)
+                {
+                    permissionManager = value;
+                }
+            }
+        }
+
+        public ICommand BackCommand => new RelayCommand(Back);
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport, parameter => permissionManager.CanExecute(parameter,
+            typeof(ProductsViewModel).GetMethod(nameof(SaveReport)) ?? throw new ArgumentNullException()));
+        public ICommand AddCommand => new RelayCommand(AddProduct, parameter => permissionManager.CanExecute(parameter, 
+            typeof(ProductsViewModel).GetMethod(nameof(AddProduct)) ?? throw new ArgumentNullException()));
+        public ICommand EditCommand => new RelayCommand(EditProduct, parameter => permissionManager.CanExecute(parameter,
+            typeof(ProductsViewModel).GetMethod(nameof(EditProduct)) ?? throw new ArgumentNullException()));
+        public ICommand AllocateCommand => new RelayCommand(AllocateProduct, parameter => permissionManager.CanExecute(parameter,
+            typeof(ProductsViewModel).GetMethod(nameof(AllocateProduct)) ?? throw new ArgumentNullException()));
+
         public ProductsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
+            if (MainViewModel.LoginService.CurrentUser == null) throw new ArgumentNullException();
+            permissionManager = new PermissionManager(MainViewModel.LoginService.CurrentUser.Role);
             categories = new ObservableCollection<CategoryViewModel>();
             productSelectors = new ProductsSelectorsFilterModel(this);
             categoriesSelector = new ProductsCategoriesSelectorsFilterModel(this);
@@ -504,18 +513,15 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public ICommand BackCommand => new RelayCommand(Back);
-        public ICommand SaveReportCommand => new RelayCommand(SaveReport);
-        public ICommand AddCommand => new RelayCommand(AddProduct);
-        public ICommand EditCommand => new RelayCommand(EditProduct);
-        public ICommand AllocateCommand => new RelayCommand(AllocateProduct);
-
         private void Back(object parameter)
         {
             mainViewModel.NavigateBack();
         }
 
-        private void SaveReport(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData, 
+                          UserPermissionEnum.CreateAllReports,
+                          UserPermissionEnum.CreateSelfReports)]
+        public void SaveReport(object parameter)
         {
             try
             {
@@ -591,7 +597,10 @@ namespace WarehouseManagementSystem.ViewModels
             return JsonConvert.SerializeObject(products, Formatting.None);
         }
 
-        private void AllocateProduct(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.AddProducts,
+                          UserPermissionEnum.EditProducts)]
+        public void AllocateProduct(object parameter)
         {
             if (SelectedProduct == null || SelectedZonePosition == null)
             {
@@ -695,14 +704,18 @@ namespace WarehouseManagementSystem.ViewModels
             return true;
         }
 
-        private void AddProduct(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData, 
+                          UserPermissionEnum.AddProducts)]
+        public void AddProduct(object parameter)
         {
             SupportWindow supportWindow = new SupportWindow(new AddEditProductViewModel(this, Categories));
             supportWindow.ShowDialog();
             InitializeAsync();
         }
 
-        private void EditProduct(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.EditProducts)]
+        public void EditProduct(object parameter)
         {
             if (SelectedProduct != null)
             {

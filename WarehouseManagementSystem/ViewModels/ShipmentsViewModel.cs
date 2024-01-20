@@ -7,7 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using WarehouseManagementSystem.Attributes;
 using WarehouseManagementSystem.Commands;
+using WarehouseManagementSystem.Enums;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
 using WarehouseManagementSystem.Services;
@@ -41,7 +43,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Shipment>? shipments;
-
         public ObservableCollection<Shipment>? Shipments
         {
             get { return shipments; }
@@ -56,7 +57,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private Shipment? selectedShipment;
-
         public Shipment? SelectedShipment
         {
             get { return selectedShipment; }
@@ -71,7 +71,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Customer>? customers;
-
         public ObservableCollection<Customer>? Customers
         {
             get { return customers; }
@@ -86,7 +85,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<User>? users;
-
         public ObservableCollection<User>? Users
         {
             get { return users; }
@@ -100,9 +98,34 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private PermissionManager permissionManager;
+        public PermissionManager PermissionManager
+        {
+            get { return permissionManager; }
+            private set
+            {
+                if (permissionManager != value)
+                {
+                    permissionManager = value;
+                }
+            }
+        }
+
+        public ICommand BackCommand => new RelayCommand(Back);
+        public ICommand ShowCommand => new RelayCommand(Show, parameter => permissionManager.CanExecute(parameter,
+            typeof(ShipmentsViewModel).GetMethod(nameof(Show)) ?? throw new ArgumentNullException()));
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport, parameter => permissionManager.CanExecute(parameter,
+            typeof(ShipmentsViewModel).GetMethod(nameof(SaveReport)) ?? throw new ArgumentNullException()));
+        public ICommand AddCommand => new RelayCommand(AddShipment, parameter => permissionManager.CanExecute(parameter,
+            typeof(ShipmentsViewModel).GetMethod(nameof(AddShipment)) ?? throw new ArgumentNullException()));
+        public ICommand EditCommand => new RelayCommand(EditShipment, parameter => permissionManager.CanExecute(parameter,
+            typeof(ShipmentsViewModel).GetMethod(nameof(EditShipment)) ?? throw new ArgumentNullException()));
+
         public ShipmentsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
+            if (MainViewModel.LoginService.CurrentUser == null) throw new ArgumentNullException();
+            permissionManager = new PermissionManager(MainViewModel.LoginService.CurrentUser.Role);
             filterSelectors = new ShipmentsSelectorsFilterModel(this);
             FilterSelectors.SectionAllCustomersSelected = true;
             FilterSelectors.SectionAllUsersSelected = true;
@@ -146,13 +169,10 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public ICommand BackCommand => new RelayCommand(Back);
-        public ICommand ShowCommand => new RelayCommand(Show);
-        public ICommand SaveReportCommand => new RelayCommand(SaveReport);
-        public ICommand AddCommand => new RelayCommand(AddShipment);
-        public ICommand EditCommand => new RelayCommand(EditShipment);
-
-        private async void Show(object parameter)
+        [AccessPermission(UserPermissionEnum.ViewAllData,
+                          UserPermissionEnum.ViewAllShipments,
+                          UserPermissionEnum.ViewSelfShipments)]
+        public async void Show(object parameter)
         {
             try
             {
@@ -172,7 +192,10 @@ namespace WarehouseManagementSystem.ViewModels
             mainViewModel.NavigateBack();
         }
 
-        private void SaveReport(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.CreateAllReports,
+                          UserPermissionEnum.CreateSelfReports)]
+        public void SaveReport(object parameter)
         {
             try
             {
@@ -247,7 +270,10 @@ namespace WarehouseManagementSystem.ViewModels
             return JsonConvert.SerializeObject(content, Formatting.None);
         }
 
-        private void AddShipment(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.ManageAllShipments,
+                          UserPermissionEnum.ManageSelfShipments)]
+        public void AddShipment(object parameter)
         {
             SupportWindow supportWindow = new SupportWindow(new AddEditShipmentViewModel(this));
             supportWindow.ShowDialog();
@@ -255,7 +281,10 @@ namespace WarehouseManagementSystem.ViewModels
             Show(this);
         }
 
-        private void EditShipment(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.ManageAllShipments,
+                          UserPermissionEnum.ManageSelfShipments)]
+        public void EditShipment(object parameter)
         {
             if (SelectedShipment != null)
             {
