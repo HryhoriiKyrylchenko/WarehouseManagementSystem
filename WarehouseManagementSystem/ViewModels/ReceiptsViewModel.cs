@@ -7,7 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using WarehouseManagementSystem.Attributes;
 using WarehouseManagementSystem.Commands;
+using WarehouseManagementSystem.Enums;
 using WarehouseManagementSystem.Migrations;
 using WarehouseManagementSystem.Models;
 using WarehouseManagementSystem.Models.Entities;
@@ -27,7 +29,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ReceiptsSelectorsFilterModel filterSelectors;
-
         public ReceiptsSelectorsFilterModel FilterSelectors
         {
             get { return filterSelectors; }
@@ -42,7 +43,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Receipt>? receipts;
-
         public ObservableCollection<Receipt>? Receipts
         {
             get { return receipts; }
@@ -57,7 +57,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private Receipt? selectedReceipt;
-
         public Receipt? SelectedReceipt
         {
             get { return selectedReceipt; }
@@ -72,7 +71,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<Supplier>? suppliers;
-
         public ObservableCollection<Supplier>? Suppliers
         {
             get { return suppliers; }
@@ -87,7 +85,6 @@ namespace WarehouseManagementSystem.ViewModels
         }
 
         private ObservableCollection<User>? users;
-
         public ObservableCollection<User>? Users
         {
             get { return users; }
@@ -101,9 +98,34 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
+        private PermissionManager permissionManager;
+        public PermissionManager PermissionManager
+        {
+            get { return permissionManager; }
+            private set
+            {
+                if (permissionManager != value)
+                {
+                    permissionManager = value;
+                }
+            }
+        }
+
+        public ICommand BackCommand => new RelayCommand(Back);
+        public ICommand ShowCommand => new RelayCommand(Show, parameter => permissionManager.CanExecute(parameter,
+            typeof(ReceiptsViewModel).GetMethod(nameof(Show)) ?? throw new ArgumentNullException()));
+        public ICommand SaveReportCommand => new RelayCommand(SaveReport, parameter => permissionManager.CanExecute(parameter,
+            typeof(ReceiptsViewModel).GetMethod(nameof(SaveReport)) ?? throw new ArgumentNullException()));
+        public ICommand AddCommand => new RelayCommand(AddReceipt, parameter => permissionManager.CanExecute(parameter,
+            typeof(ReceiptsViewModel).GetMethod(nameof(AddReceipt)) ?? throw new ArgumentNullException()));
+        public ICommand EditCommand => new RelayCommand(EditReceipt, parameter => permissionManager.CanExecute(parameter,
+            typeof(ReceiptsViewModel).GetMethod(nameof(EditReceipt)) ?? throw new ArgumentNullException()));
+
         public ReceiptsViewModel(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
+            if (MainViewModel.LoginService.CurrentUser == null) throw new ArgumentNullException();
+            permissionManager = new PermissionManager(MainViewModel.LoginService.CurrentUser.Role);
             filterSelectors = new ReceiptsSelectorsFilterModel(this);
             FilterSelectors.SectionAllSuppliersSelected = true;
             FilterSelectors.SectionAllUsersSelected = true;
@@ -153,13 +175,10 @@ namespace WarehouseManagementSystem.ViewModels
             }
         }
 
-        public ICommand BackCommand => new RelayCommand(Back);
-        public ICommand ShowCommand => new RelayCommand(Show);
-        public ICommand SaveReportCommand => new RelayCommand(SaveReport);
-        public ICommand AddCommand => new RelayCommand(AddReceipt);
-        public ICommand EditCommand => new RelayCommand(EditReceipt);
-
-        private async void Show(object obj)
+        [AccessPermission(UserPermissionEnum.ViewAllData,
+                          UserPermissionEnum.ViewAllReceipts,
+                          UserPermissionEnum.ViewSelfReceipts)]
+        public async void Show(object obj)
         {
             try
             {
@@ -180,7 +199,10 @@ namespace WarehouseManagementSystem.ViewModels
             mainViewModel.NavigateBack();
         }
 
-        private void SaveReport(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.CreateAllReports,
+                          UserPermissionEnum.CreateSelfReports)]
+        public void SaveReport(object parameter)
         {
             try
             {
@@ -254,7 +276,10 @@ namespace WarehouseManagementSystem.ViewModels
             return JsonConvert.SerializeObject(content, Formatting.None);
         }
 
-        private void AddReceipt(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.ManageAllReceipts,
+                          UserPermissionEnum.ManageSelfReceipts)]
+        public void AddReceipt(object parameter)
         {
             SupportWindow supportWindow = new SupportWindow(new AddEditReceiptViewModel(this));
             supportWindow.ShowDialog();
@@ -262,7 +287,10 @@ namespace WarehouseManagementSystem.ViewModels
             Show(this);
         }
 
-        private void EditReceipt(object parameter)
+        [AccessPermission(UserPermissionEnum.ManageAllData,
+                          UserPermissionEnum.ManageAllReceipts,
+                          UserPermissionEnum.ManageSelfReceipts)]
+        public void EditReceipt(object parameter)
         {
             if (SelectedReceipt != null)
             {
