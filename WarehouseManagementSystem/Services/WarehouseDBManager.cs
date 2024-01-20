@@ -260,6 +260,8 @@ namespace WarehouseManagementSystem.Services
         {
             var zonePositions = dbContext.ProductInZonePositions
                 .Where(zp => zp.ProductId == productId)
+                .Include(pzp => pzp.Product)
+                .Include(pzp => pzp.ZonePosition)
                 .ToList();
             return new ObservableCollection<ProductInZonePosition>(zonePositions);
         }
