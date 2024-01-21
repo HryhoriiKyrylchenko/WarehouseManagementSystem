@@ -1,4 +1,4 @@
 ## Documentation
 
-- [Explanatory note](Documentation/Explanatory note.md)
+- [Explanatory note](Documentation/ExplanatoryNote.md)
 - [Project description](Documentation/README.md)
