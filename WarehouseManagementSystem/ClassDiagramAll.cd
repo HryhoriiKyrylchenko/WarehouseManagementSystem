@@ -1,0 +1,1015 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Alphabetical">
+  <Class Name="WarehouseManagementSystem.Attributes.AccessPermissionAttribute">
+    <Position X="76.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>Attributes\AccessPermissionAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Commands.RelayCommand" BaseTypeListCollapsed="true">
+    <Position X="78.5" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAACAAQAAEAEAABAIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\RelayCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Converters.DateTimeToStringConverter" BaseTypeListCollapsed="true">
+    <Position X="87.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\DateTimeToStringConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Converters.UserRoleToVisibilityConverter" BaseTypeListCollapsed="true">
+    <Position X="80.25" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\UserRoleToVisibilityConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Enums.Support_classes.ReportTypeEnumValues">
+    <Position X="87.25" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Enums\Support classes\ReportTypeEnumValues.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Enums.Support_classes.UnitsOfMeasureEnumValues">
+    <Position X="75" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Enums\Support classes\UnitsOfMeasureEnumValues.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Exceptions.CustomJsonException">
+    <Position X="85.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\CustomJsonException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Exceptions.DuplicateObjectException">
+    <Position X="89" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\DuplicateObjectException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.InitialCreate">
+    <Position X="78.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20231230154601_InitialCreate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.EditZoneCategory">
+    <Position X="83.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20231231103811_EditZoneCategory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.EditProduct">
+    <Position X="76.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20231231111328_EditProduct.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.EditProductWithWarehouse">
+    <Position X="82" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20231231123143_EditProductWithWarehouse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.EditAddress">
+    <Position X="90.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20240106135803_EditAddress.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.EditProductPhoto">
+    <Position X="80.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20240107104943_EditProductPhoto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.EditProduct07012024">
+    <Position X="78.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20240107133031_EditProduct07.01.2024.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.EditMovementHistory">
+    <Position X="75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20240108124150_EditMovementHistory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Migrations.WarehouseDbContextModelSnapshot">
+    <Position X="87.25" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Migrations\WarehouseDbContextModelSnapshot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.AddressBuilder" BaseTypeListCollapsed="true">
+    <Position X="75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAABIAAAgAAAIAgAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Models\Builders\AddressBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.CustomerBuilder" BaseTypeListCollapsed="true">
+    <Position X="83.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEAAAAABAAAAAQCAAAAAAAgAAAAAgABAAAAAAAAQAAA=</HashCode>
+      <FileName>Models\Builders\CustomerBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ErrorLogBuilder" BaseTypeListCollapsed="true">
+    <Position X="89" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAAAAAAAAAAAAhAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Builders\ErrorLogBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.LabelBuilder" BaseTypeListCollapsed="true">
+    <Position X="82" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAARAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Builders\LabelBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ManufacturerBuilder" BaseTypeListCollapsed="true">
+    <Position X="90.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAIAAAAAQAEAAAAAAgAAAQAgIAAACAAAAAQAAA=</HashCode>
+      <FileName>Models\Builders\ManufacturerBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.MovementHistoryBuilder" BaseTypeListCollapsed="true">
+    <Position X="78.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAAAAAAgAAAAAgAAAAAAAgAAQAAA=</HashCode>
+      <FileName>Models\Builders\MovementHistoryBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ProductBuilder" BaseTypeListCollapsed="true">
+    <Position X="87.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEAAAAAAQkAAAQAAAAAAAAgAAASAgABAACAAAAgYoAA=</HashCode>
+      <FileName>Models\Builders\ProductBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ProductCategoryBuilder" BaseTypeListCollapsed="true">
+    <Position X="90.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAIAAAAgAAAAAgAAAAAAIABAQAAA=</HashCode>
+      <FileName>Models\Builders\ProductCategoryBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ProductInZonePositionBuilder" BaseTypeListCollapsed="true">
+    <Position X="78.5" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAIAAAECQAAAAiAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Builders\ProductInZonePositionBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ProductPhotoBuilder" BaseTypeListCollapsed="true">
+    <Position X="82" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAAAAAAAAAAAAgAABAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Builders\ProductPhotoBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ReceiptBuilder" BaseTypeListCollapsed="true">
+    <Position X="87.25" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQIAAAAAAAgAAAAAgAAEAAAAAAAwAAA=</HashCode>
+      <FileName>Models\Builders\ReceiptBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ReceiptItemBuilder" BaseTypeListCollapsed="true">
+    <Position X="90.75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAABAAAQAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Builders\ReceiptItemBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ReportBuilder" BaseTypeListCollapsed="true">
+    <Position X="82" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAEAAAAAAAAAQAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Builders\ReportBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ShipmentBuilder" BaseTypeListCollapsed="true">
+    <Position X="76.75" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQIAAAAQAAgAAAAAgAAEAAAAAAAQAAA=</HashCode>
+      <FileName>Models\Builders\ShipmentBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ShipmentItemBuilder" BaseTypeListCollapsed="true">
+    <Position X="80.25" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EIAAAAAAAAAAAQAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Builders\ShipmentItemBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.SupplierBuilder" BaseTypeListCollapsed="true">
+    <Position X="87.25" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAACAAAgAAAAAgAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Models\Builders\SupplierBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.UserBuilder" BaseTypeListCollapsed="true">
+    <Position X="78.5" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAAAAAAgAAAAAgAAAAAAAAAAQAQA=</HashCode>
+      <FileName>Models\Builders\UserBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.WarehouseBuilder" BaseTypeListCollapsed="true">
+    <Position X="83.75" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAAAAAAgAAAAAgAAAAAAAAAgQAAA=</HashCode>
+      <FileName>Models\Builders\WarehouseBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ZoneBuilder" BaseTypeListCollapsed="true">
+    <Position X="75" Y="37.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAAAAAAgQAAAAgAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Models\Builders\ZoneBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ZoneCategoryBuilder" BaseTypeListCollapsed="true">
+    <Position X="78.5" Y="37.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAIAAAAgAAAAAgAAAAAAIABAQAAA=</HashCode>
+      <FileName>Models\Builders\ZoneCategoryBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Builders.ZonePositionBuilder" BaseTypeListCollapsed="true">
+    <Position X="82" Y="37.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAQAAAAAAAAgQAAAAgAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Models\Builders\ZonePositionBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Support_classes.ProductDetail">
+    <Position X="75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Models\Entities\Support classes\ProductDetail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Address">
+    <Position X="90.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAECAAAAAgAAAIAMABAAAAAAAAIAAAAABAMAAAAQAAA=</HashCode>
+      <FileName>Models\Entities\Address.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Customer">
+    <Position X="82" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wAICAEAAAAAAABAMAAAAAAAAAAAQAAACAAAAAAACAAA=</HashCode>
+      <FileName>Models\Entities\Customer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.ErrorLog">
+    <Position X="87.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQACAAAAAAAAAgAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Entities\ErrorLog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Label">
+    <Position X="80.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Entities\Label.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Manufacturer">
+    <Position X="89" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wAACAAAAAAAgAAAEAAAAAAQAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Entities\Manufacturer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.MovementHistory">
+    <Position X="76.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kAACCAAEAAAAAAAAABAAAAAAAAAAAAAAAAAAgAAABAA=</HashCode>
+      <FileName>Models\Entities\MovementHistory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Product">
+    <Position X="85.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gCgCKAAAFQAgAgAUCAAAgAQCgAEQAAAACAAAgAACKAA=</HashCode>
+      <FileName>Models\Entities\Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.ProductCategory">
+    <Position X="89" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAICAAAAAAAAAAAAAAAAEAAAACAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Entities\ProductCategory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.ProductInZonePosition">
+    <Position X="76.75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAGAAAAAIAAAAAAABAAAAAAAAAAAAAAAAABgAAAAAA=</HashCode>
+      <FileName>Models\Entities\ProductInZonePosition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.ProductPhoto">
+    <Position X="80.25" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Entities\ProductPhoto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Receipt">
+    <Position X="85.5" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAADAAAAAAAAAIAQAAAAAAgAAgQAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Models\Entities\Receipt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.ReceiptItem">
+    <Position X="89" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAgAAAAAA=</HashCode>
+      <FileName>Models\Entities\ReceiptItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Report">
+    <Position X="80.25" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAQAAAgAAAEAAAAAAAAgAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Models\Entities\Report.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Shipment">
+    <Position X="75" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAEDAAAAAAAAAAAAAAAAAAgAAgAQABAAAAAAAAAggAA=</HashCode>
+      <FileName>Models\Entities\Shipment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.ShipmentItem">
+    <Position X="78.5" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACAAAAAAAAABAAAAAAAAAAAAAAAAEAAAAAgAAAAAA=</HashCode>
+      <FileName>Models\Entities\ShipmentItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Supplier">
+    <Position X="85.5" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wAACAAAAAAAAAAAEAAAAAAQAAAAAAAACAAAAAAABAAA=</HashCode>
+      <FileName>Models\Entities\Supplier.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.User">
+    <Position X="76.75" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oAACAAAAAAAAABAEEQAAAAAAAAAAAAACAAAAAAABAAA=</HashCode>
+      <FileName>Models\Entities\User.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Warehouse">
+    <Position X="82" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wAACAAAAAAAAAAAEAAAAAAQCAAAAAAACAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Entities\Warehouse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.Zone">
+    <Position X="90.75" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAQCAAAABAAAAAAEAAAAAAQCAAACAgAACAAAAAAAAAA=</HashCode>
+      <FileName>Models\Entities\Zone.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.ZoneCategory">
+    <Position X="76.75" Y="37.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAICAAAAAAAAAAAAAAAAEAACACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Entities\ZoneCategory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.Entities.ZonePosition">
+    <Position X="80.25" Y="37.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAADAAAAAAAEABAAAAQSAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Entities\ZonePosition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Models.WarehouseDbContext">
+    <Position X="85.5" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAFACCAAEQAAAJAQABAAAAAikAASAAAABAQAAAARAAw=</HashCode>
+      <FileName>Models\WarehouseDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Services.AccessManager">
+    <Position X="75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\AccessManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Services.EntityManager" BaseTypeListCollapsed="true">
+    <Position X="92.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>VxOh1tGMITAahajUDfAC4krZweJJkggrR45oAYS0tEQ=</HashCode>
+      <FileName>Services\EntityManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Services.ErrorLogger" BaseTypeListCollapsed="true">
+    <Position X="90.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAQAAAAAAIAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Services\ErrorLogger.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Services.EventService">
+    <Position X="75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Services\EventService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Services.LoginService">
+    <Position X="61.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEQAAAAIAAAACAAAAAAAIAACAAAAEAAAAQAAAABAA=</HashCode>
+      <FileName>Services\LoginService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Services.PermissionManager">
+    <Position X="83.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\PermissionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.Services.WarehouseDBManager" BaseTypeListCollapsed="true">
+    <Position X="89" Y="33.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QQAAQCRAACoAgJCYAQAEQAEACAAAXlCgQOAAHEGBIAg=</HashCode>
+      <FileName>Services\WarehouseDBManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Behaviors.TreeViewSelectedItemBehavior">
+    <Position X="90.75" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAFAAAAAAAAAAAAABABAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\Behaviors\TreeViewSelectedItemBehavior.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Helpers.ConfirmationHelper">
+    <Position X="80.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\Helpers\ConfirmationHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Helpers.ExceptionHelper">
+    <Position X="76.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>ViewModels\Helpers\ExceptionHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Helpers.MessageHelper">
+    <Position X="75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAACAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\Helpers\MessageHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Helpers.PasswordBoxHelper">
+    <Position X="82" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBABAAAAAAAABAAEAAAAABAAABAgAAAAAAAAAICEAAg=</HashCode>
+      <FileName>ViewModels\Helpers\PasswordBoxHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Support_data.ProductsCategoriesSelectorsFilterModel">
+    <Position X="52.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAABAAAACAAEAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>ViewModels\Support data\ProductsCategoriesSelectorsFilterModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Support_data.ProductsSelectorsFilterModel">
+    <Position X="56.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAgAACAIAAAABAAAAAgAAAAAIAAAAAAACAgAA=</HashCode>
+      <FileName>ViewModels\Support data\ProductsSelectorsFilterModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Support_data.ReceiptsSelectorsFilterModel">
+    <Position X="63.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAgAAAAIAAgAATAIAAEAAACAAgAAoCAAAGAAAA=</HashCode>
+      <FileName>ViewModels\Support data\ReceiptsSelectorsFilterModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Support_data.ReportsSelectorsFilterModel">
+    <Position X="68" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAARAAAAEBAAAAAQAAAAEAAAAAEAAAIAAAACAAAA=</HashCode>
+      <FileName>ViewModels\Support data\ReportsSelectorsFilterModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.Support_data.ShipmentsSelectorsFilterModel">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAgACAAIAAABATAAAQEAAACAAAAAoCAACCAAAg=</HashCode>
+      <FileName>ViewModels\Support data\ShipmentsSelectorsFilterModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddCustomerViewModel">
+    <Position X="29.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAIAABAQSIAAAAACIAAAAAAAAACAAIADAAAIAAAAAAA=</HashCode>
+      <FileName>ViewModels\AddCustomerViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddEditAddressViewModel">
+    <Position X="32" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAACCAAQAAAAAACIAAAAAIIAAMAAAACAIAAAQAAAAE=</HashCode>
+      <FileName>ViewModels\AddEditAddressViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddEditProductViewModel">
+    <Position X="34.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>YMsG1AAMcgAwQQc0JAaQA6CSAgCgMAYILVCBwAYgUUo=</HashCode>
+      <FileName>ViewModels\AddEditProductViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddEditReceiptViewModel">
+    <Position X="38.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBkIQAABRUSBAZJQJACAABRCURBAgBAMgKAaRgAwABY=</HashCode>
+      <FileName>ViewModels\AddEditReceiptViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddEditShipmentViewModel">
+    <Position X="41" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QhEIAAQhQSDMATIgogAwABAGECAIEAQayIBZBkACGAY=</HashCode>
+      <FileName>ViewModels\AddEditShipmentViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddManufacturerViewModel">
+    <Position X="43.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAIAABgAQAAAAAACIAAAAAgAAACAAIADAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\AddManufacturerViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddProductCategoryViewModel">
+    <Position X="45.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>0ACAAIAAQAAAAgACIAAAIgCwACAAEAAAAAACAAAgAIA=</HashCode>
+      <FileName>ViewModels\AddProductCategoryViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddressViewModel">
+    <Position X="54.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAIAAAgAAAAAIABAACAAQAAIAAgACAAMAAAABAAA=</HashCode>
+      <FileName>ViewModels\AddressViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.AddSupplierViewModel">
+    <Position X="47.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAIAABAEQAAAAAACIAAAAAAAAACAAIADAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\AddSupplierViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.CategoryViewModel">
+    <Position X="65.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAEAAAAAAAAAAAAAAAAAAAACAQ=</HashCode>
+      <FileName>ViewModels\CategoryViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.CurrentProductViewModel">
+    <Position X="70.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAohoLAIAwAwCAAAIIKAgDSCgIAVAAKAAQKjgAACIDA=</HashCode>
+      <FileName>ViewModels\CurrentProductViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.CurrentReceiptViewModel">
+    <Position X="2.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAIAAABEAAIAQAACAAAAAAgQAAAIEACAAAAAgAAA=</HashCode>
+      <FileName>ViewModels\CurrentReceiptViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.CurrentShipmentViewModel">
+    <Position X="5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAEAAIABAAAAAAEAAAAAABAAAgAQAAIAACCAAAAggAA=</HashCode>
+      <FileName>ViewModels\CurrentShipmentViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.CustomerViewModel">
+    <Position X="9.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kAIAAMAAAAhAAAAIAAAAAAAAAAIQAAACAAAAAAACAAA=</HashCode>
+      <FileName>ViewModels\CustomerViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.LogingViewModel">
+    <Position X="36.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABCAAIAAAACAAAAAAQBAAAEABAAAAAACIAEwAgCQAAA=</HashCode>
+      <FileName>ViewModels\LogingViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.MainViewModel">
+    <Position X="14" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>GEBQACAAAgEAAEAEAABBARMAgAACASMAAAAgAAAAAIA=</HashCode>
+      <FileName>ViewModels\MainViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ManufacturerViewModel">
+    <Position X="18.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAIAAAAAgAAAAIAAAAAQAAAIEAAACAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\ManufacturerViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.MoveProductsViewModel">
+    <Position X="23" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>HUBBqhBosJiACBSUIEoFACAS2gLTcDqgQxE4EAyAQLA=</HashCode>
+      <FileName>ViewModels\MoveProductsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ProductsViewModel">
+    <Position X="25.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>mQssDAALMBoISDAGIAoAQCASEgBSdBSAYhA5BIAAAYQ=</HashCode>
+      <FileName>ViewModels\ProductsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ReceiptItemViewModel">
+    <Position X="75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>ViewModels\ReceiptItemViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ReceiptsViewModel">
+    <Position X="59" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MQAAACAAABAUSIACIACAACABAgA0YAAABIEYgAABAIA=</HashCode>
+      <FileName>ViewModels\ReceiptsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ReportSelectionViewModel">
+    <Position X="50" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAQAAAAIAAIAAABAACAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>ViewModels\ReportSelectionViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ReportsViewModel">
+    <Position X="72.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>NQAAAKQAABAECAECYAABACAAAAA0AAAFAAAAhGAAAMA=</HashCode>
+      <FileName>ViewModels\ReportsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.SaveReportViewModel">
+    <Position X="27.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAQAABAEAACAAAAAAAAAAAAAAAAAAQAAAEQAA=</HashCode>
+      <FileName>ViewModels\SaveReportViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.SettingsViewModel">
+    <Position X="7.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAACAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SettingsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ShipmentItemViewModel">
+    <Position X="82" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>ViewModels\ShipmentItemViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ShipmentsViewModel">
+    <Position X="11.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MQEAAiABABAESBACIAAQACAAAkA0YAAAgAAYgAAAAIA=</HashCode>
+      <FileName>ViewModels\ShipmentsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.SummaryViewModel">
+    <Position X="16.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBAUAAAQEAAAAAAAAAQAEAACgBAABAAAAAQAAEAAEAA=</HashCode>
+      <FileName>ViewModels\SummaryViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.SupplierViewModel">
+    <Position X="20.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAIAAAAAAAAAAAAAAAAQAAAIEAAACAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SupplierViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ViewModelBase">
+    <Position X="36.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\ViewModelBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.ViewModels.ViewModelBaseRequestClose">
+    <Position X="38.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\ViewModelBaseRequestClose.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.AddCustomerView" BaseTypeListCollapsed="true">
+    <Position X="78.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Views\AddCustomerView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.AddEditAddressView" BaseTypeListCollapsed="true">
+    <Position X="80.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\AddEditAddressView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.AddEditProductView" BaseTypeListCollapsed="true">
+    <Position X="82" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\AddEditProductView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.AddEditReceiptView" BaseTypeListCollapsed="true">
+    <Position X="83.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Views\AddEditReceiptView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.AddEditShipmentView" BaseTypeListCollapsed="true">
+    <Position X="85.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Views\AddEditShipmentView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.AddManufacturerView" BaseTypeListCollapsed="true">
+    <Position X="87.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\AddManufacturerView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.AddProductCategoryView" BaseTypeListCollapsed="true">
+    <Position X="89" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\AddProductCategoryView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.AddSupplierView" BaseTypeListCollapsed="true">
+    <Position X="76.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\AddSupplierView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.LogingView" BaseTypeListCollapsed="true">
+    <Position X="83.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\LogingView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.MainView" BaseTypeListCollapsed="true">
+    <Position X="85.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\MainView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.MoveProductsView" BaseTypeListCollapsed="true">
+    <Position X="80.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Views\MoveProductsView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.ProductsView" BaseTypeListCollapsed="true">
+    <Position X="83.75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Views\ProductsView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.ReceiptsView" BaseTypeListCollapsed="true">
+    <Position X="76.75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\ReceiptsView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.ReportSelectionView" BaseTypeListCollapsed="true">
+    <Position X="83.75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\ReportSelectionView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.ReportsView" BaseTypeListCollapsed="true">
+    <Position X="85.5" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\ReportsView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.SaveReportView" BaseTypeListCollapsed="true">
+    <Position X="89" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\SaveReportView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.SettingsView" BaseTypeListCollapsed="true">
+    <Position X="90.75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\SettingsView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Views.ShipmentsView" BaseTypeListCollapsed="true">
+    <Position X="83.75" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Views\ShipmentsView.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.Windows.SupportWindow" BaseTypeListCollapsed="true">
+    <Position X="89" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAEAAIABAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\SupportWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="WarehouseManagementSystem.App">
+    <Position X="78.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WarehouseManagementSystem.MainWindow" BaseTypeListCollapsed="true">
+    <Position X="87.25" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="WarehouseManagementSystem.Models.Builders.IBuilder&lt;T&gt;">
+    <Position X="64.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Builders\IBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WarehouseManagementSystem.ViewModels.Interfaces.IHasAddress">
+    <Position X="66" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\Interfaces\IHasAddress.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WarehouseManagementSystem.ViewModels.Interfaces.IRequestClose">
+    <Position X="67.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\Interfaces\IRequestClose.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="WarehouseManagementSystem.Enums.ReportTypeEnum">
+    <Position X="64.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAEQAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Enums\ReportTypeEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="WarehouseManagementSystem.Enums.UnitsOfMeasureEnum">
+    <Position X="66" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAEAAAAIhAAAAIEAAAAAsAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Enums\UnitsOfMeasureEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="WarehouseManagementSystem.Enums.UserPermissionEnum">
+    <Position X="67.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAEBARAoAgAAAAAIABIAAAAAAgAIAAAACAUCAAQ=</HashCode>
+      <FileName>Enums\UserPermissionEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="WarehouseManagementSystem.Enums.UserRolesEnum">
+    <Position X="69.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAABACAAAAAAAAAgAAAQAAAAQAAAAQAAEAAAAAAAAAA=</HashCode>
+      <FileName>Enums\UserRolesEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
