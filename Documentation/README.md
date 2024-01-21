@@ -1,6 +1,6 @@
-﻿#Warehouse Management System**
+﻿#Warehouse Management System
 
-##Documentation**
+##Documentation
 
 1. **Introduction:** The developed system is software designed to automate warehouse management processes. It is created with the aim of improving inventory management efficiency, reducing accounting errors, and providing a reliable foundation for future expansion into an online store. The system will be oriented towards the use of technologies such as C#, WPF, Entity Framework Core, and SQL Server.
 
