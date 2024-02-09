@@ -25,7 +25,8 @@
             <TextBlock Text="Batch number:" FontSize="20" Margin="15,5" HorizontalAlignment="Center"/>
             <TextBlock Text="{Binding SelectedShipment.BatchNumber}" FontSize="20" FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
             <TextBlock Text="Data:" FontSize="20" Margin="15,5" HorizontalAlignment="Center"/>
-            <TextBlock Text="{Binding SelectedShipment.ShipmentDate}" FontSize="20" FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding SelectedShipment.ShipmentDate, Converter={StaticResource DateTimeConverter}}" FontSize="20" 
+                       FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1">
             <TextBlock  Text="SHIPMENTS" FontSize="35" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -72,14 +73,14 @@
                 </Grid>
             </Border>
         </StackPanel>
-        <DataGrid Grid.Row="1" Grid.Column="0" Margin="15" ItemsSource="{Binding SelectedShipment.ShipmentItems}" 
+        <DataGrid Grid.Row="1" Grid.Column="0" Margin="15" ItemsSource="{Binding SelectedShipment.ShipmentItems}" IsReadOnly="True" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Product name" Width="150" Binding="{Binding Product.Name}" />
                 <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Grid.Row="1" Grid.Column="1" x:Name="DataGridReceipts" Margin="15" ItemsSource="{Binding Shipments}" 
+        <DataGrid Grid.Row="1" Grid.Column="1" x:Name="DataGridReceipts" Margin="15" ItemsSource="{Binding Shipments}" IsReadOnly="True"
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False"
                   SelectedItem="{Binding SelectedShipment, Mode=TwoWay}">
             <DataGrid.Columns>

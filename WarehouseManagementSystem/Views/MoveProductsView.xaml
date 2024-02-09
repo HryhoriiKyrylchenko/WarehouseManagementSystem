@@ -67,7 +67,7 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="MOVE PRODUCTS" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <DataGrid Grid.Row="1" Margin="15,0,15,15" ItemsSource="{Binding ProductInZonePozitions}" HorizontalScrollBarVisibility="Auto" 
-                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto" IsReadOnly="True"
                       AutoGenerateColumns="False" SelectedItem="{Binding SelectedProductInZonePosition, Mode=TwoWay}" Height="298" VerticalAlignment="Bottom">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Width="300" Binding="{Binding Product.Name}" />

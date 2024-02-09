@@ -25,7 +25,8 @@
             <TextBlock Text="Batch number:" FontSize="20" Margin="15,5" HorizontalAlignment="Center"/>
             <TextBlock Text="{Binding SelectedReceipt.BatchNumber}" FontSize="20" FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
             <TextBlock Text="Data:" FontSize="20" Margin="15,5" HorizontalAlignment="Center"/>
-            <TextBlock Text="{Binding SelectedReceipt.ReceiptDate}" FontSize="20" FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding SelectedReceipt.ReceiptDate, Converter={StaticResource DateTimeConverter}}" FontSize="20" 
+                       FontWeight="Bold" Margin="15,5" HorizontalAlignment="Center"/>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1">
             <TextBlock  Text="RECEIPTS" FontSize="35" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -73,7 +74,7 @@
             </Border>
         </StackPanel>
         <DataGrid Grid.Row="1" Grid.Column="0" Margin="15" ItemsSource="{Binding SelectedReceipt.ReceiptItems, Mode=TwoWay}" 
-                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False">
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Product name" Width="150" Binding="{Binding Product.Name}" />
                 <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
@@ -81,7 +82,7 @@
         </DataGrid>
         <DataGrid Grid.Row="1" Grid.Column="1" x:Name="DataGridReceipts" Margin="15" ItemsSource="{Binding Receipts}" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False"
-                  SelectedItem="{Binding SelectedReceipt, Mode=TwoWay}">
+                  SelectedItem="{Binding SelectedReceipt, Mode=TwoWay}" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Batch number" Width="150" Binding="{Binding BatchNumber}" />
                 <DataGridTextColumn Header="Receipt date" Width="100" Binding="{Binding ReceiptDate, 

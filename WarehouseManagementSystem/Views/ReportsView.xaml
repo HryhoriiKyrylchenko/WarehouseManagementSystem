@@ -49,7 +49,7 @@
                 <RowDefinition Height=".5*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <DataGrid Grid.Row="0" Grid.Column="0" Margin="15" ItemsSource="{Binding Reports}" HorizontalScrollBarVisibility="Auto" 
+            <DataGrid Grid.Row="0" Grid.Column="0" Margin="15" ItemsSource="{Binding Reports}" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"
                       VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" SelectedItem="{Binding SelectedReport, Mode=TwoWay}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Title" Width="300" Binding="{Binding Title}" />
@@ -66,7 +66,7 @@
                         CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
             </UniformGrid>
             <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="15" ItemsSource="{Binding SelectedReportContent}" 
-                      AutoGenerateColumns="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                      AutoGenerateColumns="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
                 <DataGrid.Resources>
                     <DataTemplate DataType="{x:Type entities:Product}">
                         

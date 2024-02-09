@@ -114,22 +114,25 @@ namespace WarehouseManagementSystem.ViewModels
 
         private void Cancel(object obj)
         {
-            try
+            if (ConfirmationHelper.GetCancelConfirmation() == MessageBoxResult.OK)
             {
-                if (ManufacturerViewModel.Address != null)
+                try
                 {
-                    using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
+                    if (ManufacturerViewModel.Address != null)
                     {
-                        db.DeleteAddress(ManufacturerViewModel.Address);
+                        using (EntityManager db = new EntityManager(new Models.WarehouseDbContext()))
+                        {
+                            db.DeleteAddress(ManufacturerViewModel.Address);
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                ExceptionHelper.HandleException(ex);
-            }
+                catch (Exception ex)
+                {
+                    ExceptionHelper.HandleException(ex);
+                }
 
-            CloseParentWindow();
+                CloseParentWindow();
+            }
         }
     }
 }
