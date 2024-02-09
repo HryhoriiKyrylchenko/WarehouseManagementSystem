@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WarehouseManagementSystem.Models.Builders;
 using WarehouseManagementSystem.Models.Entities;
+using WarehouseManagementSystem.Services;
 
 namespace WarehouseManagementSystem.Models
 {
@@ -50,7 +51,13 @@ namespace WarehouseManagementSystem.Models
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                     .Build();
 
-                string connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new NullReferenceException("Connection string == null");
+                string? connectionString = configuration.GetConnectionString("CurrentConnection");
+
+                if (!ConnectionTester.TestConnectionString(connectionString))
+                {
+                    connectionString = configuration.GetConnectionString("DefaultConnection")
+                                        ?? throw new NullReferenceException("Connection string == null");
+                }
 
                 optionsBuilder.UseSqlServer(connectionString);
             }
